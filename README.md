@@ -490,17 +490,11 @@ Chúng tôi rất hoan nghênh mọi đóng góp! Vui lòng làm theo các bư�
 
 ---
 
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
 
 ## 👨‍💻 Tác giả
 
 **Kieen Lee**
 - GitHub: [@KieenLee](https://github.com/KieenLee)
-- Email: kieenlee@example.com
 
 ---
 
@@ -511,17 +505,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [Blazor](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor)
 - [WPF](https://docs.microsoft.com/en-us/dotnet/desktop/wpf/)
 - [CommunityToolkit.Mvvm](https://github.com/CommunityToolkit/dotnet)
-
----
-
-## 📞 Support
-
-Nếu bạn gặp vấn đề hoặc có câu hỏi:
-- Mở [Issue](https://github.com/KieenLee/minimart-smart-system/issues)
-- Liên hệ qua email: kieenlee@example.com
-
----
-
-<p align="center">
-  Made with ❤️ by Kieen Lee
-</p>
