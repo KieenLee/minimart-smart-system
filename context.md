@@ -25,7 +25,7 @@ Hệ thống được chia thành **hai kênh độc lập**, cùng kết nối 
 **Phương thức:**
 
 ```
-Blazor App <-> ASP.NET Web API <-> Database (EF Core)
+ASP.NET Core MVC (.cshtml) <-> ASP.NET Web API <-> Database (EF Core)
 ```
 
 **Mục đích:**
@@ -79,7 +79,7 @@ Desktop App (WPF)
 
 | Tác nhân   | Nền tảng      | Chức năng chính                                         |
 | ---------- | ------------- | ------------------------------------------------------- |
-| Khách hàng | Web (Blazor)  | Xem sản phẩm, đặt hàng trực tuyến, xem lịch sử đơn hàng |
+| Khách hàng | Web (MVC)     | Xem sản phẩm, đặt hàng trực tuyến, xem lịch sử đơn hàng |
 | Nhân viên  | Desktop (TCP) | Đăng nhập, bán hàng POS, in hóa đơn, kiểm tra tồn kho   |
 | Admin      | Desktop (TCP) | Quản lý nhân viên, chỉnh sửa giá, xem báo cáo doanh thu |
 
@@ -89,7 +89,7 @@ Desktop App (WPF)
 
 | Thành phần      | Công nghệ                      |
 | --------------- | ------------------------------ |
-| Web UI          | Blazor Page (ASP.NET Core)     |
+| Web UI          | ASP.NET Core MVC (.cshtml)     |
 | Web Backend     | ASP.NET Core Web API (RESTful) |
 | Desktop Client  | WPF (.NET 8)                   |
 | Internal Server | Console App (TCP Listener)     |
