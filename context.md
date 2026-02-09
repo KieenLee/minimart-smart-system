@@ -109,3 +109,297 @@ Desktop App (WPF)
 - Dependency Container
 - Interface
 - Kiến trúc 3 Layers
+
+minimart-smart-system/
+│
+├── .git/
+├── .gitignore
+├── context.md
+├── plan.md
+├── README.md
+└── MS2.sln
+│
+├── MS2.Models/ # Shared Models Layer
+│ ├── MS2.Models.csproj
+│ │
+│ ├── Entities/ # Domain Entities
+│ │ ├── BaseEntity.cs
+│ │ ├── User.cs
+│ │ ├── Customer.cs
+│ │ ├── Employee.cs
+│ │ ├── Category.cs
+│ │ ├── Product.cs
+│ │ ├── Order.cs
+│ │ └── OrderDetail.cs
+│ │
+│ ├── DTOs/ # Data Transfer Objects
+│ │ ├── Auth/
+│ │ │ ├── LoginRequestDto.cs
+│ │ │ ├── RegisterRequestDto.cs
+│ │ │ └── AuthResponseDto.cs
+│ │ │
+│ │ ├── Product/
+│ │ │ ├── ProductDto.cs
+│ │ │ ├── CreateProductDto.cs
+│ │ │ ├── UpdateProductDto.cs
+│ │ │ ├── UpdateProductPriceDto.cs
+│ │ │ └── UpdateProductStockDto.cs
+│ │ │
+│ │ ├── Order/
+│ │ │ ├── OrderDto.cs
+│ │ │ ├── CreateOrderDto.cs
+│ │ │ ├── OrderItemDto.cs
+│ │ │ └── OrderDetailDto.cs
+│ │ │
+│ │ ├── Customer/
+│ │ │ ├── CustomerDto.cs
+│ │ │ └── CreateCustomerDto.cs
+│ │ │
+│ │ └── Employee/
+│ │ ├── EmployeeDto.cs
+│ │ └── CreateEmployeeDto.cs
+│ │
+│ └── TCP/ # TCP Protocol Models
+│ ├── TcpMessage.cs
+│ ├── TcpResponse.cs
+│ └── TcpActions.cs
+│
+│
+├── MS2.DataAccess/ # Data Access Layer
+│ ├── MS2.DataAccess.csproj
+│ ├── appsettings.json
+│ │
+│ ├── Data/
+│ │ └── MS2DbContext.cs # EF Core DbContext
+│ │
+│ ├── Interfaces/ # Repository Interfaces
+│ │ ├── IRepository.cs
+│ │ ├── IProductRepository.cs
+│ │ ├── IOrderRepository.cs
+│ │ ├── IUserRepository.cs
+│ │ ├── IEmployeeRepository.cs
+│ │ ├── ICustomerRepository.cs
+│ │ ├── ICategoryRepository.cs
+│ │ └── IUnitOfWork.cs
+│ │
+│ ├── Repositories/ # Repository Implementations
+│ │ ├── Repository.cs
+│ │ ├── ProductRepository.cs
+│ │ ├── OrderRepository.cs
+│ │ ├── UserRepository.cs
+│ │ ├── EmployeeRepository.cs
+│ │ ├── CustomerRepository.cs
+│ │ ├── CategoryRepository.cs
+│ │ └── UnitOfWork.cs
+│ │
+│ ├── Migrations/ # EF Core Migrations
+│ │ └── (Auto-generated migration files)
+│ │
+│ └── Seeders/ # Data Seeders
+│ └── DataSeeder.cs
+│
+│
+├── MS2.WebAPI/ # Flow A: Web API Backend
+│ ├── MS2.WebAPI.csproj
+│ ├── appsettings.json
+│ ├── appsettings.Development.json
+│ ├── Program.cs
+│ │
+│ ├── Controllers/
+│ │ ├── AuthController.cs
+│ │ ├── ProductsController.cs
+│ │ ├── OrdersController.cs
+│ │ ├── CustomersController.cs
+│ │ ├── CategoriesController.cs
+│ │ └── EmployeesController.cs
+│ │
+│ ├── Services/ # Business Logic Services
+│ │ ├── IJwtTokenService.cs
+│ │ ├── JwtTokenService.cs
+│ │ ├── IAuthService.cs
+│ │ └── AuthService.cs
+│ │
+│ ├── Models/
+│ │ ├── JwtSettings.cs
+│ │ └── ApiResponse.cs
+│ │
+│ ├── Middleware/
+│ │ ├── ExceptionHandlingMiddleware.cs
+│ │ └── LoggingMiddleware.cs
+│ │
+│ └── Extensions/
+│ ├── ServiceExtensions.cs
+│ └── SwaggerExtensions.cs
+│
+│
+├── MS2.BlazorApp/ # Flow A: Blazor Web App
+│ ├── MS2.BlazorApp.csproj
+│ ├── Program.cs
+│ ├── App.razor
+│ ├── \_Imports.razor
+│ ├── Routes.razor
+│ │
+│ ├── wwwroot/
+│ │ ├── appsettings.json
+│ │ ├── css/
+│ │ │ ├── app.css
+│ │ │ └── bootstrap/
+│ │ ├── js/
+│ │ │ └── site.js
+│ │ └── images/
+│ │
+│ ├── Pages/ # Blazor Pages
+│ │ ├── Index.razor
+│ │ ├── Login.razor
+│ │ ├── Register.razor
+│ │ ├── Products.razor
+│ │ ├── ProductDetail.razor
+│ │ ├── Cart.razor
+│ │ ├── Checkout.razor
+│ │ ├── Orders.razor
+│ │ └── OrderDetail.razor
+│ │
+│ ├── Components/ # Reusable Components
+│ │ ├── Layout/
+│ │ │ ├── MainLayout.razor
+│ │ │ ├── NavMenu.razor
+│ │ │ └── Footer.razor
+│ │ │
+│ │ ├── Product/
+│ │ │ ├── ProductCard.razor
+│ │ │ ├── ProductList.razor
+│ │ │ └── ProductFilter.razor
+│ │ │
+│ │ ├── Cart/
+│ │ │ ├── CartItem.razor
+│ │ │ └── CartSummary.razor
+│ │ │
+│ │ └── Order/
+│ │ ├── OrderItem.razor
+│ │ └── OrderSummary.razor
+│ │
+│ ├── Services/ # HTTP Services
+│ │ ├── IAuthService.cs
+│ │ ├── AuthService.cs
+│ │ ├── IProductService.cs
+│ │ ├── ProductService.cs
+│ │ ├── IOrderService.cs
+│ │ ├── OrderService.cs
+│ │ ├── ICartService.cs
+│ │ └── CartService.cs
+│ │
+│ ├── Auth/
+│ │ ├── CustomAuthStateProvider.cs
+│ │ └── AuthenticationHeaderHandler.cs
+│ │
+│ └── Models/
+│ ├── CartItem.cs
+│ └── CheckoutModel.cs
+│
+│
+├── MS2.ServerApp/ # Flow B: TCP Server
+│ ├── MS2.ServerApp.csproj
+│ ├── Program.cs
+│ ├── appsettings.json
+│ ├── appsettings.Development.json
+│ │
+│ ├── Services/
+│ │ ├── TcpServer.cs
+│ │ ├── ITcpMessageHandler.cs
+│ │ ├── TcpMessageHandler.cs
+│ │ ├── IJwtTokenService.cs
+│ │ └── JwtTokenService.cs
+│ │
+│ ├── Handlers/ # TCP Action Handlers
+│ │ ├── LoginHandler.cs
+│ │ ├── ProductHandler.cs
+│ │ ├── OrderHandler.cs
+│ │ ├── InventoryHandler.cs
+│ │ └── ReportHandler.cs
+│ │
+│ ├── Models/
+│ │ ├── TcpSettings.cs
+│ │ └── JwtSettings.cs
+│ │
+│ └── Extensions/
+│ └── ServiceExtensions.cs
+│
+│
+└── MS2.DesktopApp/ # Flow B: WPF Desktop App
+├── MS2.DesktopApp.csproj
+├── App.xaml
+├── App.xaml.cs
+├── AssemblyInfo.cs
+│
+├── Views/ # XAML Views
+│ ├── LoginWindow.xaml
+│ ├── LoginWindow.xaml.cs
+│ ├── MainWindow.xaml
+│ ├── MainWindow.xaml.cs
+│ │
+│ ├── POS/
+│ │ ├── POSView.xaml
+│ │ └── POSView.xaml.cs
+│ │
+│ ├── Inventory/
+│ │ ├── InventoryView.xaml
+│ │ ├── InventoryView.xaml.cs
+│ │ ├── UpdateStockDialog.xaml
+│ │ └── UpdatePriceDialog.xaml
+│ │
+│ ├── Reports/
+│ │ ├── ReportsView.xaml
+│ │ ├── ReportsView.xaml.cs
+│ │ ├── SalesReportView.xaml
+│ │ └── InventoryReportView.xaml
+│ │
+│ └── Employees/
+│ ├── EmployeeManagementView.xaml
+│ ├── EmployeeManagementView.xaml.cs
+│ ├── AddEmployeeDialog.xaml
+│ └── EditEmployeeDialog.xaml
+│
+├── ViewModels/ # MVVM ViewModels
+│ ├── LoginViewModel.cs
+│ ├── MainViewModel.cs
+│ ├── POSViewModel.cs
+│ ├── InventoryViewModel.cs
+│ ├── ReportsViewModel.cs
+│ └── EmployeeManagementViewModel.cs
+│
+├── Services/ # WPF Services
+│ ├── ITcpNetworkService.cs
+│ ├── TcpNetworkService.cs
+│ ├── IAuthService.cs
+│ ├── AuthService.cs
+│ ├── INavigationService.cs
+│ ├── NavigationService.cs
+│ ├── IDialogService.cs
+│ └── DialogService.cs
+│
+├── Models/
+│ ├── AppSettings.cs
+│ ├── CartItemModel.cs
+│ └── ViewModelBase.cs
+│
+├── Converters/ # Value Converters
+│ ├── BoolToVisibilityConverter.cs
+│ ├── DecimalToCurrencyConverter.cs
+│ └── NullToVisibilityConverter.cs
+│
+├── Resources/ # WPF Resources
+│ ├── Styles/
+│ │ ├── ButtonStyles.xaml
+│ │ ├── TextBoxStyles.xaml
+│ │ └── DataGridStyles.xaml
+│ │
+│ ├── Images/
+│ │ ├── logo.png
+│ │ └── icons/
+│ │
+│ └── ResourceDictionaries.xaml
+│
+└── Helpers/
+├── RelayCommand.cs
+├── AsyncRelayCommand.cs
+└── ObservableObject.cs
