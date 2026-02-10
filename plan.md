@@ -1,394 +1,148 @@
 # KẾ HOẠCH TRIỂN KHAI DỰ ÁN MS2 - MINIMART SMART SYSTEM
 
-**Phiên bản:** 2.0  
-**Ngày cập nhật:** 09/02/2026  
+**Phiên bản:** 2.1  
+**Ngày cập nhật:** 10/02/2026  
 **Kiến trúc:** Dual-Path Architecture (Web MVC + TCP Network)
+
+---
+
+## PHASE 0: FOUNDATION - PROGRESS TRACKER
+
+### Tổng quan cập nhật quá trình
+
+- Dự án đã hoàn thành phần scaffold database, entity, DbContext, setup project/solution và các package quan trọng.
+- Database sử dụng: **MiniMart_Smart**
+- Thứ tự task và phương pháp có biến đổi tùy thực tế (scaffold từ database đã có, bỏ qua migration)
+- Đang tiến hành Repository Pattern – các bước tiếp theo sẽ cải tiến hệ thống thực thể và repository.
+
+---
+
+### ❗ Tiến độ/Trạng thái từng Task
+
+## ✅ Task 0.1: Khởi tạo Solution và Projects - HOÀN THÀNH
+
+- Tạo solution `MS2.sln`
+- Tạo project `MS2.Models` (.NET 8 Class Library)
+- Tạo project `MS2.DataAccess` (.NET 8 Class Library)
+- Add reference: `MS2.DataAccess` → `MS2.Models`
+- Setup `.gitignore` cho .NET
+
+## ✅ Task 0.2: Cài đặt NuGet Packages - HOÀN THÀNH
+
+- Microsoft.EntityFrameworkCore 8.0.11
+- Microsoft.EntityFrameworkCore.SqlServer
+- Microsoft.EntityFrameworkCore.Tools
+- Microsoft.EntityFrameworkCore.Design
+- Microsoft.Extensions.Configuration
+- Microsoft.Extensions.Configuration.Json
+
+## ✅ Task 0.3: Thiết kế Entities - HOÀN THÀNH
+
+- **Database:** MiniMart*Smart *(không phải MS2Database như plan cũ)\_
+- Scaffold entity trực tiếp từ database với các bảng:
+  - User (Role: Admin/Employee/Customer)
+  - Category (ParentCategoryId, tự liên kết)
+  - Product (Barcode)
+  - CartItem
+  - Order (CustomerID, EmployeeID)
+  - OrderDetail
+- _Lưu ý_: Không sử dụng BaseEntity (sử dụng khuôn bảng từ DB thực tế)
+
+## ✅ Task 0.4: Tạo DbContext - HOÀN THÀNH
+
+- File: `MS2DbContext.cs` với DbSet, cấu hình OnModelCreating
+- File: `appsettings.json` (Server=WIN-R972FJEQE2C\SQLEXPRESS;Database=MiniMart_Smart)
+- File: `MS2DbContextFactory.cs` (IDesignTimeDbContextFactory)
+- Configured relationships (category self-ref, multi-FK từ bảng User)
+- Đã kiểm tra kết nối và DbContext
+
+## ⏭️ Task 0.5: EF Core Migrations - SKIPPED
+
+- **Lý do:** DB đã có sẵn → scaffold code, không dùng migration lên.
+- Ready-to-use: MiniMart_Smart đã có sample data (6 users, 5 categories, 19 products)
+
+## 🔄 Task 0.6: Implement Repository Pattern - IN PROGRESS
+
+**Cần thực hiện:**
+
+- Tạo structure:
+  ```
+  MS2.DataAccess/
+  ├── Interfaces/
+  │   ├── IRepository.cs
+  │   ├── IProductRepository.cs
+  │   ├── IOrderRepository.cs
+  │   ├── IUserRepository.cs
+  │   ├── ICartItemRepository.cs
+  │   ├── ICategoryRepository.cs
+  │   └── IUnitOfWork.cs
+  └── Repositories/
+      ├── Repository.cs
+      ├── ProductRepository.cs
+      ├── OrderRepository.cs
+      ├── UserRepository.cs
+      ├── CartItemRepository.cs
+      ├── CategoryRepository.cs
+      └── UnitOfWork.cs
+  ```
+- [ ] Tạo IRepository<T> interface với CRUD methods
+- [ ] Implement Repository<T> base class
+- [ ] Tạo từng specific repository interface
+- [ ] Implement cụ thể từng repository
+- [ ] Tạo IUnitOfWork interface và class
+
+**Tiến độ:** Chưa bắt đầu code, đã xác định thiết kế – ƯU TIÊN TIẾP THEO.
+
+## ⏸️ Task 0.7: Unit of Work Pattern - CHỜ REPOSITORY
+
+- Sẽ thực hiện cùng lúc với Task 0.6
+- Dự kiến cấu trúc interface tương tự kế hoạch cũ
+
+## ⏸️ Task 0.8: DTOs và TCP Models - CHƯA LÀM
+
+**Các folders đã tạo (chưa có file):**
+
+- MS2.Models/DTOs/Auth/
+- MS2.Models/DTOs/Product/
+- MS2.Models/DTOs/Order/
+- MS2.Models/TCP/
+
+**Sẽ tạo sau khi hoàn thành cơ bản Repository/UnitOfWork:**
+
+- [ ] LoginRequestDto, LoginResponseDto
+- [ ] ProductDto, CreateProductDto, UpdateProductDto
+- [ ] OrderDto, CreateOrderDto, OrderDetailDto
+- [ ] TcpMessage, TcpResponse, TcpActions
+
+---
+
+## Tổng kết tiến độ PHASE 0
+
+- ❌ Phase 0 chưa hoàn toàn xong, đã xong các phần nền tảng, **đang** bước vào Repository Pattern
+- **Next step:** Viết code Repository Pattern (base + cụ thể từng bảng)
+- Kiểm tra/cải tiến entities nếu cần (theo field thực tế đã scaffold)
+- Chờ UnitOfWork, DTO, TCP models ở bước kế tiếp
+
+---
+
+# TOÀN BỘ KẾ HOẠCH TRIỂN KHAI (GIỮ LẠI ĐỂ THEO DÕI)
 
 ---
 
 ## TỔNG QUAN
 
-Dự án được chia thành **3 phases theo thứ tự triển khai:**
+Dự án chia thành 3 phase theo thứ tự triển khai:
 
 1. **Phase 0 - FOUNDATION:** Database, Models, Repositories (Shared cho cả 2 flows)
 2. **Phase B - DESKTOP APP (Flow B):** WPF Client + TCP Server (Internal POS System)
 3. **Phase A - WEB APP (Flow A):** ASP.NET MVC + Web API (Public Customer Portal)
 
-**Lý do thứ tự này:**
+**Lý do thứ tự:**
 
-- Desktop App (Flow B) là **ưu tiên cao nhất** - phục vụ nghiệp vụ bán hàng hàng ngày tại cửa hàng
-- Web App (Flow A) là **bổ sung** - mở rộng kênh bán hàng online cho khách hàng
-
----
-
-# PHASE 0: FOUNDATION - CƠ SỞ HẠ TẦNG CHUNG
-
-> **Mục tiêu:** Tạo database schema, entities, repositories dùng chung cho cả 2 flows
+- Desktop App (Flow B) là **ưu tiên cao nhất** phục vụ bán hàng tại cửa hàng
+- Web App (Flow A) là **bổ sung** mở rộng bán online
 
 ---
-
-## Task 0.1: Khởi tạo Solution và Projects
-
-**Folder Structure:**
-
-```
-MS2.sln
-├── MS2.Models/              # Shared Models (Class Library .NET 8)
-└── MS2.DataAccess/          # Shared Data Access (Class Library .NET 8)
-```
-
-**Todo List:**
-
-- [ ] Tạo solution `MS2.sln`
-- [ ] Tạo project `MS2.Models` (Class Library .NET 8)
-- [ ] Tạo project `MS2.DataAccess` (Class Library .NET 8)
-- [ ] Add reference: `MS2.DataAccess` → `MS2.Models`
-- [ ] Setup `.gitignore` cho .NET
-- [ ] Commit initial structure
-
-**CLI Commands:**
-
-```bash
-dotnet new sln -n MS2
-dotnet new classlib -n MS2.Models -f net8.0
-dotnet new classlib -n MS2.DataAccess -f net8.0
-dotnet sln add MS2.Models/MS2.Models.csproj
-dotnet sln add MS2.DataAccess/MS2.DataAccess.csproj
-dotnet add MS2.DataAccess reference MS2.Models
-```
-
----
-
-## Task 0.2: Cài đặt NuGet Packages
-
-**MS2.Models:**
-
-- [ ] `System.ComponentModel.Annotations`
-
-**MS2.DataAccess:**
-
-- [ ] `Microsoft.EntityFrameworkCore` (8.0.x)
-- [ ] `Microsoft.EntityFrameworkCore.SqlServer`
-- [ ] `Microsoft.EntityFrameworkCore.Tools`
-- [ ] `Microsoft.EntityFrameworkCore.Design`
-- [ ] `System.Text.Json`
-
-**CLI Commands:**
-
-```bash
-dotnet add MS2.DataAccess package Microsoft.EntityFrameworkCore
-dotnet add MS2.DataAccess package Microsoft.EntityFrameworkCore.SqlServer
-dotnet add MS2.DataAccess package Microsoft.EntityFrameworkCore.Tools
-dotnet add MS2.DataAccess package Microsoft.EntityFrameworkCore.Design
-dotnet add MS2.DataAccess package System.Text.Json
-```
-
----
-
-## Task 0.3: Thiết kế Entities
-
-**Folder Structure:**
-
-```
-MS2.Models/
-├── Entities/
-│   ├── BaseEntity.cs
-│   ├── User.cs
-│   ├── Customer.cs
-│   ├── Employee.cs
-│   ├── Category.cs
-│   ├── Product.cs
-│   ├── Order.cs
-│   └── OrderDetail.cs
-├── DTOs/
-│   ├── Auth/
-│   ├── Product/
-│   ├── Order/
-│   ├── Customer/
-│   └── Employee/
-└── TCP/
-    ├── TcpMessage.cs
-    ├── TcpResponse.cs
-    └── TcpActions.cs
-```
-
-**Entities cần tạo:**
-
-**BaseEntity.cs:**
-
-- `int Id`
-- `DateTime CreatedAt`
-- `DateTime? UpdatedAt`
-- `bool IsDeleted`
-
-**User.cs:**
-
-- `int Id`
-- `string Username` (Required, MaxLength 50)
-- `string PasswordHash` (Required)
-- `string Email` (Required, MaxLength 100)
-- `string Role` (Required: "Admin", "Employee", "Customer")
-- `DateTime CreatedAt`
-
-**Customer.cs:**
-
-- `int Id`
-- `int UserId` (FK → User)
-- `string FullName` (Required, MaxLength 100)
-- `string Phone` (MaxLength 20)
-- `string Address` (MaxLength 500)
-- `int Points` (Default: 0)
-- Navigation: `User`, `List<Order>`
-
-**Employee.cs:**
-
-- `int Id`
-- `int UserId` (FK → User)
-- `string FullName` (Required, MaxLength 100)
-- `string Position` (MaxLength 50)
-- `DateTime HireDate`
-- `decimal Salary`
-- Navigation: `User`, `List<Order>`
-
-**Category.cs:**
-
-- `int Id`
-- `string Name` (Required, MaxLength 100)
-- `string Description` (MaxLength 500)
-- `int? ParentCategoryId` (FK → Category)
-- Navigation: `ParentCategory`, `List<SubCategories>`, `List<Product>`
-
-**Product.cs:**
-
-- `int Id`
-- `int CategoryId` (FK → Category)
-- `string Name` (Required, MaxLength 200)
-- `string Description` (MaxLength 1000)
-- `decimal Price` (Required)
-- `int Stock` (Required)
-- `string Barcode` (MaxLength 50, Unique)
-- `string ImageUrl` (MaxLength 500)
-- Navigation: `Category`, `List<OrderDetail>`
-
-**Order.cs:**
-
-- `int Id`
-- `int? CustomerId` (FK → Customer, nullable for guest orders)
-- `int? EmployeeId` (FK → Employee, null for online orders)
-- `DateTime OrderDate`
-- `decimal TotalAmount`
-- `string Status` ("Pending", "Processing", "Completed", "Cancelled")
-- `string OrderType` ("Online", "POS")
-- Navigation: `Customer`, `Employee`, `List<OrderDetail>`
-
-**OrderDetail.cs:**
-
-- `int Id`
-- `int OrderId` (FK → Order)
-- `int ProductId` (FK → Product)
-- `int Quantity`
-- `decimal UnitPrice`
-- `decimal Subtotal`
-- Navigation: `Order`, `Product`
-
-**Todo List:**
-
-- [ ] Tạo tất cả entity classes với Data Annotations
-- [ ] Implement Navigation Properties
-- [ ] Tạo DTOs cho Auth, Product, Order, Customer, Employee
-- [ ] Tạo TCP protocol models (TcpMessage, TcpResponse)
-
----
-
-## Task 0.4: Tạo DbContext
-
-**File:** `MS2.DataAccess/Data/MS2DbContext.cs`
-
-**Todo List:**
-
-- [ ] Tạo `MS2DbContext` class kế thừa `DbContext`
-- [ ] Khai báo DbSet cho tất cả entities
-- [ ] Configure relationships trong `OnModelCreating()`
-- [ ] Setup cascade delete rules (Restrict cho User relationships)
-- [ ] Implement soft delete với query filters: `IsDeleted == false`
-- [ ] Tạo `appsettings.json` với connection string
-
-**Connection String:**
-
-```json
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=MS2Database;Trusted_Connection=True;MultipleActiveResultSets=true"
-  }
-}
-```
-
----
-
-## Task 0.5: Chạy EF Core Migrations
-
-**Todo List:**
-
-- [ ] Tạo migration: `Add-Migration InitialCreate`
-- [ ] Review migration code
-- [ ] Apply migration: `Update-Database`
-- [ ] Verify database trong SSMS/Azure Data Studio
-- [ ] Kiểm tra tất cả tables, indexes, foreign keys
-
-**CLI Commands:**
-
-```bash
-dotnet ef migrations add InitialCreate --project MS2.DataAccess
-dotnet ef database update --project MS2.DataAccess
-```
-
----
-
-## Task 0.6: Implement Repository Pattern
-
-**Folder Structure:**
-
-```
-MS2.DataAccess/
-├── Interfaces/
-│   ├── IRepository.cs
-│   ├── IProductRepository.cs
-│   ├── IOrderRepository.cs
-│   ├── IUserRepository.cs
-│   ├── IEmployeeRepository.cs
-│   ├── ICustomerRepository.cs
-│   ├── ICategoryRepository.cs
-│   └── IUnitOfWork.cs
-└── Repositories/
-    ├── Repository.cs
-    ├── ProductRepository.cs
-    ├── OrderRepository.cs
-    ├── UserRepository.cs
-    ├── EmployeeRepository.cs
-    ├── CustomerRepository.cs
-    ├── CategoryRepository.cs
-    └── UnitOfWork.cs
-```
-
-**IRepository<T> Methods:**
-
-- `Task<IEnumerable<T>> GetAllAsync()`
-- `Task<T> GetByIdAsync(int id)`
-- `Task<T> AddAsync(T entity)`
-- `Task UpdateAsync(T entity)`
-- `Task DeleteAsync(int id)`
-- `Task<bool> ExistsAsync(int id)`
-
-**IProductRepository (extends IRepository<Product>):**
-
-- `Task<IEnumerable<Product>> GetByCategoryAsync(int categoryId)`
-- `Task<Product> GetByBarcodeAsync(string barcode)`
-- `Task<IEnumerable<Product>> SearchAsync(string keyword)`
-- `Task<IEnumerable<Product>> GetLowStockProductsAsync(int threshold)`
-
-**IOrderRepository (extends IRepository<Order>):**
-
-- `Task<IEnumerable<Order>> GetByCustomerIdAsync(int customerId)`
-- `Task<IEnumerable<Order>> GetByEmployeeIdAsync(int employeeId)`
-- `Task<IEnumerable<Order>> GetByDateRangeAsync(DateTime from, DateTime to)`
-- `Task<Order> GetWithDetailsAsync(int orderId)`
-
-**IUserRepository (extends IRepository<User>):**
-
-- `Task<User> GetByUsernameAsync(string username)`
-- `Task<User> GetByEmailAsync(string email)`
-- `Task<bool> UsernameExistsAsync(string username)`
-
-**Todo List:**
-
-- [ ] Tạo tất cả interfaces trong `Interfaces/`
-- [ ] Implement generic `Repository<T>` class
-- [ ] Implement specific repositories với methods bổ sung
-- [ ] Sử dụng async/await cho tất cả methods
-
----
-
-## Task 0.7: Implement Unit of Work Pattern
-
-**IUnitOfWork Interface:**
-
-```
-Properties:
-- IProductRepository Products
-- IOrderRepository Orders
-- IUserRepository Users
-- IEmployeeRepository Employees
-- ICustomerRepository Customers
-- ICategoryRepository Categories
-
-Methods:
-- Task<int> SaveChangesAsync()
-- Task BeginTransactionAsync()
-- Task CommitTransactionAsync()
-- Task RollbackTransactionAsync()
-- void Dispose()
-```
-
-**Todo List:**
-
-- [ ] Tạo `IUnitOfWork` interface
-- [ ] Implement `UnitOfWork` class
-- [ ] Inject `MS2DbContext` vào constructor
-- [ ] Khởi tạo tất cả repositories trong constructor
-- [ ] Implement transaction management
-- [ ] Implement IDisposable pattern
-
----
-
-## Task 0.8: Seed Sample Data
-
-**File:** `MS2.DataAccess/Seeders/DataSeeder.cs`
-
-**Data cần seed:**
-
-**Users:**
-
-- [ ] 1 Admin user (username: `admin`, password: `admin123`)
-- [ ] 3-5 Employee users
-- [ ] 5-10 Customer users
-
-**Categories:**
-
-- [ ] Đồ uống
-- [ ] Snack
-- [ ] Bánh kẹo
-- [ ] Đồ gia dụng
-- [ ] Thực phẩm khô
-
-**Products:**
-
-- [ ] 30-50 products với barcode hợp lệ
-- [ ] Phân bố đều qua các categories
-- [ ] Stock từ 50-200 items
-- [ ] Giá từ 5,000 - 100,000 VNĐ
-
-**Todo List:**
-
-- [ ] Tạo `DataSeeder` static class
-- [ ] Method `SeedAsync(MS2DbContext context)`
-- [ ] Check if data exists trước khi seed
-- [ ] Hash passwords với BCrypt
-- [ ] Gọi seeder trong startup
-
----
-
-## ✅ Checkpoint Foundation
-
-**Sau khi hoàn thành Phase 0:**
-
-- ✅ Solution structure hoàn chỉnh
-- ✅ Database với tất cả tables
-- ✅ Repository pattern implemented
-- ✅ Unit of Work implemented
-- ✅ Sample data seeded
-- ✅ Có thể test CRUD operations qua Unit Tests (optional)
-
-**→ Bắt đầu Phase B: Desktop App (Flow B)**
 
 ---
 
