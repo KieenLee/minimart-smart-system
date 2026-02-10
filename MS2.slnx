@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="MS2.DataAccess/MS2.DataAccess.csproj" />
+  <Project Path="MS2.Models/MS2.Models.csproj" />
+</Solution>
