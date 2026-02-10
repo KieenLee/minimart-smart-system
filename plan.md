@@ -61,7 +61,7 @@
 - **Lý do:** DB đã có sẵn → scaffold code, không dùng migration lên.
 - Ready-to-use: MiniMart_Smart đã có sample data (6 users, 5 categories, 19 products)
 
-## 🔄 Task 0.6: Implement Repository Pattern - IN PROGRESS
+## 🔄 Task 0.6: Implement Repository Pattern
 
 **Cần thực hiện:**
 
@@ -93,12 +93,12 @@
 
 **Tiến độ:** Chưa bắt đầu code, đã xác định thiết kế – ƯU TIÊN TIẾP THEO.
 
-## ⏸️ Task 0.7: Unit of Work Pattern - CHỜ REPOSITORY
+## ⏸️ Task 0.7: Unit of Work Pattern - IN PROGRESS
 
 - Sẽ thực hiện cùng lúc với Task 0.6
 - Dự kiến cấu trúc interface tương tự kế hoạch cũ
 
-## ⏸️ Task 0.8: DTOs và TCP Models - CHƯA LÀM
+## ⏸️ Task 0.8: DTOs và TCP Models - IN PROGRESS
 
 **Các folders đã tạo (chưa có file):**
 
