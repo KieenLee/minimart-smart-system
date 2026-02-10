@@ -1,7 +1,7 @@
 # KẾ HOẠCH TRIỂN KHAI DỰ ÁN MS2 - MINIMART SMART SYSTEM
 
-**Phiên bản:** 2.1  
-**Ngày cập nhật:** 10/02/2026  
+**Phiên bản:** 2.2  
+**Ngày cập nhật:** 11/02/2026  
 **Kiến trúc:** Dual-Path Architecture (Web MVC + TCP Network)
 
 ---
@@ -12,8 +12,8 @@
 
 - Dự án đã hoàn thành phần scaffold database, entity, DbContext, setup project/solution và các package quan trọng.
 - Database sử dụng: **MiniMart_Smart**
-- Thứ tự task và phương pháp có biến đổi tùy thực tế (scaffold từ database đã có, bỏ qua migration)
-- Đang tiến hành Repository Pattern – các bước tiếp theo sẽ cải tiến hệ thống thực thể và repository.
+- **Repository Pattern đã hoàn thành** với Generic Repository và 5 specific repositories + UnitOfWork.
+- **Đang tiến hành:** DTOs và TCP Models - bước cuối cùng của Phase 0.
 
 ---
 
@@ -21,107 +21,134 @@
 
 ## ✅ Task 0.1: Khởi tạo Solution và Projects - HOÀN THÀNH
 
-- Tạo solution `MS2.sln`
-- Tạo project `MS2.Models` (.NET 8 Class Library)
-- Tạo project `MS2.DataAccess` (.NET 8 Class Library)
-- Add reference: `MS2.DataAccess` → `MS2.Models`
-- Setup `.gitignore` cho .NET
+- ✅ Tạo solution `MS2.sln`
+- ✅ Tạo project `MS2.Models` (.NET 8 Class Library)
+- ✅ Tạo project `MS2.DataAccess` (.NET 8 Class Library)
+- ✅ Add reference: `MS2.DataAccess` → `MS2.Models`
+- ✅ Setup `.gitignore` cho .NET
 
 ## ✅ Task 0.2: Cài đặt NuGet Packages - HOÀN THÀNH
 
-- Microsoft.EntityFrameworkCore 8.0.11
-- Microsoft.EntityFrameworkCore.SqlServer
-- Microsoft.EntityFrameworkCore.Tools
-- Microsoft.EntityFrameworkCore.Design
-- Microsoft.Extensions.Configuration
-- Microsoft.Extensions.Configuration.Json
+- ✅ Microsoft.EntityFrameworkCore 8.0.11
+- ✅ Microsoft.EntityFrameworkCore.SqlServer
+- ✅ Microsoft.EntityFrameworkCore.Tools
+- ✅ Microsoft.EntityFrameworkCore.Design
+- ✅ Microsoft.Extensions.Configuration
+- ✅ Microsoft.Extensions.Configuration.Json
 
 ## ✅ Task 0.3: Thiết kế Entities - HOÀN THÀNH
 
-- **Database:** MiniMart*Smart *(không phải MS2Database như plan cũ)\_
-- Scaffold entity trực tiếp từ database với các bảng:
-  - User (Role: Admin/Employee/Customer)
-  - Category (ParentCategoryId, tự liên kết)
-  - Product (Barcode)
-  - CartItem
-  - Order (CustomerID, EmployeeID)
-  - OrderDetail
-- _Lưu ý_: Không sử dụng BaseEntity (sử dụng khuôn bảng từ DB thực tế)
+**Database:** MiniMart_Smart (không phải MS2Database như plan ban đầu)
+
+**Entities đã scaffold từ database:**
+
+- ✅ User (Role: Admin/Employee/Customer)
+- ✅ Category (ParentCategoryId, tự liên kết)
+- ✅ Product (Barcode)
+- ✅ CartItem
+- ✅ Order (CustomerID, EmployeeID)
+- ✅ OrderDetail
+
+**Lưu ý:** Không sử dụng BaseEntity pattern, các entities có fields riêng từ database
 
 ## ✅ Task 0.4: Tạo DbContext - HOÀN THÀNH
 
-- File: `MS2DbContext.cs` với DbSet, cấu hình OnModelCreating
-- File: `appsettings.json` (Server=WIN-R972FJEQE2C\SQLEXPRESS;Database=MiniMart_Smart)
-- File: `MS2DbContextFactory.cs` (IDesignTimeDbContextFactory)
-- Configured relationships (category self-ref, multi-FK từ bảng User)
-- Đã kiểm tra kết nối và DbContext
+- ✅ `MS2DbContext.cs` với DbSet, OnModelCreating
+- ✅ `appsettings.json`: Server=WIN-R972FJEQE2C\SQLEXPRESS;Database=MiniMart_Smart
+- ✅ `MS2DbContextFactory.cs` (IDesignTimeDbContextFactory)
+- ✅ Relationships configured (category self-ref, multi-FK từ User)
+- ✅ Đã kiểm tra kết nối và DbContext
 
 ## ⏭️ Task 0.5: EF Core Migrations - SKIPPED
 
-- **Lý do:** DB đã có sẵn → scaffold code, không dùng migration lên.
-- Ready-to-use: MiniMart_Smart đã có sample data (6 users, 5 categories, 19 products)
+**Lý do:** Database đã tồn tại → scaffold code, không cần migration
 
-## 🔄 Task 0.6: Implement Repository Pattern
+- ✅ Database MiniMart_Smart đã có sẵn
+- ✅ Sample data đã seed (6 users, 5 categories, 19 products)
 
-**Cần thực hiện:**
+## ✅ Task 0.6: Implement Repository Pattern - HOÀN THÀNH
+
+**Đã tạo structure hoàn chỉnh:**
 
 - Tạo structure:
   ```
-  MS2.DataAccess/
+  MS2.DataAccess
   ├── Interfaces/
-  │   ├── IRepository.cs
-  │   ├── IProductRepository.cs
-  │   ├── IOrderRepository.cs
-  │   ├── IUserRepository.cs
-  │   ├── ICartItemRepository.cs
-  │   ├── ICategoryRepository.cs
-  │   └── IUnitOfWork.cs
+  │ ├── IRepository.cs ✅ Generic Repository Interface
+  │ ├── IProductRepository.cs ✅ Product methods
+  │ ├── IOrderRepository.cs ✅ Order methods
+  │ ├── IUserRepository.cs ✅ User methods
+  │ ├── ICategoryRepository.cs ✅ Category methods
+  │ ├── ICartItemRepository.cs ✅ CartItem methods
+  │ └── IUnitOfWork.cs ✅ UnitOfWork interface
   └── Repositories/
-      ├── Repository.cs
-      ├── ProductRepository.cs
-      ├── OrderRepository.cs
-      ├── UserRepository.cs
-      ├── CartItemRepository.cs
-      ├── CategoryRepository.cs
-      └── UnitOfWork.cs
+  ├── Repository.cs ✅ Generic implementation
+  ├── ProductRepository.cs ✅ GetByBarcode, Search, LowStock
+  ├── OrderRepository.cs ✅ GetWithDetails, DateRange, Sales
+  ├── UserRepository.cs ✅ GetByUsername, GetByRole
+  ├── CategoryRepository.cs ✅ GetRootCategories, SubCategories
+  ├── CartItemRepository.cs ✅ GetByUserId, DeleteByUserId
+  └── UnitOfWork.cs ✅ Transaction management
   ```
-- [ ] Tạo IRepository<T> interface với CRUD methods
-- [ ] Implement Repository<T> base class
-- [ ] Tạo từng specific repository interface
-- [ ] Implement cụ thể từng repository
-- [ ] Tạo IUnitOfWork interface và class
 
 **Tiến độ:** Chưa bắt đầu code, đã xác định thiết kế – ƯU TIÊN TIẾP THEO.
 
-## ⏸️ Task 0.7: Unit of Work Pattern - IN PROGRESS
+**Features đã implement:**
 
-- Sẽ thực hiện cùng lúc với Task 0.6
-- Dự kiến cấu trúc interface tương tự kế hoạch cũ
+- ✅ Generic Repository với CRUD cơ bản (GetAll, GetById, Add, Update, Delete)
+- ✅ Expression-based queries (FindAsync, CountAsync, GetFirstOrDefaultAsync)
+- ✅ Specific methods cho từng repository (GetByBarcode, SearchAsync, GetWithDetailsAsync...)
+- ✅ Include navigation properties
+- ✅ Transaction support (BeginTransaction/Commit/Rollback)
+- ✅ Lazy initialization repositories trong UnitOfWork
+- ✅ IDisposable pattern
+- ✅ Async/await cho tất cả operations
 
-## ⏸️ Task 0.8: DTOs và TCP Models - IN PROGRESS
+**Đã kiểm tra và hoạt động ổn định!**
 
-**Các folders đã tạo (chưa có file):**
+## 🔄 Task 0.7: DTOs và TCP Models - ĐANG LÀM
+
+**Folders đã tạo:**
 
 - MS2.Models/DTOs/Auth/
 - MS2.Models/DTOs/Product/
 - MS2.Models/DTOs/Order/
 - MS2.Models/TCP/
 
-**Sẽ tạo sau khi hoàn thành cơ bản Repository/UnitOfWork:**
-
-- [ ] LoginRequestDto, LoginResponseDto
-- [ ] ProductDto, CreateProductDto, UpdateProductDto
-- [ ] OrderDto, CreateOrderDto, OrderDetailDto
-- [ ] TcpMessage, TcpResponse, TcpActions
+- ✅ Tạo Auth DTOs
+  - ✅ LoginRequestDto
+  - ✅ LoginResponseDto
+  - ✅ UserDto
+  - ✅ RegisterRequestDto
+- ✅ Tạo Product DTOs
+  - ✅ ProductDto
+  - ✅ CreateProductDto
+  - ✅ UpdateProductDto
+  - ✅ UpdatePriceDto
+  - ✅ UpdateStockDto
+- ✅ Tạo Order DTOs
+  - ✅ OrderDto
+  - ✅ OrderDetailDto
+  - ✅ CreateOrderDto
+  - ✅ CreateOrderDetailDto
+  - ✅ SalesReportDto
+- ✅ Tạo TCP Protocol Models
+  - ✅ TcpMessage (với ToBytes/FromBytes methods)
+  - ✅ TcpResponse (với CreateSuccess/CreateError factory methods)
+  - ✅ TcpActions (constants cho tất cả actions)
 
 ---
 
-## Tổng kết tiến độ PHASE 0
+## 📊 Tổng kết tiến độ PHASE 0
 
-- ❌ Phase 0 chưa hoàn toàn xong, đã xong các phần nền tảng, **đang** bước vào Repository Pattern
-- **Next step:** Viết code Repository Pattern (base + cụ thể từng bảng)
-- Kiểm tra/cải tiến entities nếu cần (theo field thực tế đã scaffold)
-- Chờ UnitOfWork, DTO, TCP models ở bước kế tiếp
+**✅ Đã hoàn thành (100%):**
+
+- Solution structure (MS2.sln, MS2.Models, MS2.DataAccess)
+- Database schema (MiniMart_Smart với 6 tables)
+- Entity models (6 entities scaffolded)
+- DbContext với Factory pattern
+- Repository Pattern (5 repositories + generic base)
+- Unit of Work Pattern
 
 ---
 
