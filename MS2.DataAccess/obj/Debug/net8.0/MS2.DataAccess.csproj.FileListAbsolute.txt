@@ -16,3 +16,4 @@ D:\Workspace\Project_.Net\minimart-smart-system\MS2.DataAccess\obj\Debug\net8.0\
 D:\Workspace\Project_.Net\minimart-smart-system\MS2.DataAccess\obj\Debug\net8.0\MS2.DataAccess.pdb
 D:\Workspace\Project_.Net\minimart-smart-system\MS2.DataAccess\obj\Debug\net8.0\MS2.DataAccess.genruntimeconfig.cache
 D:\Workspace\Project_.Net\minimart-smart-system\MS2.DataAccess\obj\Debug\net8.0\ref\MS2.DataAccess.dll
+D:\Workspace\Project_.Net\minimart-smart-system\MS2.DataAccess\bin\Debug\net8.0\appsettings.json

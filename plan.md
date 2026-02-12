@@ -1,7 +1,7 @@
 # KẾ HOẠCH TRIỂN KHAI DỰ ÁN MS2 - MINIMART SMART SYSTEM
 
 **Phiên bản:** 2.2  
-**Ngày cập nhật:** 11/02/2026  
+**Ngày cập nhật:** 13/02/2026  
 **Kiến trúc:** Dual-Path Architecture (Web MVC + TCP Network)
 
 ---
@@ -252,6 +252,14 @@ MS2.ServerApp/                    # Console App .NET 8
 
 **✅ Task B1.1 HOÀN THÀNH!**
 
+**Đã thực hiện:**
+
+- Tạo MS2.ServerApp console project
+- Cài đặt 6 packages (không có JWT, sử dụng SessionId)
+- Setup appsettings.json với TcpSettings và ConnectionString
+- Tạo folder structure: Models/, Network/, Business/Interfaces/, Business/Services/
+- Tạo TcpSettings.cs và UserSession.cs
+
 **CLI Commands:**
 
 ```bash
@@ -289,7 +297,19 @@ dotnet add MS2.ServerApp package BCrypt.Net-Next
 
 ---
 
-## Task B1.2: Design TCP Message Protocol
+## ✅ Task B1.2: Design TCP Message Protocol - HOÀN THÀNH
+
+**Đã thực hiện:**
+
+- ✅ Tạo TcpMessage.cs với ToBytes()/FromBytes() methods
+- ✅ Tạo TcpResponse.cs với CreateSuccess()/CreateError() factory methods
+- ✅ Tạo TcpActions.cs với tất cả action constants
+- ✅ Implement Length-Prefix protocol: [4 bytes length][JSON bytes]
+- ✅ JSON serialization/deserialization working
+
+---
+
+## Task B1.2 (Original): Design TCP Message Protocol
 
 **File:** `MS2.Models/TCP/TcpMessage.cs`
 
@@ -330,7 +350,92 @@ dotnet add MS2.ServerApp package BCrypt.Net-Next
 
 ---
 
-## Task B1.3: Implement TCP Server Core
+## ✅ Task B1.3: Create Business Interfaces - HOÀN THÀNH
+
+**Đã tạo 5 interfaces:**
+
+- ✅ ISessionManager.cs (6 methods: CreateSession, GetSession, RemoveSession, IsValidSession, GetAllSessions, RemoveExpiredSessions)
+- ✅ IAuthService.cs (3 methods: LoginAsync, RegisterAsync, LogoutAsync)
+- ✅ IProductService.cs (6 methods: GetProducts, Search, GetByBarcode, UpdatePrice, UpdateStock, GetLowStock)
+- ✅ IOrderService.cs (4 methods: CreateOrder, GetOrders, GetOrderDetails, GetSalesReport)
+- ✅ ICategoryService.cs (3 methods: GetCategories, GetRootCategories, GetSubCategories)
+
+**Kiến trúc:**
+
+- Tất cả methods return Task<TcpResponse>
+- Tất cả methods nhận TcpMessage parameter
+- Session validation trong mỗi method (trừ Login)
+
+---
+
+## ✅ Task B1.4: Implement Business Services - HOÀN THÀNH
+
+**Đã implement 5 services:**
+
+**SessionManager.cs (~60 LOC):**
+
+- ConcurrentDictionary<string, UserSession> for thread-safe storage
+- GUID SessionId generation
+- Session lifecycle management
+
+**AuthService.cs (~150 LOC):**
+
+- LoginAsync: BCrypt password verification, session creation, return SessionId + UserDto
+- RegisterAsync: Hash password, create user, save to database
+- LogoutAsync: Remove session
+
+**ProductService.cs (~250 LOC):**
+
+- GetProductsAsync: Return all products with Category navigation
+- SearchProductsAsync: Keyword search
+- GetProductByBarcodeAsync: For barcode scanner
+- UpdateProductPriceAsync: Admin only
+- UpdateProductStockAsync: Update inventory
+- GetLowStockProductsAsync: Low stock alerts
+
+**OrderService.cs (~280 LOC):**
+
+- CreateOrderAsync: Transaction-based order creation with stock validation
+- GetOrdersAsync: Return all orders with details
+- GetOrderDetailsAsync: Single order with full details
+- GetSalesReportAsync: Date range revenue report
+
+**CategoryService.cs (~80 LOC):**
+
+- GetCategoriesAsync: All categories
+- GetRootCategoriesAsync: Top-level categories
+- GetSubCategoriesAsync: Child categories by parent
+
+**Các lỗi đã sửa (42 lỗi):**
+
+- ✅ Xóa property Unit khỏi ProductDto (Entity không có)
+- ✅ Thêm IsActive vào UserDto
+- ✅ Sửa UpdateStockDto class name (bị trùng UpdatePriceDto)
+- ✅ Thêm UnitPrice vào CreateOrderDetailDto
+- ✅ Sửa SaveAsync → SaveChangesAsync
+- ✅ Sửa Models.Entities.User → MS2.Models.Entities.User
+- ✅ Thêm Context property vào IUnitOfWork và UnitOfWork
+- ✅ Sửa OrderDetail creation logic (xóa Discount field)
+- ✅ Sửa tất cả property mappings (OrderId → Id, ProductName từ Entity)
+- ✅ Thêm GetAllWithDetailsAsync và GetSalesReportAsync vào IOrderRepository
+- ✅ Implement 2 methods trong OrderRepository
+- ✅ Cài Microsoft.EntityFrameworkCore cho MS2.Models
+- ✅ Build thành công!
+
+---
+
+## ⏸️ Task B1.5: Implement Network Layer - ĐANG LÀM
+
+**Todo List:**
+
+- [ ] Tạo TcpMessageRouter.cs
+- [ ] Tạo TcpServer.cs
+- [ ] Setup Program.cs với DI
+- [ ] Test TCP Server
+
+---
+
+## Task B1.3 (Original): Implement TCP Server Core
 
 **File:** `MS2.ServerApp/Services/TcpServer.cs`
 
@@ -481,9 +586,27 @@ Action → Method
 
 ---
 
-## ✅ Checkpoint Phase B1
+## 📊 Tiến độ Phase B1 - TCP Server (60% hoàn thành)
 
-**Sau khi hoàn thành:**
+**✅ Đã hoàn thành:**
+
+- ✅ Task B1.1: Setup project, packages, folder structure
+- ✅ Task B1.2: TCP Protocol Models (TcpMessage, TcpResponse, TcpActions)
+- ✅ Task B1.3: Business Interfaces (5 interfaces, 22 methods)
+- ✅ Task B1.4: Business Services (5 services, ~800 LOC, 42 bugs fixed)
+
+**🔄 Đang làm:**
+
+- ⏸️ Task B1.5: Network Layer (TcpServer, TcpMessageRouter)
+
+**⏭️ Chưa làm:**
+
+- ⏸️ Task B1.6: Setup Program.cs với DI Container
+- ⏸️ Task B1.7: Integration testing
+
+## ✅ Checkpoint Phase B1 (Khi hoàn thành 100%)
+
+**Mục tiêu:**
 
 - ✅ TCP Server chạy ổn định trên port 5000
 - ✅ Multi-client support working

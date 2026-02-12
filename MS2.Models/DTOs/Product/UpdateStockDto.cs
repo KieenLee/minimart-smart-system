@@ -1,7 +1,7 @@
 namespace MS2.Models.DTOs.Product;
 
-public class UpdatePriceDto
+public class UpdateStockDto
 {
     public int ProductId { get; set; }
-    public decimal NewPrice { get; set; }
+    public int NewStock { get; set; }
 }

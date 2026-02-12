@@ -31,15 +31,17 @@ namespace MS2.ServerApp.Business.Services
 
                 var productDtos = products.Select(p => new ProductDto
                 {
-                    ProductId = p.ProductId,
-                    ProductName = p.ProductName,
-                    Barcode = p.Barcode,
+                    Id = p.Id,
+                    Name = p.Name,
                     CategoryId = p.CategoryId,
+                    CategoryName = p.Category?.Name ?? "",
+                    Barcode = p.Barcode,
                     Price = p.Price,
                     Stock = p.Stock,
-                    Unit = p.Unit,
                     ImageUrl = p.ImageUrl,
-                    Description = p.Description
+                    Description = p.Description,
+                    CreatedAt = p.CreatedAt,
+                    IsActive = p.IsActive
                 }).ToList();
 
                 return TcpResponse.CreateSuccess(productDtos, "Get products successful", message.RequestId);
@@ -68,15 +70,17 @@ namespace MS2.ServerApp.Business.Services
 
                 var productDtos = products.Select(p => new ProductDto
                 {
-                    ProductId = p.ProductId,
-                    ProductName = p.ProductName,
-                    Barcode = p.Barcode,
+                    Id = p.Id,
+                    Name = p.Name,
                     CategoryId = p.CategoryId,
+                    CategoryName = p.Category?.Name ?? "",
+                    Barcode = p.Barcode,
                     Price = p.Price,
                     Stock = p.Stock,
-                    Unit = p.Unit,
                     ImageUrl = p.ImageUrl,
-                    Description = p.Description
+                    Description = p.Description,
+                    CreatedAt = p.CreatedAt,
+                    IsActive = p.IsActive
                 }).ToList();
 
                 return TcpResponse.CreateSuccess(productDtos, "Search successful", message.RequestId);
@@ -110,15 +114,17 @@ namespace MS2.ServerApp.Business.Services
 
                 var productDto = new ProductDto
                 {
-                    ProductId = product.ProductId,
-                    ProductName = product.ProductName,
+                    Id = product.Id,
+                    Name = product.Name,
                     Barcode = product.Barcode,
                     CategoryId = product.CategoryId,
+                    CategoryName = product.Category?.Name ?? "",
                     Price = product.Price,
                     Stock = product.Stock,
-                    Unit = product.Unit,
                     ImageUrl = product.ImageUrl,
-                    Description = product.Description
+                    Description = product.Description,
+                    CreatedAt = product.CreatedAt,
+                    IsActive = product.IsActive
                 };
 
                 return TcpResponse.CreateSuccess(productDto, "Product found", message.RequestId);
@@ -153,8 +159,8 @@ namespace MS2.ServerApp.Business.Services
                 }
 
                 product.Price = updateDto.NewPrice;
-                _unitOfWork.Products.Update(product);
-                await _unitOfWork.SaveAsync();
+                _unitOfWork.Context.Products.Update(product);
+                await _unitOfWork.SaveChangesAsync();
 
                 return TcpResponse.CreateSuccess(null, "Price updated", message.RequestId);
             }
@@ -188,8 +194,8 @@ namespace MS2.ServerApp.Business.Services
                 }
 
                 product.Stock = updateDto.NewStock;
-                _unitOfWork.Products.Update(product);
-                await _unitOfWork.SaveAsync();
+                _unitOfWork.Context.Products.Update(product);
+                await _unitOfWork.SaveChangesAsync();
 
                 return TcpResponse.CreateSuccess(null, "Stock updated", message.RequestId);
             }
@@ -217,15 +223,17 @@ namespace MS2.ServerApp.Business.Services
 
                 var productDtos = products.Select(p => new ProductDto
                 {
-                    ProductId = p.ProductId,
-                    ProductName = p.ProductName,
-                    Barcode = p.Barcode,
+                    Id = p.Id,
+                    Name = p.Name,
                     CategoryId = p.CategoryId,
+                    CategoryName = p.Category?.Name ?? "",
+                    Barcode = p.Barcode,
                     Price = p.Price,
                     Stock = p.Stock,
-                    Unit = p.Unit,
                     ImageUrl = p.ImageUrl,
-                    Description = p.Description
+                    Description = p.Description,
+                    CreatedAt = p.CreatedAt,
+                    IsActive = p.IsActive
                 }).ToList();
 
                 return TcpResponse.CreateSuccess(productDtos, "Low stock products retrieved", message.RequestId);

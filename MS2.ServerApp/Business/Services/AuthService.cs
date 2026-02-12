@@ -48,11 +48,11 @@ namespace MS2.ServerApp.Business.Services
                 // Tạo UserDto
                 var userDto = new UserDto
                 {
-                    UserId = user.UserId,
+                    Id = user.Id,
                     Username = user.Username,
                     FullName = user.FullName,
                     Email = user.Email,
-                    PhoneNumber = user.PhoneNumber,
+                    Phone = user.Phone,
                     Role = user.Role,
                     IsActive = user.IsActive
                 };
@@ -103,28 +103,28 @@ namespace MS2.ServerApp.Business.Services
                 string passwordHash = BCrypt.Net.BCrypt.HashPassword(registerRequest.Password);
 
                 // Tạo user mới
-                var newUser = new Models.Entities.User
+                var newUser = new MS2.Models.Entities.User
                 {
                     Username = registerRequest.Username,
                     PasswordHash = passwordHash,
                     FullName = registerRequest.FullName,
                     Email = registerRequest.Email,
-                    PhoneNumber = registerRequest.PhoneNumber,
+                    Phone = registerRequest.Phone,
                     Role = registerRequest.Role ?? "Employee",
                     IsActive = true,
                     CreatedAt = DateTime.Now
                 };
 
                 await _unitOfWork.Users.AddAsync(newUser);
-                await _unitOfWork.SaveAsync();
+                await _unitOfWork.SaveChangesAsync();
 
                 var userDto = new UserDto
                 {
-                    UserId = newUser.UserId,
+                    Id = newUser.Id,
                     Username = newUser.Username,
                     FullName = newUser.FullName,
                     Email = newUser.Email,
-                    PhoneNumber = newUser.PhoneNumber,
+                    Phone = newUser.Phone,
                     Role = newUser.Role,
                     IsActive = newUser.IsActive
                 };

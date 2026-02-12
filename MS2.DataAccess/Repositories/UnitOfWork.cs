@@ -46,6 +46,11 @@ public class UnitOfWork : IUnitOfWork
         get { return _cartItems ??= new CartItemRepository(_context); }
     }
 
+    public MS2DbContext Context
+    {
+        get { return _context; }
+    }
+
     public async Task<int> SaveChangesAsync()
     {
         return await _context.SaveChangesAsync();

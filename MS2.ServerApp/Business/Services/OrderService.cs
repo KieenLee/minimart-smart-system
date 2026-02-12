@@ -47,14 +47,14 @@ namespace MS2.ServerApp.Business.Services
                         CustomerId = createOrderDto.CustomerId,
                         EmployeeId = createOrderDto.EmployeeId,
                         OrderDate = DateTime.Now,
-                        TotalAmount = 0, // Sẽ tính sau
+                        TotalAmount = 0,
                         Status = "Completed",
                         OrderType = createOrderDto.OrderType,
                         Notes = createOrderDto.Notes
                     };
 
                     await _unitOfWork.Orders.AddAsync(order);
-                    await _unitOfWork.SaveAsync(); // Lưu để có OrderId
+                    await _unitOfWork.SaveChangesAsync(); // Lưu để có OrderId
 
                     decimal totalAmount = 0;
 
@@ -74,46 +74,49 @@ namespace MS2.ServerApp.Business.Services
                         {
                             await _unitOfWork.RollbackTransactionAsync();
                             return TcpResponse.CreateError(
-                                $"Insufficient stock for {product.ProductName}. Available: {product.Stock}",
+                                $"Insufficient stock for {product.Name}. Available: {product.Stock}",
                                 message.RequestId);
                         }
 
                         // Tạo OrderDetail
                         var orderDetail = new OrderDetail
                         {
-                            OrderId = order.OrderId,
+                            OrderId = order.Id,
                             ProductId = detail.ProductId,
+                            ProductName = product.Name,
                             Quantity = detail.Quantity,
                             UnitPrice = detail.UnitPrice ?? product.Price,
-                            Discount = detail.Discount ?? 0
+                            Subtotal = (detail.UnitPrice ?? product.Price) * detail.Quantity
                         };
-
-                        decimal lineTotal = (orderDetail.UnitPrice * orderDetail.Quantity) - orderDetail.Discount;
+                        decimal lineTotal = orderDetail.Subtotal;
                         totalAmount += lineTotal;
 
-                        await _unitOfWork.Orders.AddOrderDetailAsync(orderDetail);
+                        // Thêm OrderDetail vào DbContext
+                        await _unitOfWork.Context.OrderDetails.AddAsync(orderDetail);
 
                         // Cập nhật stock
                         product.Stock -= detail.Quantity;
-                        _unitOfWork.Products.Update(product);
+                        _unitOfWork.Context.Products.Update(product);
                     }
 
                     // Cập nhật TotalAmount
                     order.TotalAmount = totalAmount;
-                    _unitOfWork.Orders.Update(order);
-                    await _unitOfWork.SaveAsync();
+                    _unitOfWork.Context.Orders.Update(order);
+                    await _unitOfWork.SaveChangesAsync();
 
                     // Commit transaction
                     await _unitOfWork.CommitTransactionAsync();
 
                     // Lấy order với details để return
-                    var createdOrder = await _unitOfWork.Orders.GetOrderWithDetailsAsync(order.OrderId);
+                    var createdOrder = await _unitOfWork.Orders.GetWithDetailsAsync(order.Id);
 
                     var orderDto = new OrderDto
                     {
-                        OrderId = createdOrder.OrderId,
+                        Id = createdOrder.Id,
                         CustomerId = createdOrder.CustomerId,
+                        CustomerName = createdOrder.Customer?.FullName ?? "",
                         EmployeeId = createdOrder.EmployeeId,
+                        EmployeeName = createdOrder.Employee?.FullName ?? "",
                         OrderDate = createdOrder.OrderDate,
                         TotalAmount = createdOrder.TotalAmount,
                         Status = createdOrder.Status,
@@ -121,13 +124,12 @@ namespace MS2.ServerApp.Business.Services
                         Notes = createdOrder.Notes,
                         OrderDetails = createdOrder.OrderDetails.Select(od => new OrderDetailDto
                         {
-                            OrderDetailId = od.OrderDetailId,
-                            OrderId = od.OrderId,
+                            Id = od.Id,
                             ProductId = od.ProductId,
-                            ProductName = od.Product?.ProductName,
+                            ProductName = od.ProductName,
                             Quantity = od.Quantity,
                             UnitPrice = od.UnitPrice,
-                            Discount = od.Discount
+                            Subtotal = od.Subtotal
                         }).ToList()
                     };
 
@@ -158,9 +160,11 @@ namespace MS2.ServerApp.Business.Services
 
                 var orderDtos = orders.Select(o => new OrderDto
                 {
-                    OrderId = o.OrderId,
+                    Id = o.Id,
                     CustomerId = o.CustomerId,
+                    CustomerName = o.Customer?.FullName ?? "",
                     EmployeeId = o.EmployeeId,
+                    EmployeeName = o.Employee?.FullName ?? "",
                     OrderDate = o.OrderDate,
                     TotalAmount = o.TotalAmount,
                     Status = o.Status,
@@ -168,13 +172,12 @@ namespace MS2.ServerApp.Business.Services
                     Notes = o.Notes,
                     OrderDetails = o.OrderDetails.Select(od => new OrderDetailDto
                     {
-                        OrderDetailId = od.OrderDetailId,
-                        OrderId = od.OrderId,
+                        Id = od.Id,
                         ProductId = od.ProductId,
-                        ProductName = od.Product?.ProductName,
+                        ProductName = od.ProductName,
                         Quantity = od.Quantity,
                         UnitPrice = od.UnitPrice,
-                        Discount = od.Discount
+                        Subtotal = od.Subtotal
                     }).ToList()
                 }).ToList();
 
@@ -200,7 +203,7 @@ namespace MS2.ServerApp.Business.Services
 
                 int orderId = orderData?["OrderId"] ?? 0;
 
-                var order = await _unitOfWork.Orders.GetOrderWithDetailsAsync(orderId);
+                var order = await _unitOfWork.Orders.GetWithDetailsAsync(orderId);
 
                 if (order == null)
                 {
@@ -209,9 +212,11 @@ namespace MS2.ServerApp.Business.Services
 
                 var orderDto = new OrderDto
                 {
-                    OrderId = order.OrderId,
+                    Id = order.Id,
                     CustomerId = order.CustomerId,
+                    CustomerName = order.Customer?.FullName ?? "",
                     EmployeeId = order.EmployeeId,
+                    EmployeeName = order.Employee?.FullName ?? "",
                     OrderDate = order.OrderDate,
                     TotalAmount = order.TotalAmount,
                     Status = order.Status,
@@ -219,13 +224,12 @@ namespace MS2.ServerApp.Business.Services
                     Notes = order.Notes,
                     OrderDetails = order.OrderDetails.Select(od => new OrderDetailDto
                     {
-                        OrderDetailId = od.OrderDetailId,
-                        OrderId = od.OrderId,
+                        Id = od.Id,
                         ProductId = od.ProductId,
-                        ProductName = od.Product?.ProductName,
+                        ProductName = od.ProductName,
                         Quantity = od.Quantity,
                         UnitPrice = od.UnitPrice,
-                        Discount = od.Discount
+                        Subtotal = od.Subtotal
                     }).ToList()
                 };
 

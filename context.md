@@ -111,6 +111,74 @@ Desktop App (WPF)
 - Interface
 - Kiến trúc 3 Layers
 
+---
+
+## 7. Tiến độ dự án (Cập nhật: 13/02/2026)
+
+### Phase 0: FOUNDATION - ✅ 100% Complete
+
+- ✅ Database: MiniMart_Smart (6 tables, seeded data)
+- ✅ MS2.Models: 6 Entities, 15 DTOs, 3 TCP Models
+- ✅ MS2.DataAccess: Repository Pattern, UnitOfWork, 5 Repositories
+- ✅ All builds successful
+
+### Phase B1: TCP SERVER - 🔄 60% Complete
+
+- ✅ Task B1.1: Project setup (MS2.ServerApp)
+- ✅ Task B1.2: TCP Protocol (TcpMessage, TcpResponse, TcpActions)
+- ✅ Task B1.3: Business Interfaces (5 interfaces)
+- ✅ Task B1.4: Business Services (5 services, 800 LOC, 42 bugs fixed)
+- ⏸️ Task B1.5: Network Layer (TcpServer, TcpMessageRouter) - IN PROGRESS
+- ⏸️ Task B1.6: Program.cs + DI Container
+- ⏸️ Task B1.7: Testing
+
+### Phase B2: WPF DESKTOP APP - ⏸️ Not Started
+
+### Phase A: WEB APP - ⏸️ Not Started
+
+**Next Steps:**
+
+1. Complete Network Layer (TcpServer, TcpMessageRouter)
+2. Setup DI Container in Program.cs
+3. End-to-end testing
+4. Start WPF Desktop App development
+
+---
+
+## 8. Project Structure
+
+---
+
+## 7. Tiến độ dự án (Cập nhật: 13/02/2026)
+
+### Phase 0: FOUNDATION - ✅ 100% Complete
+
+- ✅ Database: MiniMart_Smart (6 tables, seeded data)
+- ✅ MS2.Models: 6 Entities, 15 DTOs, 3 TCP Models
+- ✅ MS2.DataAccess: Repository Pattern, UnitOfWork, 5 Repositories
+- ✅ All builds successful
+
+### Phase B1: TCP SERVER - 🔄 60% Complete
+
+- ✅ Task B1.1: Project setup (MS2.ServerApp)
+- ✅ Task B1.2: TCP Protocol (TcpMessage, TcpResponse, TcpActions)
+- ✅ Task B1.3: Business Interfaces (5 interfaces)
+- ✅ Task B1.4: Business Services (5 services, 800 LOC, 42 bugs fixed)
+- ⏸️ Task B1.5: Network Layer (TcpServer, TcpMessageRouter) - IN PROGRESS
+- ⏸️ Task B1.6: Program.cs + DI Container
+- ⏸️ Task B1.7: Testing
+
+### Phase B2: WPF DESKTOP APP - ⏸️ Not Started
+
+### Phase A: WEB APP - ⏸️ Not Started
+
+**Next Steps:**
+
+1. Complete Network Layer (TcpServer, TcpMessageRouter)
+2. Setup DI Container in Program.cs
+3. End-to-end testing
+4. Start WPF Desktop App development
+
 minimart-smart-system/
 │
 ├── .git/

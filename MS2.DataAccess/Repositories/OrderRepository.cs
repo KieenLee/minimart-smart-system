@@ -79,4 +79,62 @@ public class OrderRepository : Repository<Order>, IOrderRepository
                        o.Status == "Completed")
             .SumAsync(o => o.TotalAmount);
     }
+
+    public async Task<IEnumerable<Order>> GetAllWithDetailsAsync()
+    {
+        return await _dbSet
+            .Include(o => o.Customer)
+            .Include(o => o.Employee)
+            .Include(o => o.OrderDetails)
+                .ThenInclude(od => od.Product)
+            .OrderByDescending(o => o.OrderDate)
+            .ToListAsync();
+    }
+
+    public async Task<MS2.Models.DTOs.Order.SalesReportDto> GetSalesReportAsync(DateTime fromDate, DateTime toDate)
+    {
+        var orders = await _dbSet
+            .Where(o => o.OrderDate >= fromDate && o.OrderDate <= toDate && o.Status == "Completed")
+            .Include(o => o.Customer)
+            .Include(o => o.Employee)
+            .Include(o => o.OrderDetails)
+                .ThenInclude(od => od.Product)
+            .OrderByDescending(o => o.OrderDate)
+            .ToListAsync();
+
+        var totalRevenue = orders.Sum(o => o.TotalAmount);
+        var totalOrders = orders.Count;
+        var averageOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
+
+        return new MS2.Models.DTOs.Order.SalesReportDto
+        {
+            FromDate = fromDate,
+            ToDate = toDate,
+            TotalRevenue = totalRevenue,
+            TotalOrders = totalOrders,
+            AverageOrderValue = averageOrderValue,
+            Orders = orders.Select(o => new MS2.Models.DTOs.Order.OrderDto
+            {
+                Id = o.Id,
+                CustomerId = o.CustomerId,
+                CustomerName = o.Customer?.FullName ?? "",
+                EmployeeId = o.EmployeeId,
+                EmployeeName = o.Employee?.FullName ?? "",
+                OrderDate = o.OrderDate,
+                TotalAmount = o.TotalAmount,
+                Status = o.Status,
+                OrderType = o.OrderType,
+                Notes = o.Notes,
+                OrderDetails = o.OrderDetails.Select(od => new MS2.Models.DTOs.Order.OrderDetailDto
+                {
+                    Id = od.Id,
+                    ProductId = od.ProductId,
+                    ProductName = od.ProductName,
+                    Quantity = od.Quantity,
+                    UnitPrice = od.UnitPrice,
+                    Subtotal = od.Subtotal
+                }).ToList()
+            }).ToList()
+        };
+    }
 }

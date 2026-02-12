@@ -9,6 +9,9 @@ public interface IUnitOfWork : IDisposable
     ICategoryRepository Categories { get; }
     ICartItemRepository CartItems { get; }
 
+    // DbContext accessor
+    MS2.DataAccess.Data.MS2DbContext Context { get; }
+
     // Transaction methods
     Task<int> SaveChangesAsync();
     Task BeginTransactionAsync();
