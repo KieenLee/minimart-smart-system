@@ -1,0 +1,137 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using MS2.DesktopApp.Network;
+using MS2.Models.DTOs.Auth;
+using MS2.Models.TCP;
+using System;
+using System.Text.Json;
+using System.Threading.Tasks;
+using System.Windows;
+
+namespace MS2.DesktopApp.Models;
+
+public partial class LoginViewModel : ObservableObject
+{
+    private readonly TcpClientService _tcpClient;
+
+    [ObservableProperty]
+    private string username = "";
+
+    [ObservableProperty]
+    private string password = "";
+
+    [ObservableProperty]
+    private string errorMessage = "";
+
+    [ObservableProperty]
+    private bool isLoading = false;
+
+    public LoginViewModel(TcpClientService tcpClient)
+    {
+        _tcpClient = tcpClient;
+    }
+
+    [RelayCommand]
+    private async Task LoginAsync()
+    {
+        // Validate
+        if (string.IsNullOrWhiteSpace(Username))
+        {
+            ErrorMessage = "Vui lòng nhập tên đăng nhập!";
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(Password))
+        {
+            ErrorMessage = "Vui lòng nhập mật khẩu!";
+            return;
+        }
+
+        IsLoading = true;
+        ErrorMessage = "";
+
+        try
+        {
+            // 1. Kết nối TCP Server
+            bool connected = await _tcpClient.ConnectAsync();
+            if (!connected)
+            {
+                ErrorMessage = "Không thể kết nối tới server!\nVui lòng kiểm tra server đã chạy chưa.";
+                IsLoading = false;
+                return;
+            }
+
+            // 2. Tạo LoginRequest
+            var loginRequest = new LoginRequestDto
+            {
+                Username = Username,
+                Password = Password
+            };
+
+            // 3. Gửi LOGIN request
+            var response = await _tcpClient.SendMessageAsync(
+                TcpActions.LOGIN,
+                loginRequest,
+                sessionId: null  // LOGIN không cần SessionId
+            );
+
+            // 4. Xử lý response
+            if (response?.Success == true)
+            {
+                // Parse LoginResponse
+                var jsonString = response.Data?.ToString() ?? "{}";
+                var loginResponse = JsonSerializer.Deserialize<LoginResponseDto>(
+                    jsonString,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+                );
+
+                if (loginResponse?.SessionId != null)
+                {
+                    // Lưu SessionId vào TcpClient
+                    _tcpClient.CurrentSessionId = loginResponse.SessionId;
+
+                    // Thông báo thành công
+                    MessageBox.Show(
+                        $"Đăng nhập thành công!\nXin chào, {loginResponse.User?.FullName ?? Username}",
+                        "Thành công",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information
+                    );
+
+                    // Đóng LoginWindow và mở MainWindow
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        var mainWindow = new MainWindow();
+                        mainWindow.Show();
+
+                        // Tìm và đóng LoginWindow
+                        foreach (Window window in Application.Current.Windows)
+                        {
+                            if (window is Presentation.LoginWindow)
+                            {
+                                window.Close();
+                                break;
+                            }
+                        }
+                    });
+                }
+                else
+                {
+                    ErrorMessage = "Lỗi: Không nhận được SessionId từ server!";
+                }
+            }
+            else
+            {
+                ErrorMessage = response?.Message ?? "Đăng nhập thất bại! Vui lòng kiểm tra lại thông tin.";
+            }
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Lỗi kết nối: {ex.Message}";
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+}
