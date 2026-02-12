@@ -1,6 +1,6 @@
 # KẾ HOẠCH TRIỂN KHAI DỰ ÁN MS2 - MINIMART SMART SYSTEM
 
-**Phiên bản:** 2.2  
+**Phiên bản:** 2.3  
 **Ngày cập nhật:** 13/02/2026  
 **Kiến trúc:** Dual-Path Architecture (Web MVC + TCP Network)
 
@@ -424,169 +424,85 @@ dotnet add MS2.ServerApp package BCrypt.Net-Next
 
 ---
 
-## ⏸️ Task B1.5: Implement Network Layer - ĐANG LÀM
+## ✅ Task B1.5: Implement Network Layer - HOÀN THÀNH
 
-**Todo List:**
+**Đã tạo 2 files:**
 
-- [ ] Tạo TcpMessageRouter.cs
-- [ ] Tạo TcpServer.cs
-- [ ] Setup Program.cs với DI
-- [ ] Test TCP Server
+- ✅ **TcpMessageRouter.cs (~90 LOC):**
+  - Switch-based routing theo message.Action
+  - Scoped DI cho mỗi request (fresh DbContext)
+  - 13 actions mapped: LOGIN, LOGOUT, GET_PRODUCTS, SEARCH_PRODUCTS, GET_PRODUCT_BY_BARCODE, UPDATE_PRODUCT_PRICE, UPDATE_PRODUCT_STOCK, GET_LOW_STOCK_PRODUCTS, CREATE_ORDER, GET_ORDERS, GET_ORDER_DETAILS, GET_SALES_REPORT, GET_CATEGORIES
+  - Exception handling với error responses
+  - Unknown action fallback
 
----
+- ✅ **TcpServer.cs (~180 LOC):**
+  - TcpListener trên configured host/port
+  - AcceptClientsAsync loop cho concurrent clients
+  - HandleClientAsync cho mỗi client
+  - Length-prefix protocol (read 4 bytes length → read message)
+  - Message routing qua TcpMessageRouter
+  - Comprehensive logging (connect, disconnect, errors)
+  - Graceful shutdown với 5s timeout
 
-## Task B1.3 (Original): Implement TCP Server Core
+**Kiến trúc:**
 
-**File:** `MS2.ServerApp/Services/TcpServer.cs`
-
-**TcpServer Class:**
-
-**Properties:**
-
-- `TcpListener _listener`
-- `List<Task> _clientTasks`
-- `CancellationTokenSource _cancellationTokenSource`
-
-**Methods:**
-
-- `Task StartAsync()` - Start listening
-- `Task AcceptClientsAsync(CancellationToken)` - Accept client loop
-- `Task HandleClientAsync(TcpClient, CancellationToken)` - Handle individual client
-- `Task<TcpResponse> ProcessMessageAsync(TcpMessage)` - Process message via handler
-- `Task StopAsync()` - Graceful shutdown
-
-**Todo List:**
-
-- [ ] Tạo `TcpServer` class
-- [ ] Initialize `TcpListener` với config từ appsettings
-- [ ] Implement async client acceptance loop
-- [ ] Implement multi-client handling (mỗi client 1 Task riêng)
-- [ ] Implement graceful shutdown khi Ctrl+C
-- [ ] Add logging cho connections, errors
+- Thread-safe: Mỗi client được handle trong Task riêng
+- Scoped DI: Mỗi message request có DbContext riêng
+- Error handling: Try-catch ở mỗi layer
+- Logging: Console logging cho debug và monitor
 
 ---
 
-## Task B1.4: Implement Message Handlers
+## ✅ Task B1.6: Setup Dependency Injection & Program.cs - HOÀN THÀNH
 
-**Interface:** `ITcpMessageHandler`
+**Program.cs đã implement:**
 
-- `Task<TcpResponse> HandleAsync(TcpMessage message)`
+- ✅ Host.CreateApplicationBuilder() setup
+- ✅ Configuration loading từ appsettings.json
+- ✅ Console logging với Information level
+- ✅ TcpSettings singleton registration
+- ✅ DbContext registration với SQL Server connection
+- ✅ Repository registration: IUnitOfWork → UnitOfWork (Scoped)
+- ✅ Business Services registration:
+  - ISessionManager → SessionManager (Singleton)
+  - IAuthService → AuthService (Scoped)
+  - IProductService → ProductService (Scoped)
+  - IOrderService → OrderService (Scoped)
+  - ICategoryService → CategoryService (Scoped)
+- ✅ Network Layer registration:
+  - TcpMessageRouter (Singleton)
+  - TcpServer (Singleton)
+- ✅ Graceful shutdown handler (Console.CancelKeyPress)
+- ✅ Server lifecycle management
 
-**Class:** `TcpMessageHandler`
+**Build Status:**
 
-**Routing Logic:**
-
-```
-Action → Method
-- LOGIN → HandleLoginAsync()
-- GET_PRODUCTS → HandleGetProductsAsync()
-- SEARCH_PRODUCTS → HandleSearchProductsAsync()
-- GET_PRODUCT_BY_BARCODE → HandleGetProductByBarcodeAsync()
-- CREATE_ORDER → HandleCreateOrderAsync()
-- UPDATE_PRODUCT_PRICE → HandleUpdateProductPriceAsync()
-- UPDATE_PRODUCT_STOCK → HandleUpdateProductStockAsync()
-- GET_SALES_REPORT → HandleGetSalesReportAsync()
-- GET_EMPLOYEES → HandleGetEmployeesAsync()
-- GET_INVENTORY → HandleGetInventoryAsync()
-```
-
-**Todo List:**
-
-- [ ] Tạo `ITcpMessageHandler` interface
-- [ ] Implement `TcpMessageHandler` class
-- [ ] Inject `IUnitOfWork` và `ISessionManager`
-- [ ] Implement routing switch/case theo Action
-- [ ] Validate SessionId cho tất cả actions trừ LOGIN
-- [ ] Implement từng handler method
-- [ ] Return `TcpResponse.CreateSuccess()` hoặc `TcpResponse.CreateError()`
-
-**Handler Examples:**
-
-**HandleLoginAsync:**
-
-- Deserialize `LoginRequestDto` từ `message.Data`
-- Tìm user theo username
-- Verify password với BCrypt
-- Create session với SessionManager
-- Return SessionId + user info
-
-**HandleGetProductsAsync:**
-
-- Validate SessionId
-- Call `_unitOfWork.Products.GetAllAsync()`
-- Return products list
-
-**HandleCreateOrderAsync:**
-
-- Validate SessionId
-- Get user from session
-- Deserialize `CreateOrderDto`
-- Validate products stock
-- Create Order + OrderDetails
-- Update product stock
-- Use transaction (BeginTransaction/Commit/Rollback)
-- Return created order
+- ✅ Build succeeded với 15 nullable warnings (non-critical)
+- ✅ Tất cả dependencies resolved
+- ✅ Ready to run
 
 ---
 
-## Task B1.5: Setup Dependency Injection & Program.cs
+## ⏸️ Task B1.7: Test TCP Server - CHỜ TESTING
 
-**Program.cs Structure:**
+**Test Scenarios đã lên kế hoạch:**
 
-```csharp
-- Configure Host Builder
-- Add Configuration (appsettings.json)
-- Add Logging (Console, Debug)
-- Register DbContext
-- Register Repositories (IUnitOfWork, UnitOfWork)
-- Register Services (IJwtTokenService, ITcpMessageHandler, TcpServer)
-- Configure JwtSettings, TcpSettings
-- Start TcpServer
-- Handle Ctrl+C for graceful shutdown
-```
+1. **Server Startup Test:** Verify server binds to 127.0.0.1:5000
+2. **Connection Test:** Client connect test
+3. **LOGIN Action Test:** Valid credentials (admin/admin123)
+4. **GET_PRODUCTS Test:** Retrieve products với valid SessionId
+5. **Invalid Session Test:** Fake SessionId error handling
+6. **Concurrent Client Test:** 2-3 clients simultaneously
 
-**Todo List:**
+**Test Tools:**
 
-- [ ] Setup `Host.CreateApplicationBuilder()`
-- [ ] Configure `appsettings.json` loading
-- [ ] Configure Console logging
-- [ ] Register `MS2DbContext` với DI
-- [ ] Register `IUnitOfWork` → `UnitOfWork` (Scoped)
-- [ ] Register `ISessionManager` → `SessionManager` (Singleton)
-- [ ] Register `ITcpMessageHandler` → `TcpMessageHandler` (Scoped)
-- [ ] Register `TcpServer` (Singleton)
-- [ ] Start server và wait for cancellation
-- [ ] Implement graceful shutdown
+- PowerShell test client script (đã chuẩn bị)
+- Test-NetConnection cmdlet
+- Hoặc tạo Console test app riêng
 
 ---
 
-## Task B1.6: Test TCP Server
-
-**Test Console Client:**
-
-**Todo List:**
-
-- [ ] Tạo simple Console test client
-- [ ] Test connection tới `127.0.0.1:5000`
-- [ ] Test LOGIN action
-- [ ] Test GET_PRODUCTS action với token
-- [ ] Test CREATE_ORDER action
-- [ ] Test error handling (invalid token, wrong action)
-- [ ] Test concurrent connections (3-5 clients)
-- [ ] Verify database changes
-
-**Test Scenarios:**
-
-1. **Login Test:** Send LOGIN → Nhận SessionId
-2. **Products Test:** Send GET_PRODUCTS với SessionId → Nhận danh sách
-3. **Barcode Scan Test:** Send GET_PRODUCT_BY_BARCODE → Nhận product
-4. **Order Test:** Send CREATE_ORDER → Verify trong database
-5. **Invalid SessionId Test:** Send request với fake SessionId → Nhận error
-6. **Concurrent Test:** 5 clients login đồng thời
-
----
-
-## 📊 Tiến độ Phase B1 - TCP Server (60% hoàn thành)
+## 📊 Tiến độ Phase B1 - TCP Server (95% hoàn thành)
 
 **✅ Đã hoàn thành:**
 
@@ -594,10 +510,12 @@ Action → Method
 - ✅ Task B1.2: TCP Protocol Models (TcpMessage, TcpResponse, TcpActions)
 - ✅ Task B1.3: Business Interfaces (5 interfaces, 22 methods)
 - ✅ Task B1.4: Business Services (5 services, ~800 LOC, 42 bugs fixed)
+- ✅ Task B1.5: Network Layer (TcpServer, TcpMessageRouter)
+- ✅ Task B1.6: Program.cs với DI Container
 
-**🔄 Đang làm:**
+**🔄 Chờ testing:**
 
-- ⏸️ Task B1.5: Network Layer (TcpServer, TcpMessageRouter)
+- ⏸️ Task B1.7: Test TCP Server (95% complete, chỉ còn testing)
 
 **⏭️ Chưa làm:**
 
