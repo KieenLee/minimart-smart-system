@@ -1,6 +1,6 @@
 # KẾ HOẠCH TRIỂN KHAI DỰ ÁN MS2 - MINIMART SMART SYSTEM
 
-**Phiên bản:** 2.3  
+**Phiên bản:** 2.4  
 **Ngày cập nhật:** 13/02/2026  
 **Kiến trúc:** Dual-Path Architecture (Web MVC + TCP Network)
 
@@ -517,6 +517,27 @@ dotnet add MS2.ServerApp package BCrypt.Net-Next
 
 - ⏸️ Task B1.7: Test TCP Server (95% complete, chỉ còn testing)
 
+---
+
+## 📊 Tiến độ Phase B2 - WPF Desktop App (40% hoàn thành)
+
+**✅ Đã hoàn thành:**
+
+- ✅ Task B2.1: Setup WPF Project (cấu trúc đơn giản hóa)
+- ✅ Task B2.2: TCP Client Service implementation
+- ✅ Task B2.3: Login Window với MVVM pattern
+
+**🔄 Đang làm:**
+
+- ⏸️ Task B2.4: Main Window với Navigation Menu
+
+**⏭️ Chưa làm:**
+
+- ⏸️ Task B2.5: POS View (Point of Sale)
+- ⏸️ Task B2.6: Inventory View
+- ⏸️ Task B2.7: Reports View
+- ⏸️ Task B2.8: Employee Management View (Admin only)
+
 **⏭️ Chưa làm:**
 
 - ⏸️ Task B1.6: Setup Program.cs với DI Container
@@ -544,106 +565,137 @@ dotnet add MS2.ServerApp package BCrypt.Net-Next
 
 ---
 
-## Task B2.1: Setup WPF Project với 3-Layer Architecture
+## ✅ Task B2.1: Setup WPF Project - HOÀN THÀNH
 
-**Folder Structure (theo ảnh kiến trúc):**
+**Folder Structure (đã đơn giản hóa):**
 
 ```
 MS2.DesktopApp/                      # WPF .NET 8
-├── App.xaml
-├── App.xaml.cs
-├── AssemblyInfo.cs
+├── App.xaml (đã setup Converters)
+├── App.xaml.cs (đã setup DI Container)
+├── appsettings.json
 │
-├── Business/                        # BUSINESS LAYER
-│   ├── DTOs/
-│   │   ├── LoginDto.cs
-│   │   ├── ProductDto.cs
-│   │   └── OrderDto.cs
-│   ├── Interfaces/
-│   │   ├── IAuthService.cs
-│   │   ├── IProductService.cs
-│   │   ├── IOrderService.cs
-│   │   └── INetworkService.cs
-│   ├── Repositories/
-│   │   ├── AuthRepository.cs
-│   │   ├── ProductRepository.cs
-│   │   └── OrderRepository.cs
-│   └── Services/
-│       ├── AuthService.cs
-│       ├── ProductService.cs
-│       ├── OrderService.cs
-│       └── DialogService.cs
+├── DTOs/                            # Data Transfer Objects (trống - dùng MS2.Models)
+├── Export/                          # Chức năng export data của Admin
+├── Models/                          # ViewModels
+│   ├── TcpClientSettings.cs ✅
+│   └── LoginViewModel.cs ✅
 │
-├── DataAccess/                      # DATA ACCESS LAYER (TCP)
-│   ├── Network/
-│   │   ├── TcpNetworkService.cs
-│   │   └── NetworkConfig.cs
-│   └── Repositories/
-│       ├── TcpAuthRepository.cs
-│       ├── TcpProductRepository.cs
-│       └── TcpOrderRepository.cs
+├── Network/                         # TCP Client Layer
+│   └── TcpClientService.cs ✅
 │
-├── Presentation/                    # PRESENTATION LAYER
-│   ├── Views/
-│   │   ├── LoginWindow.xaml
-│   │   ├── LoginWindow.xaml.cs
-│   │   ├── MainWindow.xaml
-│   │   ├── MainWindow.xaml.cs
-│   │   ├── POS/
-│   │   │   ├── POSView.xaml
-│   │   │   └── POSView.xaml.cs
-│   │   ├── Inventory/
-│   │   │   ├── InventoryView.xaml
-│   │   │   └── InventoryView.xaml.cs
-│   │   ├── Reports/
-│   │   │   ├── ReportsView.xaml
-│   │   │   └── ReportsView.xaml.cs
-│   │   └── Employees/
-│   │       ├── EmployeeManagementView.xaml
-│   │       └── EmployeeManagementView.xaml.cs
-│   │
-│   ├── ViewModels/
-│   │   ├── LoginViewModel.cs
-│   │   ├── MainViewModel.cs
-│   │   ├── POSViewModel.cs
-│   │   ├── InventoryViewModel.cs
-│   │   ├── ReportsViewModel.cs
-│   │   └── EmployeeManagementViewModel.cs
-│   │
-│   ├── Converters/
-│   │   ├── BoolToVisibilityConverter.cs
-│   │   └── DecimalToCurrencyConverter.cs
-│   │
-│   └── Resources/
-│       ├── Styles/
-│       │   ├── ButtonStyles.xaml
-│       │   └── TextBoxStyles.xaml
-│       └── Images/
-│
-├── Models/                          # VIEW MODELS
-│   ├── CartItemModel.cs
-│   ├── AppSettings.cs
-│   └── ViewModelBase.cs
-│
-└── DependencyInjection/             # DI CONTAINER
-    └── ServiceConfiguration.cs
+└── Presentation/                    # UI Layer
+    ├── Converters/
+    │   ├── BoolToVisibilityConverter.cs ✅
+    │   └── StringToVisibilityConverter.cs ✅
+    ├── LoginWindow.xaml ✅
+    ├── LoginWindow.xaml.cs ✅
+    ├── POS/                         # Màn hình bán hàng
+    ├── Inventory/                   # Quản lý kho
+    ├── Reports/                     # Báo cáo
+    └── Employees/                   # Quản lý nhân viên
 ```
 
 **NuGet Packages:**
 
-- [ ] `CommunityToolkit.Mvvm` (cho MVVM pattern)
-- [ ] `Microsoft.Extensions.DependencyInjection`
-- [ ] `Microsoft.Extensions.Configuration`
-- [ ] `Microsoft.Extensions.Configuration.Json`
-- [ ] `System.Text.Json`
+- ✅ `CommunityToolkit.Mvvm 8.4.0` (MVVM pattern)
+- ✅ `Microsoft.Extensions.DependencyInjection 10.0.3`
+- ✅ `Microsoft.Extensions.Configuration 10.0.3`
+- ✅ `Microsoft.Extensions.Configuration.Json 10.0.3`
+- ✅ `System.Text.Json 10.0.3`
+
+**Đã thực hiện:**
+
+- ✅ Tạo project `MS2.DesktopApp` (WPF .NET 8)
+- ✅ Reference `MS2.Models`
+- ✅ Cài đặt tất cả packages (5 packages)
+- ✅ Tạo folders: DTOs, Export, Models, Network, Presentation (với subfolders)
+- ✅ Add project vào solution
+- ✅ Build thành công
+
+---
+
+## ✅ Task B2.2: Implement TCP Client Service - HOÀN THÀNH
+
+**Files đã tạo:**
+
+1. ✅ **TcpClientSettings.cs** - Config model
+2. ✅ **TcpClientService.cs** - TCP Client với các methods:
+   - `ConnectAsync()` - Kết nối tới server
+   - `SendMessageAsync(action, data, sessionId)` - Gửi message và nhận response
+   - `Disconnect()` - Ngắt kết nối
+   - `IsConnected` property
+   - `CurrentSessionId` property - Lưu SessionId sau login
+
+**Tính năng:**
+
+- ✅ Length-prefix protocol (4 bytes + JSON)
+- ✅ Thread-safe với SemaphoreSlim
+- ✅ Async/await pattern
+- ✅ Exception handling
+- ✅ Console logging
+- ✅ Dispose pattern
+
+---
+
+## ✅ Task B2.3: Implement Login Window - HOÀN THÀNH
+
+**Files đã tạo:**
+
+1. ✅ **LoginWindow.xaml** - UI đăng nhập với Material Design style
+   - Username TextBox
+   - Password PasswordBox
+   - Login Button
+   - Error Message display
+   - Loading ProgressBar
+2. ✅ **LoginWindow.xaml.cs** - Code-behind xử lý PasswordBox binding
+
+3. ✅ **LoginViewModel.cs** - ViewModel với CommunityToolkit.Mvvm
+   - Properties: Username, Password, ErrorMessage, IsLoading
+   - LoginCommand (RelayCommand async)
+   - Validation logic
+   - TCP connection và authentication
+   - SessionId management
+4. ✅ **BoolToVisibilityConverter.cs** - Convert bool → Visibility
+5. ✅ **StringToVisibilityConverter.cs** - Convert string → Visibility
+
+**App.xaml updates:**
+
+- ✅ Register 2 Converters vào Resources
+- ✅ Thêm converters namespace
+
+**App.xaml.cs updates:**
+
+- ✅ Setup DI Container (ServiceCollection)
+- ✅ Register TcpClientService (Singleton)
+- ✅ Register LoginViewModel (Transient)
+- ✅ Register LoginWindow (Transient)
+- ✅ Show LoginWindow với DataContext binding
+
+**Chức năng:**
+
+- ✅ MVVM pattern hoàn chỉnh
+- ✅ Username/Password validation
+- ✅ Connect tới TCP Server (127.0.0.1:5000)
+- ✅ Send LOGIN request với TcpActions.LOGIN
+- ✅ Parse LoginResponseDto
+- ✅ Lưu SessionId vào TcpClientService
+- ✅ Show MainWindow sau khi login thành công
+- ✅ Error handling và display
+- ✅ Loading indicator
+
+---
+
+## ⏸️ Task B2.4: Implement Main Window - CHỜ LÀM
 
 **Todo List:**
 
-- [ ] Tạo project `MS2.DesktopApp` (WPF .NET 8)
-- [ ] Reference `MS2.Models`
-- [ ] Cài đặt tất cả packages
-- [ ] Tạo tất cả folders theo cấu trúc 3-layer
-- [ ] Add project vào solution
+- [ ] Tạo MainWindow.xaml với Grid layout
+- [ ] Navigation menu (POS, Inventory, Reports, Employees, Logout)
+- [ ] ContentControl để hiển thị các Views
+- [ ] MainViewModel với navigation commands
+- [ ] User info display
+- [ ] Logout functionality
 
 **CLI Commands:**
 

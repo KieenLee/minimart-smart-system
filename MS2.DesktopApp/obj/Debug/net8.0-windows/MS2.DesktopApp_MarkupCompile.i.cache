@@ -1,5 +1,5 @@
 ﻿MS2.DesktopApp
-
+1.0.0.0
 
 winexe
 C#
@@ -12,9 +12,9 @@ TRACE;DEBUG;NET;NET8_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR
 D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\App.xaml
 2-79649380
 
-8-1481205448
+10-1230401526
 218-150242079
 MainWindow.xaml;Presentation\LoginWindow.xaml;
 
-False
+True
 

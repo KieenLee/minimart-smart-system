@@ -24,7 +24,13 @@ public partial class LoginViewModel : ObservableObject
     private string errorMessage = "";
 
     [ObservableProperty]
+    private Visibility errorVisibility = Visibility.Collapsed;
+
+    [ObservableProperty]
     private bool isLoading = false;
+
+    [ObservableProperty]
+    private Visibility loadingVisibility = Visibility.Collapsed;
 
     public LoginViewModel(TcpClientService tcpClient)
     {
@@ -38,17 +44,21 @@ public partial class LoginViewModel : ObservableObject
         if (string.IsNullOrWhiteSpace(Username))
         {
             ErrorMessage = "Vui lòng nhập tên đăng nhập!";
+            ErrorVisibility = Visibility.Visible;
             return;
         }
 
         if (string.IsNullOrWhiteSpace(Password))
         {
             ErrorMessage = "Vui lòng nhập mật khẩu!";
+            ErrorVisibility = Visibility.Visible;
             return;
         }
 
         IsLoading = true;
+        LoadingVisibility = Visibility.Visible;
         ErrorMessage = "";
+        ErrorVisibility = Visibility.Collapsed;
 
         try
         {
@@ -57,7 +67,9 @@ public partial class LoginViewModel : ObservableObject
             if (!connected)
             {
                 ErrorMessage = "Không thể kết nối tới server!\nVui lòng kiểm tra server đã chạy chưa.";
+                ErrorVisibility = Visibility.Visible;
                 IsLoading = false;
+                LoadingVisibility = Visibility.Collapsed;
                 return;
             }
 
@@ -118,20 +130,24 @@ public partial class LoginViewModel : ObservableObject
                 else
                 {
                     ErrorMessage = "Lỗi: Không nhận được SessionId từ server!";
+                    ErrorVisibility = Visibility.Visible;
                 }
             }
             else
             {
                 ErrorMessage = response?.Message ?? "Đăng nhập thất bại! Vui lòng kiểm tra lại thông tin.";
+                ErrorVisibility = Visibility.Visible;
             }
         }
         catch (Exception ex)
         {
             ErrorMessage = $"Lỗi kết nối: {ex.Message}";
+            ErrorVisibility = Visibility.Visible;
         }
         finally
         {
             IsLoading = false;
+            LoadingVisibility = Visibility.Collapsed;
         }
     }
 }
