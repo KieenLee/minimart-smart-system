@@ -199,8 +199,8 @@ MS2.ServerApp/                    # Console App .NET 8
 │   ├── TcpServer.cs
 │   ├── ITcpMessageHandler.cs
 │   ├── TcpMessageHandler.cs
-│   ├── IJwtTokenService.cs
-│   └── JwtTokenService.cs
+│   ├── ISessionManager.cs
+│   └── SessionManager.cs
 ├── Handlers/
 │   ├── LoginHandler.cs
 │   ├── ProductHandler.cs
@@ -209,7 +209,7 @@ MS2.ServerApp/                    # Console App .NET 8
 │   └── ReportHandler.cs
 ├── Models/
 │   ├── TcpSettings.cs
-│   └── JwtSettings.cs
+│   └── UserSession.cs
 └── Extensions/
     └── ServiceExtensions.cs
 ```
@@ -221,7 +221,6 @@ MS2.ServerApp/                    # Console App .NET 8
 - [ ] `Microsoft.Extensions.Configuration`
 - [ ] `Microsoft.Extensions.Configuration.Json`
 - [ ] `Microsoft.Extensions.Logging.Console`
-- [ ] `System.IdentityModel.Tokens.Jwt`
 - [ ] `BCrypt.Net-Next`
 
 **Todo List:**
@@ -243,7 +242,6 @@ dotnet add MS2.ServerApp package Microsoft.Extensions.DependencyInjection
 dotnet add MS2.ServerApp package Microsoft.Extensions.Hosting
 dotnet add MS2.ServerApp package Microsoft.Extensions.Configuration
 dotnet add MS2.ServerApp package Microsoft.Extensions.Configuration.Json
-dotnet add MS2.ServerApp package System.IdentityModel.Tokens.Jwt
 dotnet add MS2.ServerApp package BCrypt.Net-Next
 ```
 
@@ -278,7 +276,7 @@ dotnet add MS2.ServerApp package BCrypt.Net-Next
 
 - `string Action` - Action name (e.g., "LOGIN", "GET_PRODUCTS")
 - `object Data` - JSON serialized data
-- `string Token` - JWT token (null for LOGIN action)
+- `string? SessionId` - Session identifier (null for LOGIN action)
 - `string RequestId` - Unique request identifier (GUID)
 
 **TcpResponse Structure:**
@@ -370,9 +368,9 @@ Action → Method
 
 - [ ] Tạo `ITcpMessageHandler` interface
 - [ ] Implement `TcpMessageHandler` class
-- [ ] Inject `IUnitOfWork` và `IJwtTokenService`
+- [ ] Inject `IUnitOfWork` và `ISessionManager`
 - [ ] Implement routing switch/case theo Action
-- [ ] Validate JWT token cho tất cả actions trừ LOGIN
+- [ ] Validate SessionId cho tất cả actions trừ LOGIN
 - [ ] Implement từng handler method
 - [ ] Return `TcpResponse.CreateSuccess()` hoặc `TcpResponse.CreateError()`
 
@@ -383,18 +381,19 @@ Action → Method
 - Deserialize `LoginRequestDto` từ `message.Data`
 - Tìm user theo username
 - Verify password với BCrypt
-- Generate JWT token
-- Return token + user info
+- Create session với SessionManager
+- Return SessionId + user info
 
 **HandleGetProductsAsync:**
 
-- Validate JWT token
+- Validate SessionId
 - Call `_unitOfWork.Products.GetAllAsync()`
 - Return products list
 
 **HandleCreateOrderAsync:**
 
-- Validate JWT token
+- Validate SessionId
+- Get user from session
 - Deserialize `CreateOrderDto`
 - Validate products stock
 - Create Order + OrderDetails
@@ -427,7 +426,7 @@ Action → Method
 - [ ] Configure Console logging
 - [ ] Register `MS2DbContext` với DI
 - [ ] Register `IUnitOfWork` → `UnitOfWork` (Scoped)
-- [ ] Register `IJwtTokenService` → `JwtTokenService` (Scoped)
+- [ ] Register `ISessionManager` → `SessionManager` (Singleton)
 - [ ] Register `ITcpMessageHandler` → `TcpMessageHandler` (Scoped)
 - [ ] Register `TcpServer` (Singleton)
 - [ ] Start server và wait for cancellation
@@ -452,11 +451,11 @@ Action → Method
 
 **Test Scenarios:**
 
-1. **Login Test:** Send LOGIN → Nhận token
-2. **Products Test:** Send GET_PRODUCTS với token → Nhận danh sách
+1. **Login Test:** Send LOGIN → Nhận SessionId
+2. **Products Test:** Send GET_PRODUCTS với SessionId → Nhận danh sách
 3. **Barcode Scan Test:** Send GET_PRODUCT_BY_BARCODE → Nhận product
 4. **Order Test:** Send CREATE_ORDER → Verify trong database
-5. **Invalid Token Test:** Send request với fake token → Nhận error
+5. **Invalid SessionId Test:** Send request với fake SessionId → Nhận error
 6. **Concurrent Test:** 5 clients login đồng thời
 
 ---
@@ -709,7 +708,7 @@ public partial class App : Application
 Methods:
 - Task<bool> LoginAsync(string username, string password)
 - void Logout()
-- string GetToken()
+- string GetSessionId()
 - User GetCurrentUser()
 - bool IsAuthenticated { get; }
 ```
@@ -739,7 +738,7 @@ Methods:
 - [ ] Implement services trong `Business/Services/`
 - [ ] Inject repositories vào services
 - [ ] Services gọi repositories → repositories gọi NetworkService
-- [ ] Cache token trong AuthService (in-memory)
+- [ ] Cache SessionId trong AuthService (in-memory)
 - [ ] Cache products list trong ProductService (optional)
 
 ---

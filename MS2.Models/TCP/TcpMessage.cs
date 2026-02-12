@@ -6,7 +6,7 @@ namespace MS2.Models.TCP;
 public class TcpMessage
 {
     public string Action { get; set; } = null!;
-    public string? Token { get; set; }
+    public string? SessionId { get; set; }
     public object? Data { get; set; }
     public string RequestId { get; set; } = Guid.NewGuid().ToString();
 
