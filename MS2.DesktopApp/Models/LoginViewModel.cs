@@ -29,9 +29,6 @@ public partial class LoginViewModel : ObservableObject
     [ObservableProperty]
     private bool isLoading = false;
 
-    [ObservableProperty]
-    private Visibility loadingVisibility = Visibility.Collapsed;
-
     public LoginViewModel(TcpClientService tcpClient)
     {
         _tcpClient = tcpClient;
@@ -56,7 +53,6 @@ public partial class LoginViewModel : ObservableObject
         }
 
         IsLoading = true;
-        LoadingVisibility = Visibility.Visible;
         ErrorMessage = "";
         ErrorVisibility = Visibility.Collapsed;
 
@@ -69,7 +65,6 @@ public partial class LoginViewModel : ObservableObject
                 ErrorMessage = "Không thể kết nối tới server!\nVui lòng kiểm tra server đã chạy chưa.";
                 ErrorVisibility = Visibility.Visible;
                 IsLoading = false;
-                LoadingVisibility = Visibility.Collapsed;
                 return;
             }
 
@@ -147,7 +142,6 @@ public partial class LoginViewModel : ObservableObject
         finally
         {
             IsLoading = false;
-            LoadingVisibility = Visibility.Collapsed;
         }
     }
 }
