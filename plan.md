@@ -106,7 +106,7 @@
 
 **Đã kiểm tra và hoạt động ổn định!**
 
-## 🔄 Task 0.7: DTOs và TCP Models - ĐANG LÀM
+## ✅ Task 0.7: DTOs và TCP Models - HOÀN THÀNH
 
 **Folders đã tạo:**
 
@@ -117,7 +117,7 @@
 
 - ✅ Tạo Auth DTOs
   - ✅ LoginRequestDto
-  - ✅ LoginResponseDto
+  - ✅ LoginResponseDto (sử dụng SessionId thay vì Token)
   - ✅ UserDto
   - ✅ RegisterRequestDto
 - ✅ Tạo Product DTOs
@@ -133,9 +133,11 @@
   - ✅ CreateOrderDetailDto
   - ✅ SalesReportDto
 - ✅ Tạo TCP Protocol Models
-  - ✅ TcpMessage (với ToBytes/FromBytes methods)
+  - ✅ TcpMessage (với SessionId thay vì Token, ToBytes/FromBytes methods)
   - ✅ TcpResponse (với CreateSuccess/CreateError factory methods)
   - ✅ TcpActions (constants cho tất cả actions)
+
+**Đã kiểm tra và hoạt động ổn định!**
 
 ---
 
@@ -149,6 +151,10 @@
 - DbContext với Factory pattern
 - Repository Pattern (5 repositories + generic base)
 - Unit of Work Pattern
+- DTOs và TCP Models (Session-based authentication)
+- Sample data seeded
+
+**⏭️ Tiếp theo:** Phase B1 - Xây dựng TCP Server
 
 ---
 
@@ -195,24 +201,34 @@ Dự án chia thành 3 phase theo thứ tự triển khai:
 MS2.ServerApp/                    # Console App .NET 8
 ├── Program.cs
 ├── appsettings.json
-├── Services/
-│   ├── TcpServer.cs
-│   ├── ITcpMessageHandler.cs
-│   ├── TcpMessageHandler.cs
-│   ├── ISessionManager.cs
-│   └── SessionManager.cs
-├── Handlers/
-│   ├── LoginHandler.cs
-│   ├── ProductHandler.cs
-│   ├── OrderHandler.cs
-│   ├── InventoryHandler.cs
-│   └── ReportHandler.cs
 ├── Models/
-│   ├── TcpSettings.cs
-│   └── UserSession.cs
-└── Extensions/
-    └── ServiceExtensions.cs
+│   ├── TcpSettings.cs            # TCP config (Host, Port)
+│   └── UserSession.cs            # Session model
+├── Network/                      # NETWORK LAYER
+│   ├── TcpServer.cs              # TCP Listener + Client handling
+│   └── TcpMessageRouter.cs       # Route messages to Business Services
+└── Business/                     # BUSINESS LAYER
+    ├── Interfaces/
+    │   ├── ISessionManager.cs
+    │   ├── IAuthService.cs
+    │   ├── IProductService.cs
+    │   ├── IOrderService.cs
+    │   └── ICategoryService.cs
+    └── Services/
+        ├── SessionManager.cs     # Session storage & validation
+        ├── AuthService.cs        # LOGIN, REGISTER, LOGOUT
+        ├── ProductService.cs     # Product operations
+        ├── OrderService.cs       # Order operations
+        └── CategoryService.cs    # Category operations
 ```
+
+**Lý do đơn giản hóa:**
+
+- ❌ Bỏ Handlers/ folder - logic tập trung trong các Service files
+- ❌ Bỏ Extensions/ folder - DI setup ngay trong Program.cs
+- ✅ Tách Network layer (TCP) và Business layer (Logic)
+- ✅ Mỗi Service file nhỏ (200-300 LOC), dễ đọc và maintain
+- ✅ Dùng lại Repositories từ MS2.DataAccess (không duplicate)
 
 **NuGet Packages:**
 
@@ -225,11 +241,16 @@ MS2.ServerApp/                    # Console App .NET 8
 
 **Todo List:**
 
-- [ ] Tạo project `MS2.ServerApp` (Console App .NET 8)
-- [ ] Reference `MS2.Models` và `MS2.DataAccess`
-- [ ] Cài đặt tất cả packages
-- [ ] Setup `appsettings.json` với TCP settings và JWT settings
-- [ ] Add project vào solution
+- [✅] Tạo project `MS2.ServerApp` (Console App .NET 8)
+- [✅] Reference `MS2.Models` và `MS2.DataAccess`
+- [✅] Cài đặt tất cả packages (6 packages, không có JWT)
+- [✅] Setup `appsettings.json` với TcpSettings và ConnectionString
+- [✅] Add project vào solution
+- [✅] Tạo folder structure (Models/, Network/, Business/)
+- [✅] Tạo Models/TcpSettings.cs
+- [✅] Tạo Models/UserSession.cs
+
+**✅ Task B1.1 HOÀN THÀNH!**
 
 **CLI Commands:**
 

@@ -96,7 +96,8 @@ Desktop App (WPF)
 | Communication   | System.Net.Sockets (TCP/IP)    |
 | Data Access     | Entity Framework Core          |
 | Database        | SQL Server                     |
-| Security        | JWT Bearer Authentication      |
+| Security (Web)  | JWT Bearer Authentication      |
+| Security (TCP)  | Session-based (SessionId)      |
 
 ---
 
@@ -232,7 +233,35 @@ minimart-smart-system/
 │ └── SwaggerExtensions.cs
 │
 │
-├── MS2.BlazorApp/ # Flow A: Blazor Web App
+├── MS2.ServerApp/ # Flow B: TCP Server (Console App)
+│ ├── MS2.ServerApp.csproj
+│ ├── Program.cs
+│ ├── appsettings.json
+│ │
+│ ├── Models/
+│ │ ├── TcpSettings.cs
+│ │ └── UserSession.cs
+│ │
+│ ├── Network/ # TCP Communication Layer
+│ │ ├── TcpServer.cs
+│ │ └── TcpMessageRouter.cs
+│ │
+│ └── Business/ # Business Logic Layer
+│ ├── Interfaces/
+│ │ ├── ISessionManager.cs
+│ │ ├── IAuthService.cs
+│ │ ├── IProductService.cs
+│ │ ├── IOrderService.cs
+│ │ └── ICategoryService.cs
+│ └── Services/
+│ ├── SessionManager.cs
+│ ├── AuthService.cs
+│ ├── ProductService.cs
+│ ├── OrderService.cs
+│ └── CategoryService.cs
+│
+│
+├── MS2.BlazorApp/ # Flow A: Blazor Web App (FUTURE)
 │ ├── MS2.BlazorApp.csproj
 │ ├── Program.cs
 │ ├── App.razor
