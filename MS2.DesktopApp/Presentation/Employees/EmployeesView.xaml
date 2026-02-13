@@ -4,23 +4,55 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="600" d:DesignWidth="1000">
     <Grid>
-        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-            <TextBlock Text="QUẢN LÝ NHÂN VIÊN" 
-                       FontSize="24" 
-                       FontWeight="Bold" 
-                       TextAlignment="Center"
-                       Margin="0,0,0,20"/>
-            <TextBlock Text="Chỉ Admin mới có quyền truy cập" 
-                       FontSize="16" 
-                       TextAlignment="Center"
-                       Foreground="Gray"
-                       Margin="0,0,0,10"/>
-            <TextBlock Text="Đang phát triển..." 
-                       FontSize="14" 
-                       TextAlignment="Center"
-                       Foreground="LightGray"/>
-        </StackPanel>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- TITLE -->
+        <Border Grid.Row="0" BorderBrush="Gray" BorderThickness="0,0,0,1" Padding="10">
+            <Grid>
+                <TextBlock Text="QUẢN LÝ NHÂN VIÊN" 
+                           FontSize="18" 
+                           FontWeight="Bold"/>
+
+                <Button Content="TẢI LẠI" 
+                        Width="100"
+                        Height="30"
+                        HorizontalAlignment="Right"
+                        Command="{Binding LoadEmployeesCommand}"/>
+            </Grid>
+        </Border>
+
+        <!-- EMPLOYEE LIST -->
+        <DataGrid Grid.Row="1"
+                  ItemsSource="{Binding Employees}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  Margin="10">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50"/>
+                <DataGridTextColumn Header="Họ tên" Binding="{Binding FullName}" Width="*"/>
+                <DataGridTextColumn Header="Username" Binding="{Binding Username}" Width="150"/>
+                <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="200"/>
+                <DataGridTextColumn Header="Điện thoại" Binding="{Binding Phone}" Width="120"/>
+                <DataGridTextColumn Header="Vai trò" Binding="{Binding Role}" Width="100"/>
+                <DataGridCheckBoxColumn Header="Active" Binding="{Binding IsActive}" Width="60"/>
+                <DataGridTextColumn Header="Ngày tạo" Binding="{Binding CreatedAt, StringFormat='dd/MM/yyyy'}" Width="100"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- STATUS BAR -->
+        <Border Grid.Row="2" 
+                BorderBrush="Gray" 
+                BorderThickness="0,1,0,0" 
+                Padding="10,5"
+                Background="LightGray">
+            <TextBlock Text="{Binding StatusMessage}" 
+                       FontSize="12"/>
+        </Border>
     </Grid>
 </UserControl>

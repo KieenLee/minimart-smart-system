@@ -41,25 +41,33 @@ public partial class MainViewModel : ObservableObject
     [RelayCommand]
     private void NavigateToPos()
     {
-        CurrentView = new PosView();
+        var posViewModel = new PosViewModel(_tcpClient, CurrentUser);
+        var posView = new PosView { DataContext = posViewModel };
+        CurrentView = posView;
     }
 
     [RelayCommand]
     private void NavigateToInventory()
     {
-        CurrentView = new InventoryView();
+        var inventoryViewModel = new InventoryViewModel(_tcpClient, CurrentUser);
+        var inventoryView = new InventoryView { DataContext = inventoryViewModel };
+        CurrentView = inventoryView;
     }
 
     [RelayCommand]
     private void NavigateToReports()
     {
-        CurrentView = new ReportsView();
+        var reportsViewModel = new ReportsViewModel(_tcpClient, CurrentUser);
+        var reportsView = new ReportsView { DataContext = reportsViewModel };
+        CurrentView = reportsView;
     }
 
     [RelayCommand]
     private void NavigateToEmployees()
     {
-        CurrentView = new EmployeesView();
+        var employeesViewModel = new EmployeesViewModel(_tcpClient, CurrentUser);
+        var employeesView = new EmployeesView { DataContext = employeesViewModel };
+        CurrentView = employeesView;
     }
 
     [RelayCommand]

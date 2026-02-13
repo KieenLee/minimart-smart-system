@@ -1,6 +1,6 @@
 # KẾ HOẠCH TRIỂN KHAI DỰ ÁN MS2 - MINIMART SMART SYSTEM
 
-**Phiên bản:** 2.4  
+**Phiên bản:** 2.5  
 **Ngày cập nhật:** 13/02/2026  
 **Kiến trúc:** Dual-Path Architecture (Web MVC + TCP Network)
 
@@ -515,33 +515,48 @@ dotnet add MS2.ServerApp package BCrypt.Net-Next
 
 **🔄 Chờ testing:**
 
-- ⏸️ Task B1.7: Test TCP Server (95% complete, chỉ còn testing)
+- ⏸️ Task B1.7: Test TCP Server (95% complete, chỉ còn end-to-end testing)
 
 ---
 
-## 📊 Tiến độ Phase B2 - WPF Desktop App (40% hoàn thành)
+## 📊 Tiến độ Phase B2 - WPF Desktop App (✅ 100% HOÀN THÀNH)
 
-**✅ Đã hoàn thành:**
+**✅ Đã hoàn thành tất cả 8 tasks:**
 
-- ✅ Task B2.1: Setup WPF Project (cấu trúc đơn giản hóa)
-- ✅ Task B2.2: TCP Client Service implementation
-- ✅ Task B2.3: Login Window với MVVM pattern
+- ✅ Task B2.1: Setup WPF Project (cấu trúc đơn giản hóa, simplified UI)
+- ✅ Task B2.2: TCP Client Service (đọc config từ appsettings.json)
+- ✅ Task B2.3: Login Window với MVVM pattern (no decorative UI)
+- ✅ Task B2.4: Main Window với Navigation Menu (4 views)
+- ✅ Task B2.5: POS View - Point of Sale (search, cart, checkout)
+- ✅ Task B2.6: Inventory View - Quản lý kho (update price/stock)
+- ✅ Task B2.7: Reports View - Báo cáo (sales by date range)
+- ✅ Task B2.8: Employees View - Quản lý nhân viên (list employees, Admin only)
 
-**🔄 Đang làm:**
+**Code Statistics:**
 
-- ⏸️ Task B2.4: Main Window với Navigation Menu
+- PosViewModel: ~300 LOC (search, cart management, checkout)
+- InventoryViewModel: ~250 LOC (product editing, price/stock updates)
+- ReportsViewModel: ~100 LOC (sales report by date range)
+- EmployeesViewModel: ~70 LOC (employee list display)
+- Total ViewModels: ~800+ LOC
+- Total Views (XAML): ~520+ LOC
+- CartItemModel: Local cart model for POS
+- MainViewModel: Navigation updated for all 4 views
 
-**⏭️ Chưa làm:**
+**Bug Fixes Applied:**
 
-- ⏸️ Task B2.5: POS View (Point of Sale)
-- ⏸️ Task B2.6: Inventory View
-- ⏸️ Task B2.7: Reports View
-- ⏸️ Task B2.8: Employee Management View (Admin only)
+- Fixed TcpClientService config (now reads from appsettings.json)
+- Added Microsoft.Extensions.Configuration.Binder package
+- Fixed SalesReportDto structure mismatch (single object vs list)
+- Fixed ReportsView DataGrid binding (Orders instead of SalesReports)
+- All builds successful with zero errors
 
-**⏭️ Chưa làm:**
+**⏭️ Next Step:**
 
-- ⏸️ Task B1.6: Setup Program.cs với DI Container
-- ⏸️ Task B1.7: Integration testing
+- Testing: End-to-end testing với TCP Server
+- Database: Ensure sample data exists for testing
+- Performance: Test with large datasets
+- User acceptance: Gather feedback for UI improvements
 
 ## ✅ Checkpoint Phase B1 (Khi hoàn thành 100%)
 
@@ -598,19 +613,21 @@ MS2.DesktopApp/                      # WPF .NET 8
 
 **NuGet Packages:**
 
-- ✅ `CommunityToolkit.Mvvm 8.4.0` (MVVM pattern)
+- ✅ `CommunityToolkit.Mvvm 8.4.0` (MVVM pattern với source generators)
 - ✅ `Microsoft.Extensions.DependencyInjection 10.0.3`
 - ✅ `Microsoft.Extensions.Configuration 10.0.3`
 - ✅ `Microsoft.Extensions.Configuration.Json 10.0.3`
+- ✅ `Microsoft.Extensions.Configuration.Binder 10.0.3` (appsettings.json binding)
 - ✅ `System.Text.Json 10.0.3`
 
 **Đã thực hiện:**
 
 - ✅ Tạo project `MS2.DesktopApp` (WPF .NET 8)
 - ✅ Reference `MS2.Models`
-- ✅ Cài đặt tất cả packages (5 packages)
-- ✅ Tạo folders: DTOs, Export, Models, Network, Presentation (với subfolders)
+- ✅ Cài đặt tất cả packages (6 packages)
+- ✅ Tạo folders: DTOs, Export, Models, Network, Presentation (với subfolders POS, Inventory, Reports, Employees)
 - ✅ Add project vào solution
+- ✅ Đơn giản hóa cấu trúc: Xóa Converters (không cần decorative UI)
 - ✅ Build thành công
 
 ---
@@ -619,7 +636,7 @@ MS2.DesktopApp/                      # WPF .NET 8
 
 **Files đã tạo:**
 
-1. ✅ **TcpClientSettings.cs** - Config model
+1. ✅ **TcpClientSettings.cs** - Config model (Host, Port, ConnectTimeoutMs, ReadTimeoutMs)
 2. ✅ **TcpClientService.cs** - TCP Client với các methods:
    - `ConnectAsync()` - Kết nối tới server
    - `SendMessageAsync(action, data, sessionId)` - Gửi message và nhận response
@@ -635,6 +652,14 @@ MS2.DesktopApp/                      # WPF .NET 8
 - ✅ Exception handling
 - ✅ Console logging
 - ✅ Dispose pattern
+- ✅ **Đọc config từ appsettings.json** (Host: 127.0.0.1, Port: 5000)
+
+**Bug Fix Applied:**
+
+- ✅ Fixed: TcpClientService constructor now receives TcpClientSettings from DI
+- ✅ Added: Microsoft.Extensions.Configuration.Binder package
+- ✅ Updated: App.xaml.cs setup IConfiguration and bind TcpClient section
+- ✅ Added: appsettings.json copy to output directory
 
 ---
 
@@ -642,12 +667,12 @@ MS2.DesktopApp/                      # WPF .NET 8
 
 **Files đã tạo:**
 
-1. ✅ **LoginWindow.xaml** - UI đăng nhập với Material Design style
+1. ✅ **LoginWindow.xaml** - UI đăng nhập (simplified, no decorative elements)
    - Username TextBox
    - Password PasswordBox
    - Login Button
    - Error Message display
-   - Loading ProgressBar
+   - Loading ProgressBar (simple)
 2. ✅ **LoginWindow.xaml.cs** - Code-behind xử lý PasswordBox binding
 
 3. ✅ **LoginViewModel.cs** - ViewModel với CommunityToolkit.Mvvm
@@ -656,17 +681,13 @@ MS2.DesktopApp/                      # WPF .NET 8
    - Validation logic
    - TCP connection và authentication
    - SessionId management
-4. ✅ **BoolToVisibilityConverter.cs** - Convert bool → Visibility
-5. ✅ **StringToVisibilityConverter.cs** - Convert string → Visibility
-
-**App.xaml updates:**
-
-- ✅ Register 2 Converters vào Resources
-- ✅ Thêm converters namespace
 
 **App.xaml.cs updates:**
 
 - ✅ Setup DI Container (ServiceCollection)
+- ✅ Setup IConfiguration với ConfigurationBuilder
+- ✅ Bind TcpClient section to TcpClientSettings
+- ✅ Register TcpClientSettings (Singleton)
 - ✅ Register TcpClientService (Singleton)
 - ✅ Register LoginViewModel (Transient)
 - ✅ Register LoginWindow (Transient)
@@ -674,176 +695,231 @@ MS2.DesktopApp/                      # WPF .NET 8
 
 **Chức năng:**
 
-- ✅ MVVM pattern hoàn chỉnh
+- ✅ MVVM pattern hoàn chỉnh với CommunityToolkit source generators
 - ✅ Username/Password validation
-- ✅ Connect tới TCP Server (127.0.0.1:5000)
+- ✅ Connect tới TCP Server (đọc từ appsettings.json)
 - ✅ Send LOGIN request với TcpActions.LOGIN
 - ✅ Parse LoginResponseDto
-- ✅ Lưu SessionId vào TcpClientService
+- ✅ Lưu SessionId và CurrentUser vào TcpClientService
 - ✅ Show MainWindow sau khi login thành công
 - ✅ Error handling và display
-- ✅ Loading indicator
+- ✅ Loading indicator (simple, no decorative UI)
 
 ---
 
-## ⏸️ Task B2.4: Implement Main Window - CHỜ LÀM
+## ✅ Task B2.4: Implement Main Window - HOÀN THÀNH
 
-**Todo List:**
+**Files đã tạo:**
 
-- [ ] Tạo MainWindow.xaml với Grid layout
-- [ ] Navigation menu (POS, Inventory, Reports, Employees, Logout)
-- [ ] ContentControl để hiển thị các Views
-- [ ] MainViewModel với navigation commands
-- [ ] User info display
-- [ ] Logout functionality
+1. ✅ **MainWindow.xaml** - UI với navigation menu
+   - 2-column Grid: Navigation menu (left) + Content area (right)
+   - 4 navigation buttons: POS, Quản lý kho, Báo cáo, Nhân viên
+   - User info display (Username, Role)
+   - Logout button
+   - ContentControl để hiển thị các Views
+   - Simple styling, no decorative elements
 
-**CLI Commands:**
+2. ✅ **MainWindow.xaml.cs** - Code-behind minimal
 
-```bash
-dotnet new wpf -n MS2.DesktopApp -f net8.0
-dotnet sln add MS2.DesktopApp/MS2.DesktopApp.csproj
-dotnet add MS2.DesktopApp reference MS2.Models
-dotnet add MS2.DesktopApp package CommunityToolkit.Mvvm
-dotnet add MS2.DesktopApp package Microsoft.Extensions.DependencyInjection
-dotnet add MS2.DesktopApp package Microsoft.Extensions.Configuration
-dotnet add MS2.DesktopApp package Microsoft.Extensions.Configuration.Json
-dotnet add MS2.DesktopApp package System.Text.Json
-```
+3. ✅ **MainViewModel.cs** - ViewModel với navigation logic
+   - Properties: CurrentView, CurrentUser, Username, UserRole
+   - Commands: NavigateToPos, NavigateToInventory, NavigateToReports, NavigateToEmployees, LogoutCommand
+   - Visibility bindings cho Admin-only features
+   - **Updated**: All navigation methods now create ViewModels with proper DataContext
 
----
+**Chức năng:**
 
-## Task B2.2: Setup Dependency Injection Container
-
-**File:** `DependencyInjection/ServiceConfiguration.cs`
-
-**Services cần register:**
-
-**DataAccess Layer:**
-
-- [ ] `INetworkService` → `TcpNetworkService` (Singleton)
-- [ ] `TcpAuthRepository` (Transient)
-- [ ] `TcpProductRepository` (Transient)
-- [ ] `TcpOrderRepository` (Transient)
-
-**Business Layer:**
-
-- [ ] `IAuthService` → `AuthService` (Singleton)
-- [ ] `IProductService` → `ProductService` (Singleton)
-- [ ] `IOrderService` → `OrderService` (Singleton)
-- [ ] `IDialogService` → `DialogService` (Singleton)
-
-**Presentation Layer:**
-
-- [ ] `LoginViewModel` (Transient)
-- [ ] `MainViewModel` (Singleton)
-- [ ] `POSViewModel` (Transient)
-- [ ] `InventoryViewModel` (Transient)
-- [ ] `ReportsViewModel` (Transient)
-- [ ] `EmployeeManagementViewModel` (Transient)
-
-**Views:**
-
-- [ ] `LoginWindow` (Transient)
-- [ ] `MainWindow` (Singleton)
-
-**Todo List:**
-
-- [ ] Tạo `ServiceConfiguration` static class
-- [ ] Method `ConfigureServices(IServiceCollection services)`
-- [ ] Register tất cả services theo lifetime phù hợp
-- [ ] Configure trong `App.xaml.cs` startup
-
-**App.xaml.cs:**
-
-```csharp
-public partial class App : Application
-{
-    private ServiceProvider _serviceProvider;
-
-    protected override void OnStartup(StartupEventArgs e)
-    {
-        var services = new ServiceCollection();
-        ServiceConfiguration.ConfigureServices(services);
-        _serviceProvider = services.BuildServiceProvider();
-
-        var loginWindow = _serviceProvider.GetRequiredService<LoginWindow>();
-        loginWindow.Show();
-    }
-}
-```
+- ✅ Navigation menu với 4 main views
+- ✅ ContentControl binding cho dynamic view loading
+- ✅ User info display (Username và Role)
+- ✅ Logout functionality (close MainWindow, show LoginWindow)
+- ✅ Admin-only visibility cho Employees button
+- ✅ Simple UI design per user request
 
 ---
 
-## Task B2.3: Implement DataAccess Layer - TCP Network Service
+## ✅ Task B2.5: Implement POS View - HOÀN THÀNH
 
-**File:** `DataAccess/Network/TcpNetworkService.cs`
+**Files đã tạo:**
 
-**Interface:** `INetworkService`
+1. ✅ **POS/PosView.xaml** (~200 lines XAML)
+   - 3-row layout: Search bar, Main content (2:1 split), Status bar
+   - Left: Products ListBox với Add to Cart buttons
+   - Right: Cart ListBox với Remove buttons, Total display, Clear/Checkout buttons
+   - Product details: Name, Category, Stock, Price
+   - Cart items: Quantity x Price = Subtotal
+   - Status bar: Gray background với status messages
 
-- `Task<bool> ConnectAsync()`
-- `Task DisconnectAsync()`
-- `Task<TcpResponse> SendMessageAsync(string action, object data, string token)`
-- `bool IsConnected { get; }`
+2. ✅ **CartItemModel.cs** - Local cart model
+   - Properties: ProductId, ProductName, UnitPrice, Quantity, Subtotal (calculated)
+   - Used by PosViewModel for shopping cart
 
-**Implementation:**
+3. ✅ **Models/PosViewModel.cs** (~300 LOC)
+   - Properties: SearchKeyword, Products, CartItems, TotalAmount, IsLoading, StatusMessage
+   - Commands:
+     - LoadProductsCommand: Load all active products (IsActive && Stock > 0)
+     - SearchProductsCommand: Search by keyword
+     - AddToCartCommand: Add to cart (increment if exists)
+     - RemoveFromCartCommand: Remove item
+     - ClearCartCommand: Clear all items
+     - CheckoutCommand: Create order via TCP (CREATE_ORDER), clear cart, reload products
+   - Features: Auto-calculate total, confirmation dialogs, status messages
 
-**Properties:**
+**Chức năng:**
 
-- `TcpClient _client`
-- `NetworkStream _stream`
-- `string _host = "127.0.0.1"`
-- `int _port = 5000`
-- `SemaphoreSlim _sendLock` (thread-safe sending)
-
-**Methods:**
-
-- `ConnectAsync()` - Connect tới TCP Server
-- `DisconnectAsync()` - Close connection
-- `SendMessageAsync()` - Send message và receive response
-- `ReadLengthPrefixedMessage()` - Đọc message theo protocol
-- `WriteLengthPrefixedMessage()` - Ghi message theo protocol
-
-**Todo List:**
-
-- [ ] Implement `INetworkService` interface
-- [ ] Implement `TcpNetworkService` class
-- [ ] Handle connection errors (auto-reconnect nếu cần)
-- [ ] Implement thread-safe message sending
-- [ ] Implement length-prefix protocol (4 bytes length + message)
-- [ ] Add error handling và logging
+- ✅ Load products from TCP Server (GET_PRODUCTS)
+- ✅ Search products by keyword
+- ✅ Shopping cart management (add, remove, clear)
+- ✅ Total calculation
+- ✅ Checkout with order creation
+- ✅ Stock validation
+- ✅ Success/error messages
 
 ---
 
-## Task B2.4: Implement Business Layer - Services
+## ✅ Task B2.6: Implement Inventory View - HOÀN THÀNH
 
-**IAuthService:**
+**Files đã tạo:**
 
-```
-Methods:
-- Task<bool> LoginAsync(string username, string password)
-- void Logout()
-- string GetSessionId()
-- User GetCurrentUser()
-- bool IsAuthenticated { get; }
-```
+1. ✅ **Inventory/InventoryView.xaml** (~130 lines XAML)
+   - 3-row layout: Search bar, Main content (2:1 split), Status bar
+   - Left: DataGrid with 6 columns (ID, Name, Category, Price, Stock, Barcode)
+   - Right: Edit panel với NewPrice/NewStock inputs and update buttons
+   - Row selection triggers SelectedProduct update
 
-**IProductService:**
+2. ✅ **Models/InventoryViewModel.cs** (~250 LOC)
+   - Properties: Products, SelectedProduct, SearchKeyword, NewPrice, NewStock, IsLoading, StatusMessage
+   - Commands:
+     - LoadProductsCommand: Load all products (including inactive)
+     - SearchProductsCommand: Search by keyword
+     - SelectProductCommand: Select product for editing (auto-fill NewPrice/NewStock)
+     - UpdatePriceCommand: Update price via TCP (UPDATE_PRODUCT_PRICE)
+     - UpdateStockCommand: Update stock via TCP (UPDATE_PRODUCT_STOCK)
+   - Features: DataGrid selection binding, confirmation dialogs, auto-reload after updates
 
-```
-Methods:
-- Task<List<Product>> GetAllProductsAsync()
-- Task<List<Product>> SearchProductsAsync(string keyword)
+**Chức năng:**
+
+- ✅ Load all products (including inactive)
+- ✅ Search products
+- ✅ Select product from DataGrid
+- ✅ Update product price (Admin only)
+- ✅ Update product stock
+- ✅ Validation (price > 0, stock >= 0)
+- ✅ Confirmation dialogs
+- ✅ Auto-reload after updates
+
+---
+
+## ✅ Task B2.7: Implement Reports View - HOÀN THÀNH
+
+**Files đã tạo:**
+
+1. ✅ **Reports/ReportsView.xaml** (~130 lines XAML)
+   - 4-row layout: Title, Date filter, Report data, Status bar
+   - Date filter: FromDate và ToDate DatePickers với "Xem báo cáo" button
+   - Summary cards: TotalRevenue (Green), TotalOrders (Blue), AverageOrderValue (Orange)
+   - DataGrid: 6 columns (Order ID, Date, Customer, Employee, Total, Status)
+
+2. ✅ **Models/ReportsViewModel.cs** (~100 LOC)
+   - Properties: FromDate, ToDate, Orders, TotalRevenue, TotalOrders, AverageOrderValue, IsLoading, StatusMessage
+   - Commands:
+     - LoadReportCommand: Load sales report by date range (GET_SALES_REPORT)
+   - Features: DatePicker integration, summary statistics, order list display
+   - **Bug Fixed**: Changed from List<SalesReportDto> to single SalesReportDto with Orders list
+
+**Chức năng:**
+
+- ✅ Date range selection (FromDate/ToDate)
+- ✅ Load sales report from TCP Server
+- ✅ Display summary statistics (Revenue, Orders, Average)
+- ✅ Display order details in DataGrid
+- ✅ Color-coded summary cards
+- ✅ Date validation
+- ✅ Status messages
+
+---
+
+## ✅ Task B2.8: Implement Employees View - HOÀN THÀNH
+
+**Files đã tạo:**
+
+1. ✅ **Employees/EmployeesView.xaml** (~60 lines XAML)
+   - 3-row layout: Title with reload button, DataGrid, Status bar
+   - DataGrid: 8 columns (ID, FullName, Username, Email, Phone, Role, IsActive, CreatedAt)
+   - Simple read-only display
+   - Admin-only visibility (MainViewModel binding)
+
+2. ✅ **Models/EmployeesViewModel.cs** (~70 LOC)
+   - Properties: Employees, IsLoading, StatusMessage
+   - Commands:
+     - LoadEmployeesCommand: Load all employees (GET_EMPLOYEES)
+   - Features: Auto-load on initialization, simple display-only
+
+**Chức năng:**
+
+- ✅ Load all employees from TCP Server
+- ✅ Display in DataGrid with 8 columns
+- ✅ Auto-load on view open
+- ✅ Reload button
+- ✅ Admin-only access (controlled by MainViewModel)
+- ✅ Simple display-only (no editing yet)
+
+---
+
+## ✅ Phase B2 Summary - WPF Desktop App HOÀN THÀNH
+
+**Total Implementation:**
+
+- ✅ 8 ViewModels created (~800+ LOC total)
+  - LoginViewModel, MainViewModel
+  - PosViewModel (~300 LOC)
+  - InventoryViewModel (~250 LOC)
+  - ReportsViewModel (~100 LOC)
+  - EmployeesViewModel (~70 LOC)
+- ✅ 8 Views created (~520+ LOC XAML total)
+  - LoginWindow, MainWindow
+  - PosView (~200 lines)
+  - InventoryView (~130 lines)
+  - ReportsView (~130 lines)
+  - EmployeesView (~60 lines)
+- ✅ 1 Local Model: CartItemModel
+- ✅ TcpClientService with appsettings.json config
+- ✅ DI Container setup với Microsoft.Extensions.DependencyInjection
+- ✅ All builds successful with zero errors
+
+**Bug Fixes Applied:**
+
+1. TcpClientService config issue - Now reads from appsettings.json
+2. SalesReportDto structure mismatch - Fixed binding to single report object
+3. ReportsView DataGrid binding - Changed from SalesReports to Orders
+
+**Testing Checklist:**
+
+- [ ] Start TCP Server (MS2.ServerApp)
+- [ ] Start Desktop App (MS2.DesktopApp)
+- [ ] Test Login (admin/admin123)
+- [ ] Test POS: search, cart, checkout
+- [ ] Test Inventory: update price/stock
+- [ ] Test Reports: date range, summary, orders
+- [ ] Test Employees: list display, reload
+
+**⏭️ Next Phase:** Testing và Phase A (Web App)
+
 - Task<Product> GetByBarcodeAsync(string barcode)
 - Task<bool> UpdatePriceAsync(int productId, decimal newPrice)
 - Task<bool> UpdateStockAsync(int productId, int newStock)
+
 ```
 
 **IOrderService:**
 
 ```
+
 Methods:
+
 - Task<Order> CreateOrderAsync(CreateOrderDto orderDto)
 - Task<List<Order>> GetSalesReportAsync(DateTime from, DateTime to)
+
 ```
 
 **Todo List:**
@@ -886,15 +962,17 @@ Methods:
 **LoginCommand Logic:**
 
 ```
+
 1. Validate username/password not empty
 2. Set IsLoading = true
-3. Call _authService.LoginAsync(username, password)
+3. Call \_authService.LoginAsync(username, password)
 4. If success:
    - Close LoginWindow
    - Open MainWindow
 5. If fail:
    - Show ErrorMessage
 6. Set IsLoading = false
+
 ```
 
 **Todo List:**
@@ -914,19 +992,21 @@ Methods:
 **Layout:**
 
 ```
+
 ┌──────────────────────────────────────────┐
-│  [Logo] MS2 SYSTEM    [User: Admin] [X]  │
+│ [Logo] MS2 SYSTEM [User: Admin] [X] │
 ├────────┬─────────────────────────────────┤
-│        │                                  │
-│ Menu   │                                  │
-│        │        Content Area              │
-│ [POS]  │      (ContentControl)            │
-│ [Kho]  │                                  │
-│ [BC]   │                                  │
-│ [NV]   │                                  │
-│        │                                  │
-│ [Exit] │                                  │
+│ │ │
+│ Menu │ │
+│ │ Content Area │
+│ [POS] │ (ContentControl) │
+│ [Kho] │ │
+│ [BC] │ │
+│ [NV] │ │
+│ │ │
+│ [Exit] │ │
 └────────┴─────────────────────────────────┘
+
 ```
 
 **Navigation Menu:**
@@ -971,23 +1051,25 @@ Methods:
 **UI Layout:**
 
 ```
+
 ┌──────────────────────────────────────────────────┐
-│  [Barcode: ________________] [Tìm: __________]   │
+│ [Barcode: ________________] [Tìm: __________] │
 ├────────────────────────┬─────────────────────────┤
-│                        │  GIỎ HÀNG               │
-│  DANH SÁCH SẢN PHẨM    │  ┌─────────────────┐   │
-│  ┌──────────────────┐  │  │ Coca 330ml      │   │
-│  │ Coca Cola        │  │  │ SL: 2  50,000đ  │   │
-│  │ 25,000đ          │  │  └─────────────────┘   │
-│  │ [Thêm]           │  │  ┌─────────────────┐   │
-│  └──────────────────┘  │  │ Snack Oishi     │   │
-│                        │  │ SL: 1  15,000đ  │   │
-│                        │  │                 │   │
-│                        │  └─────────────────┘   │
-│                        │                         │
-│                        │  TỔNG: 115,000đ         │
-│                        │  [Xóa] [Thanh toán]    │
+│ │ GIỎ HÀNG │
+│ DANH SÁCH SẢN PHẨM │ ┌─────────────────┐ │
+│ ┌──────────────────┐ │ │ Coca 330ml │ │
+│ │ Coca Cola │ │ │ SL: 2 50,000đ │ │
+│ │ 25,000đ │ │ └─────────────────┘ │
+│ │ [Thêm] │ │ ┌─────────────────┐ │
+│ └──────────────────┘ │ │ Snack Oishi │ │
+│ │ │ SL: 1 15,000đ │ │
+│ │ │ │ │
+│ │ └─────────────────┘ │
+│ │ │
+│ │ TỔNG: 115,000đ │
+│ │ [Xóa] [Thanh toán] │
 └────────────────────────┴─────────────────────────┘
+
 ```
 
 **ViewModel:** `POSViewModel.cs`
@@ -1010,10 +1092,11 @@ Methods:
 **CheckoutCommand Logic:**
 
 ```
+
 1. Validate cart not empty
 2. Show confirmation dialog
 3. Create CreateOrderDto với cart items
-4. Call _orderService.CreateOrderAsync()
+4. Call \_orderService.CreateOrderAsync()
 5. If success:
    - Show success message
    - Print receipt (optional)
@@ -1021,7 +1104,8 @@ Methods:
    - Reload products list (cập nhật stock)
 6. If fail:
    - Show error message
-```
+
+````
 
 **Todo List:**
 
@@ -1265,7 +1349,7 @@ nssm install MS2TcpServer "C:\MS2\MS2.ServerApp.exe"
 nssm set MS2TcpServer AppDirectory "C:\MS2"
 nssm set MS2TcpServer Start SERVICE_AUTO_START
 nssm start MS2TcpServer
-```
+````
 
 **Option 2: Console App với Task Scheduler**
 

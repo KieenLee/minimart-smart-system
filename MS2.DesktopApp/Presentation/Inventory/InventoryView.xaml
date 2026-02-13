@@ -4,18 +4,121 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="600" d:DesignWidth="1000">
     <Grid>
-        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-            <TextBlock Text="QUẢN LÝ KHO HÀNG" 
-                       FontSize="24" 
-                       FontWeight="Bold" 
-                       TextAlignment="Center"
-                       Margin="0,0,0,20"/>
-            <TextBlock Text="Đang phát triển..." 
-                       FontSize="16" 
-                       TextAlignment="Center"
-                       Foreground="Gray"/>
-        </StackPanel>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- SEARCH BAR -->
+        <Border Grid.Row="0" BorderBrush="Gray" BorderThickness="0,0,0,1" Padding="10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBox Grid.Column="0" 
+                         Text="{Binding SearchKeyword, UpdateSourceTrigger=PropertyChanged}"
+                         FontSize="14"
+                         Padding="5"/>
+
+                <Button Grid.Column="1" 
+                        Content="TÌM KIẾM" 
+                        Width="100"
+                        Height="30"
+                        Margin="10,0,0,0"
+                        Command="{Binding SearchProductsCommand}"/>
+
+                <Button Grid.Column="2" 
+                        Content="TẢI LẠI" 
+                        Width="100"
+                        Height="30"
+                        Margin="10,0,0,0"
+                        Command="{Binding LoadProductsCommand}"/>
+            </Grid>
+        </Border>
+
+        <!-- MAIN CONTENT -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- PRODUCTS LIST -->
+            <Border Grid.Column="0" BorderBrush="Gray" BorderThickness="0,0,1,0" Padding="10">
+                <DataGrid ItemsSource="{Binding Products}"
+                          SelectedItem="{Binding SelectedProduct}"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          SelectionMode="Single">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50"/>
+                        <DataGridTextColumn Header="Tên sản phẩm" Binding="{Binding Name}" Width="*"/>
+                        <DataGridTextColumn Header="Danh mục" Binding="{Binding CategoryName}" Width="120"/>
+                        <DataGridTextColumn Header="Giá" Binding="{Binding Price, StringFormat='{}{0:N0}đ'}" Width="100"/>
+                        <DataGridTextColumn Header="Tồn kho" Binding="{Binding Stock}" Width="80"/>
+                        <DataGridTextColumn Header="Barcode" Binding="{Binding Barcode}" Width="120"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+
+            <!-- EDIT PANEL -->
+            <Border Grid.Column="1" Padding="10">
+                <StackPanel>
+                    <TextBlock Text="CHỈNH SỬA SẢN PHẨM" 
+                               FontSize="16" 
+                               FontWeight="Bold"
+                               Margin="0,0,0,20"/>
+
+                    <TextBlock Text="Sản phẩm đã chọn:" 
+                               FontSize="12" 
+                               Margin="0,0,0,5"/>
+                    <TextBlock Text="{Binding SelectedProduct.Name}" 
+                               FontSize="14" 
+                               FontWeight="Bold"
+                               Margin="0,0,0,20"/>
+
+                    <TextBlock Text="Giá mới:" 
+                               FontSize="12" 
+                               Margin="0,0,0,5"/>
+                    <TextBox Text="{Binding NewPrice}" 
+                             FontSize="14"
+                             Padding="5"
+                             Margin="0,0,0,10"/>
+
+                    <Button Content="CẬP NHẬT GIÁ" 
+                            Height="35"
+                            Margin="0,0,0,20"
+                            Command="{Binding UpdatePriceCommand}"/>
+
+                    <TextBlock Text="Tồn kho mới:" 
+                               FontSize="12" 
+                               Margin="0,0,0,5"/>
+                    <TextBox Text="{Binding NewStock}" 
+                             FontSize="14"
+                             Padding="5"
+                             Margin="0,0,0,10"/>
+
+                    <Button Content="CẬP NHẬT TỒN KHO" 
+                            Height="35"
+                            Command="{Binding UpdateStockCommand}"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- STATUS BAR -->
+        <Border Grid.Row="2" 
+                BorderBrush="Gray" 
+                BorderThickness="0,1,0,0" 
+                Padding="10,5"
+                Background="LightGray">
+            <TextBlock Text="{Binding StatusMessage}" 
+                       FontSize="12"/>
+        </Border>
     </Grid>
 </UserControl>
