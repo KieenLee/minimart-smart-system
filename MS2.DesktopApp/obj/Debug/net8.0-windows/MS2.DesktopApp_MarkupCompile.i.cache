@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NET;NET8_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
 D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\App.xaml
-2-79649380
+61083862580
 
-10-1230401526
-218-150242079
-MainWindow.xaml;Presentation\LoginWindow.xaml;
+15-1711507667
+219-1463374926
+MainWindow.xaml;Presentation\Employees\EmployeesView.xaml;Presentation\Inventory\InventoryView.xaml;Presentation\LoginWindow.xaml;Presentation\POS\PosView.xaml;Presentation\Reports\ReportsView.xaml;
 
-True
+False
 

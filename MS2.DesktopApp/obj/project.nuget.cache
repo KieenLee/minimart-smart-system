@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "IXTuZ2N8l+c=",
+  "dgSpecHash": "snc5/YL+ZXA=",
   "success": true,
   "projectFilePath": "D:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.DesktopApp\\MS2.DesktopApp.csproj",
   "expectedPackageFiles": [
@@ -12,6 +12,7 @@
     "C:\\Users\\Administrator\\.nuget\\packages\\microsoft.extensions.caching.memory\\8.0.1\\microsoft.extensions.caching.memory.8.0.1.nupkg.sha512",
     "C:\\Users\\Administrator\\.nuget\\packages\\microsoft.extensions.configuration\\10.0.3\\microsoft.extensions.configuration.10.0.3.nupkg.sha512",
     "C:\\Users\\Administrator\\.nuget\\packages\\microsoft.extensions.configuration.abstractions\\10.0.3\\microsoft.extensions.configuration.abstractions.10.0.3.nupkg.sha512",
+    "C:\\Users\\Administrator\\.nuget\\packages\\microsoft.extensions.configuration.binder\\10.0.3\\microsoft.extensions.configuration.binder.10.0.3.nupkg.sha512",
     "C:\\Users\\Administrator\\.nuget\\packages\\microsoft.extensions.configuration.fileextensions\\10.0.3\\microsoft.extensions.configuration.fileextensions.10.0.3.nupkg.sha512",
     "C:\\Users\\Administrator\\.nuget\\packages\\microsoft.extensions.configuration.json\\10.0.3\\microsoft.extensions.configuration.json.10.0.3.nupkg.sha512",
     "C:\\Users\\Administrator\\.nuget\\packages\\microsoft.extensions.dependencyinjection\\10.0.3\\microsoft.extensions.dependencyinjection.10.0.3.nupkg.sha512",

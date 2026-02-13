@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.DependencyInjection;
 using MS2.DesktopApp.Network;
 using MS2.Models.DTOs.Auth;
 using MS2.Models.TCP;
@@ -108,16 +109,29 @@ public partial class LoginViewModel : ObservableObject
                     // Đóng LoginWindow và mở MainWindow
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        var mainWindow = new MainWindow();
-                        mainWindow.Show();
+                        // Get ServiceProvider from App
+                        var app = (App)Application.Current;
+                        var serviceProvider = app.ServiceProvider;
 
-                        // Tìm và đóng LoginWindow
-                        foreach (Window window in Application.Current.Windows)
+                        if (serviceProvider != null && loginResponse.User != null)
                         {
-                            if (window is Presentation.LoginWindow)
+                            // Get MainWindow và MainViewModel từ DI
+                            var mainWindow = serviceProvider.GetRequiredService<MainWindow>();
+                            var mainViewModel = ActivatorUtilities.CreateInstance<MainViewModel>(
+                                serviceProvider,
+                                loginResponse.User
+                            );
+                            mainWindow.DataContext = mainViewModel;
+                            mainWindow.Show();
+
+                            // Tìm và đóng LoginWindow
+                            foreach (Window window in Application.Current.Windows)
                             {
-                                window.Close();
-                                break;
+                                if (window is Presentation.LoginWindow)
+                                {
+                                    window.Close();
+                                    break;
+                                }
                             }
                         }
                     });

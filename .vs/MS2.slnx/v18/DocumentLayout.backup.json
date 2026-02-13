@@ -1,7 +1,12 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "D:\\Workspace\\Project_.Net\\minimart-smart-system\\",
-  "Documents": [],
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{BD55DC10-7D6D-D975-0840-90F3D3BFBA14}|MS2.DesktopApp\\MS2.DesktopApp.csproj|d:\\workspace\\project_.net\\minimart-smart-system\\ms2.desktopapp\\presentation\\loginwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{BD55DC10-7D6D-D975-0840-90F3D3BFBA14}|MS2.DesktopApp\\MS2.DesktopApp.csproj|solutionrelative:ms2.desktopapp\\presentation\\loginwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -9,11 +14,23 @@
       "DocumentGroups": [
         {
           "DockedWidth": 253,
-          "SelectedChildIndex": -1,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{40ea2e6b-2121-4bb8-a43e-c83c04b51041}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "LoginWindow.xaml",
+              "DocumentMoniker": "D:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.DesktopApp\\Presentation\\LoginWindow.xaml",
+              "RelativeDocumentMoniker": "MS2.DesktopApp\\Presentation\\LoginWindow.xaml",
+              "ToolTip": "D:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.DesktopApp\\Presentation\\LoginWindow.xaml",
+              "RelativeToolTip": "MS2.DesktopApp\\Presentation\\LoginWindow.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-02-12T18:48:41.664Z",
+              "EditorCaption": ""
             }
           ]
         }

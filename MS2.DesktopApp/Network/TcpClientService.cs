@@ -3,6 +3,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using MS2.DesktopApp.Models;
 using MS2.Models.TCP;
 
 namespace MS2.DesktopApp.Network;
@@ -19,10 +20,11 @@ public class TcpClientService : IDisposable
     public bool IsConnected => _isConnected && _client?.Connected == true;
     public string? CurrentSessionId { get; set; }
 
-    public TcpClientService(string host = "127.0.0.1", int port = 5000)
+    public TcpClientService(TcpClientSettings settings)
     {
-        _host = host;
-        _port = port;
+        _host = settings.Host;
+        _port = settings.Port;
+        Console.WriteLine($"TcpClientService initialized with {_host}:{_port}");
     }
 
     /// <summary>

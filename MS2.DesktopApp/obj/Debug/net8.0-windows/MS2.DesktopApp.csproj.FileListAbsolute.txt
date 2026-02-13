@@ -31,7 +31,6 @@ D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\obj\Debug\net8.0-
 D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\obj\Debug\net8.0-windows\MainWindow.g.cs
 D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\obj\Debug\net8.0-windows\App.g.cs
 D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\obj\Debug\net8.0-windows\MS2.DesktopApp_MarkupCompile.cache
-D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\obj\Debug\net8.0-windows\MS2.DesktopApp_MarkupCompile.lref
 D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\obj\Debug\net8.0-windows\MainWindow.baml
 D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\obj\Debug\net8.0-windows\MS2.DesktopApp.g.resources
 D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\obj\Debug\net8.0-windows\MS2.DesktopApp.GeneratedMSBuildEditorConfig.editorconfig
@@ -47,3 +46,13 @@ D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\obj\Debug\net8.0-
 D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\obj\Debug\net8.0-windows\ref\MS2.DesktopApp.dll
 D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\obj\Debug\net8.0-windows\Presentation\LoginWindow.baml
 D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\obj\Debug\net8.0-windows\Presentation\LoginWindow.g.cs
+D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\obj\Debug\net8.0-windows\Presentation\Employees\EmployeesView.baml
+D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\obj\Debug\net8.0-windows\Presentation\Inventory\InventoryView.baml
+D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\obj\Debug\net8.0-windows\Presentation\POS\PosView.baml
+D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\obj\Debug\net8.0-windows\Presentation\Reports\ReportsView.baml
+D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\obj\Debug\net8.0-windows\Presentation\Employees\EmployeesView.g.cs
+D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\obj\Debug\net8.0-windows\Presentation\Inventory\InventoryView.g.cs
+D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\obj\Debug\net8.0-windows\Presentation\POS\PosView.g.cs
+D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\obj\Debug\net8.0-windows\Presentation\Reports\ReportsView.g.cs
+D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\bin\Debug\net8.0-windows\Microsoft.Extensions.Configuration.Binder.dll
+D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\bin\Debug\net8.0-windows\appsettings.json
