@@ -162,9 +162,9 @@
 
                                             <TextBlock Grid.Column="0" 
                                                        FontSize="11">
-                                                <Run Text="{Binding Quantity}"/>
+                                                <Run Text="{Binding Quantity, Mode=OneWay}"/>
                                                 <Run Text=" x "/>
-                                                <Run Text="{Binding UnitPrice, StringFormat='{}{0:N0}'}"/>
+                                                <Run Text="{Binding UnitPrice, Mode=OneWay, StringFormat='{}{0:N0}'}"/>
                                                 <Run Text="đ"/>
                                             </TextBlock>
 
@@ -172,7 +172,7 @@
                                                        HorizontalAlignment="Right"
                                                        FontSize="11"
                                                        FontWeight="Bold">
-                                                <Run Text="{Binding Subtotal, StringFormat='{}{0:N0}'}"/>
+                                                <Run Text="{Binding Subtotal, Mode=OneWay, StringFormat='{}{0:N0}'}"/>
                                                 <Run Text="đ"/>
                                             </TextBlock>
 

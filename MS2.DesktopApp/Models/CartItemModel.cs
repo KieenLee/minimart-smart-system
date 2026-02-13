@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace MS2.DesktopApp.Models;
 
 /// <summary>
@@ -9,5 +11,7 @@ public class CartItemModel
     public string ProductName { get; set; } = null!;
     public decimal UnitPrice { get; set; }
     public int Quantity { get; set; }
+
+    [JsonIgnore]
     public decimal Subtotal => UnitPrice * Quantity;
 }

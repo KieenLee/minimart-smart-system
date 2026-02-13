@@ -39,19 +39,39 @@ public partial class MainViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void NavigateToPos()
+    private async Task NavigateToPos()
     {
-        var posViewModel = new PosViewModel(_tcpClient, CurrentUser);
-        var posView = new PosView { DataContext = posViewModel };
-        CurrentView = posView;
+        try
+        {
+            var posViewModel = new PosViewModel(_tcpClient, CurrentUser);
+            var posView = new PosView { DataContext = posViewModel };
+            CurrentView = posView;
+
+            // Initialize async sau khi UI đã render
+            await posViewModel.InitializeAsync();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Lỗi khi mở POS: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 
     [RelayCommand]
-    private void NavigateToInventory()
+    private async Task NavigateToInventory()
     {
-        var inventoryViewModel = new InventoryViewModel(_tcpClient, CurrentUser);
-        var inventoryView = new InventoryView { DataContext = inventoryViewModel };
-        CurrentView = inventoryView;
+        try
+        {
+            var inventoryViewModel = new InventoryViewModel(_tcpClient, CurrentUser);
+            var inventoryView = new InventoryView { DataContext = inventoryViewModel };
+            CurrentView = inventoryView;
+
+            // Initialize async sau khi UI đã render
+            await inventoryViewModel.InitializeAsync();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Lỗi khi mở Inventory: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 
     [RelayCommand]
@@ -63,11 +83,21 @@ public partial class MainViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void NavigateToEmployees()
+    private async Task NavigateToEmployees()
     {
-        var employeesViewModel = new EmployeesViewModel(_tcpClient, CurrentUser);
-        var employeesView = new EmployeesView { DataContext = employeesViewModel };
-        CurrentView = employeesView;
+        try
+        {
+            var employeesViewModel = new EmployeesViewModel(_tcpClient, CurrentUser);
+            var employeesView = new EmployeesView { DataContext = employeesViewModel };
+            CurrentView = employeesView;
+
+            // Initialize async sau khi UI đã render
+            await employeesViewModel.InitializeAsync();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Lỗi khi mở Employees: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 
     [RelayCommand]

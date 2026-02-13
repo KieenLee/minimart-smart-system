@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.IO;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,6 +15,29 @@ namespace MS2.DesktopApp;
 public partial class App : Application
 {
     public ServiceProvider? ServiceProvider { get; private set; }
+
+    public App()
+    {
+        // Handle unhandled exceptions
+        this.DispatcherUnhandledException += App_DispatcherUnhandledException;
+        AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+    }
+
+    private void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+    {
+        MessageBox.Show($"Unhandled Exception: {e.Exception.Message}\n\n{e.Exception.StackTrace}",
+            "Critical Error",
+            MessageBoxButton.OK,
+            MessageBoxImage.Error);
+
+        e.Handled = true; // Prevent crash
+    }
+
+    private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+    {
+        var ex = e.ExceptionObject as Exception;
+        MessageBox.Show($"Fatal Error: {ex?.Message}", "Fatal Error", MessageBoxButton.OK, MessageBoxImage.Error);
+    }
 
     protected override void OnStartup(StartupEventArgs e)
     {

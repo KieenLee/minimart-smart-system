@@ -40,9 +40,22 @@ public partial class PosViewModel : ObservableObject
     {
         _tcpClient = tcpClient;
         _currentUser = currentUser;
+    }
 
-        // Load all products khi khởi tạo
-        _ = LoadProductsAsync();
+    /// <summary>
+    /// Initialize async - gọi sau khi constructor xong
+    /// </summary>
+    public async Task InitializeAsync()
+    {
+        try
+        {
+            await LoadProductsAsync();
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Lỗi khởi tạo: {ex.Message}";
+            MessageBox.Show($"Lỗi khi tải dữ liệu: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 
     [RelayCommand]
@@ -148,32 +161,65 @@ public partial class PosViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void AddToCart(ProductDto product)
+    private void AddToCart(ProductDto? product)
     {
-        if (product == null) return;
-
-        // Kiểm tra xem sản phẩm đã có trong giỏ chưa
-        var existingItem = CartItems.FirstOrDefault(x => x.ProductId == product.Id);
-
-        if (existingItem != null)
+        try
         {
-            // Tăng số lượng
-            existingItem.Quantity++;
-        }
-        else
-        {
-            // Thêm mới
-            CartItems.Add(new CartItemModel
+            if (product == null)
             {
-                ProductId = product.Id,
-                ProductName = product.Name,
-                UnitPrice = product.Price,
-                Quantity = 1
-            });
-        }
+                StatusMessage = "Sản phẩm không hợp lệ";
+                return;
+            }
 
-        UpdateTotalAmount();
-        StatusMessage = $"Đã thêm {product.Name} vào giỏ hàng";
+            if (product.Stock <= 0)
+            {
+                StatusMessage = $"Sản phẩm '{product.Name}' đã hết hàng";
+                MessageBox.Show($"Sản phẩm '{product.Name}' đã hết hàng!",
+                    "Thông báo",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+                return;
+            }
+
+            // Kiểm tra xem sản phẩm đã có trong giỏ chưa
+            var existingItem = CartItems.FirstOrDefault(x => x.ProductId == product.Id);
+
+            if (existingItem != null)
+            {
+                // Kiểm tra số lượng tối đa
+                if (existingItem.Quantity >= product.Stock)
+                {
+                    StatusMessage = $"Không thể thêm quá {product.Stock} sản phẩm '{product.Name}'";
+                    MessageBox.Show($"Không đủ hàng trong kho!\nSố lượng tối đa: {product.Stock}",
+                        "Thông báo",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
+                    return;
+                }
+
+                // Tăng số lượng
+                existingItem.Quantity++;
+            }
+            else
+            {
+                // Thêm mới
+                CartItems.Add(new CartItemModel
+                {
+                    ProductId = product.Id,
+                    ProductName = product.Name ?? "Unknown",
+                    UnitPrice = product.Price,
+                    Quantity = 1
+                });
+            }
+
+            UpdateTotalAmount();
+            StatusMessage = $"Đã thêm '{product.Name}' vào giỏ hàng";
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Lỗi khi thêm sản phẩm: {ex.Message}";
+            MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 
     [RelayCommand]

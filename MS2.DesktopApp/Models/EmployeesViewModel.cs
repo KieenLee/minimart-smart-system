@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using MS2.DesktopApp.Network;
 using MS2.Models.DTOs.Auth;
 using MS2.Models.TCP;
+using System;
 using System.Collections.ObjectModel;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -28,9 +29,22 @@ public partial class EmployeesViewModel : ObservableObject
     {
         _tcpClient = tcpClient;
         _currentUser = currentUser;
+    }
 
-        // Load employees
-        _ = LoadEmployeesAsync();
+    /// <summary>
+    /// Initialize async - gọi sau khi constructor xong
+    /// </summary>
+    public async Task InitializeAsync()
+    {
+        try
+        {
+            await LoadEmployeesAsync();
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Lỗi khởi tạo: {ex.Message}";
+            MessageBox.Show($"Lỗi khi tải dữ liệu: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 
     [RelayCommand]
