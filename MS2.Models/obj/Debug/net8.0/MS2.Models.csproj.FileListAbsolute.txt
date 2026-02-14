@@ -1,6 +1,7 @@
 D:\Workspace\Project_.Net\minimart-smart-system\MS2.Models\bin\Debug\net8.0\MS2.Models.deps.json
 D:\Workspace\Project_.Net\minimart-smart-system\MS2.Models\bin\Debug\net8.0\MS2.Models.dll
 D:\Workspace\Project_.Net\minimart-smart-system\MS2.Models\bin\Debug\net8.0\MS2.Models.pdb
+D:\Workspace\Project_.Net\minimart-smart-system\MS2.Models\obj\Debug\net8.0\MS2.Models.csproj.AssemblyReference.cache
 D:\Workspace\Project_.Net\minimart-smart-system\MS2.Models\obj\Debug\net8.0\MS2.Models.GeneratedMSBuildEditorConfig.editorconfig
 D:\Workspace\Project_.Net\minimart-smart-system\MS2.Models\obj\Debug\net8.0\MS2.Models.AssemblyInfoInputs.cache
 D:\Workspace\Project_.Net\minimart-smart-system\MS2.Models\obj\Debug\net8.0\MS2.Models.AssemblyInfo.cs
@@ -10,4 +11,3 @@ D:\Workspace\Project_.Net\minimart-smart-system\MS2.Models\obj\Debug\net8.0\MS2.
 D:\Workspace\Project_.Net\minimart-smart-system\MS2.Models\obj\Debug\net8.0\refint\MS2.Models.dll
 D:\Workspace\Project_.Net\minimart-smart-system\MS2.Models\obj\Debug\net8.0\MS2.Models.pdb
 D:\Workspace\Project_.Net\minimart-smart-system\MS2.Models\obj\Debug\net8.0\ref\MS2.Models.dll
-D:\Workspace\Project_.Net\minimart-smart-system\MS2.Models\obj\Debug\net8.0\MS2.Models.csproj.AssemblyReference.cache

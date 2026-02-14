@@ -78,6 +78,23 @@ namespace MS2.ServerApp.Network
                         .GetRequiredService<ICategoryService>()
                         .GetCategoriesAsync(message),
 
+                    // User/Employee Actions
+                    TcpActions.GET_EMPLOYEES => await scope.ServiceProvider
+                        .GetRequiredService<IUserService>()
+                        .GetEmployeesAsync(message),
+
+                    TcpActions.GET_USERS_BY_ROLE => await scope.ServiceProvider
+                        .GetRequiredService<IUserService>()
+                        .GetUsersByRoleAsync(message),
+
+                    TcpActions.SEARCH_USERS => await scope.ServiceProvider
+                        .GetRequiredService<IUserService>()
+                        .SearchUsersAsync(message),
+
+                    TcpActions.CREATE_USER => await scope.ServiceProvider
+                        .GetRequiredService<IUserService>()
+                        .CreateUserAsync(message),
+
                     // Unknown Action
                     _ => TcpResponse.CreateError($"Unknown action: {message.Action}", message.RequestId)
                 };

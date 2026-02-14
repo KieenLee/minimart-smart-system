@@ -26,6 +26,8 @@ public static class TcpActions
     // Users/Employees
     public const string GET_EMPLOYEES = "GET_EMPLOYEES";
     public const string GET_USERS_BY_ROLE = "GET_USERS_BY_ROLE";
+    public const string SEARCH_USERS = "SEARCH_USERS";
+    public const string CREATE_USER = "CREATE_USER";
 
     // Categories
     public const string GET_CATEGORIES = "GET_CATEGORIES";

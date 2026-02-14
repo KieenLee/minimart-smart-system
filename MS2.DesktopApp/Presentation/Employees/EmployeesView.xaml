@@ -8,6 +8,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
@@ -27,8 +28,46 @@
             </Grid>
         </Border>
 
+        <!-- SEARCH AND CREATE BAR -->
+        <Border Grid.Row="1" BorderBrush="LightGray" BorderThickness="0,0,0,1" Padding="10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Search Box -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="Tìm kiếm:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                    <TextBox Width="300" 
+                             Height="30" 
+                             VerticalContentAlignment="Center"
+                             Text="{Binding SearchKeyword, UpdateSourceTrigger=PropertyChanged}"
+                             Margin="0,0,10,0">
+                        <TextBox.InputBindings>
+                            <KeyBinding Key="Enter" Command="{Binding SearchEmployeesCommand}"/>
+                        </TextBox.InputBindings>
+                    </TextBox>
+                    <Button Content="TÌM KIẾM" 
+                            Width="90"
+                            Height="30"
+                            Command="{Binding SearchEmployeesCommand}"/>
+                </StackPanel>
+
+                <!-- Create Button -->
+                <Button Grid.Column="1" 
+                        Content="➕ TẠO NHÂN VIÊN MỚI" 
+                        Width="180"
+                        Height="35"
+                        Background="#4CAF50"
+                        Foreground="White"
+                        FontWeight="Bold"
+                        Click="CreateEmployeeButton_Click"/>
+            </Grid>
+        </Border>
+
         <!-- EMPLOYEE LIST -->
-        <DataGrid Grid.Row="1"
+        <DataGrid Grid.Row="2"
                   ItemsSource="{Binding Employees}"
                   AutoGenerateColumns="False"
                   IsReadOnly="True"
@@ -46,7 +85,7 @@
         </DataGrid>
 
         <!-- STATUS BAR -->
-        <Border Grid.Row="2" 
+        <Border Grid.Row="3" 
                 BorderBrush="Gray" 
                 BorderThickness="0,1,0,0" 
                 Padding="10,5"
