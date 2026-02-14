@@ -223,6 +223,90 @@ public partial class PosViewModel : ObservableObject
     }
 
     [RelayCommand]
+    private void AddToCartWithQuantity((ProductDto product, int quantity) data)
+    {
+        try
+        {
+            var (product, quantity) = data;
+
+            if (product == null)
+            {
+                StatusMessage = "Sản phẩm không hợp lệ";
+                return;
+            }
+
+            if (quantity <= 0)
+            {
+                StatusMessage = "Số lượng phải lớn hơn 0";
+                return;
+            }
+
+            if (product.Stock <= 0)
+            {
+                StatusMessage = $"Sản phẩm '{product.Name}' đã hết hàng";
+                MessageBox.Show($"Sản phẩm '{product.Name}' đã hết hàng!",
+                    "Thông báo",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+                return;
+            }
+
+            // Kiểm tra xem sản phẩm đã có trong giỏ chưa
+            var existingItem = CartItems.FirstOrDefault(x => x.ProductId == product.Id);
+
+            if (existingItem != null)
+            {
+                // Kiểm tra số lượng tối đa
+                var newQuantity = existingItem.Quantity + quantity;
+                if (newQuantity > product.Stock)
+                {
+                    StatusMessage = $"Không đủ hàng! Tồn kho: {product.Stock}, Đang có trong giỏ: {existingItem.Quantity}";
+                    MessageBox.Show($"Không đủ hàng trong kho!\n\nTồn kho: {product.Stock}\nĐang có trong giỏ: {existingItem.Quantity}\nCó thể thêm tối đa: {product.Stock - existingItem.Quantity}",
+                        "Thông báo",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
+                    return;
+                }
+
+                // Tăng số lượng theo input
+                existingItem.Quantity += quantity;
+                StatusMessage = $"Đã thêm {quantity} '{product.Name}' vào giỏ hàng (Tổng: {existingItem.Quantity})";
+            }
+            else
+            {
+                // Kiểm tra số lượng không vượt quá tồn kho
+                if (quantity > product.Stock)
+                {
+                    StatusMessage = $"Không đủ hàng! Tồn kho chỉ còn: {product.Stock}";
+                    MessageBox.Show($"Không đủ hàng trong kho!\nTồn kho: {product.Stock}",
+                        "Thông báo",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
+                    return;
+                }
+
+                // Thêm mới với số lượng
+                CartItems.Add(new CartItemModel
+                {
+                    ProductId = product.Id,
+                    ProductName = product.Name ?? "Unknown",
+                    UnitPrice = product.Price,
+                    Quantity = quantity
+                });
+
+                StatusMessage = $"Đã thêm {quantity} '{product.Name}' vào giỏ hàng";
+            }
+
+            UpdateTotalAmount();
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Lỗi khi thêm sản phẩm: {ex.Message}";
+            MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    [RelayCommand]
     private void RemoveFromCart(CartItemModel cartItem)
     {
         if (cartItem == null) return;

@@ -78,6 +78,7 @@
                                             <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="Auto"/>
                                             <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
 
                                         <StackPanel Grid.Column="0">
@@ -103,12 +104,21 @@
                                             <Run Text="đ"/>
                                         </TextBlock>
 
-                                        <Button Grid.Column="2" 
+                                        <TextBox Grid.Column="2"
+                                                 Width="50"
+                                                 Height="25"
+                                                 Margin="5,0"
+                                                 VerticalContentAlignment="Center"
+                                                 TextAlignment="Center"
+                                                 Text="1"
+                                                 Tag="{Binding}"
+                                                 x:Name="QuantityTextBox"/>
+
+                                        <Button Grid.Column="3" 
                                                 Content="THÊM" 
                                                 Width="60"
                                                 Height="25"
-                                                Command="{Binding DataContext.AddToCartCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                CommandParameter="{Binding}"/>
+                                                Click="AddToCartButton_Click"/>
                                     </Grid>
                                 </Border>
                             </DataTemplate>
