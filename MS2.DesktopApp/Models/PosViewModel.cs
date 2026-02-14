@@ -33,9 +33,6 @@ public partial class PosViewModel : ObservableObject
     [ObservableProperty]
     private bool isLoading = false;
 
-    [ObservableProperty]
-    private string statusMessage = "";
-
     public PosViewModel(TcpClientService tcpClient, UserDto currentUser)
     {
         _tcpClient = tcpClient;
@@ -51,10 +48,9 @@ public partial class PosViewModel : ObservableObject
         {
             await LoadProductsAsync();
         }
-        catch (Exception ex)
+        catch
         {
-            StatusMessage = $"Lỗi khởi tạo: {ex.Message}";
-            MessageBox.Show($"Lỗi khi tải dữ liệu: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            // Silent error handling
         }
     }
 
@@ -64,7 +60,6 @@ public partial class PosViewModel : ObservableObject
         try
         {
             IsLoading = true;
-            StatusMessage = "Đang tải sản phẩm...";
 
             var response = await _tcpClient.SendMessageAsync(
                 TcpActions.GET_PRODUCTS,
@@ -88,17 +83,10 @@ public partial class PosViewModel : ObservableObject
                         Products.Add(product);
                     }
                 }
-
-                StatusMessage = $"Đã tải {Products.Count} sản phẩm";
-            }
-            else
-            {
-                StatusMessage = $"Lỗi: {response?.Message}";
             }
         }
-        catch (Exception ex)
+        catch
         {
-            StatusMessage = $"Lỗi: {ex.Message}";
         }
         finally
         {
@@ -118,7 +106,6 @@ public partial class PosViewModel : ObservableObject
         try
         {
             IsLoading = true;
-            StatusMessage = "Đang tìm kiếm...";
 
             var response = await _tcpClient.SendMessageAsync(
                 TcpActions.SEARCH_PRODUCTS,
@@ -142,17 +129,11 @@ public partial class PosViewModel : ObservableObject
                         Products.Add(product);
                     }
                 }
-
-                StatusMessage = $"Tìm thấy {Products.Count} sản phẩm";
-            }
-            else
-            {
-                StatusMessage = $"Lỗi: {response?.Message}";
             }
         }
-        catch (Exception ex)
+        catch
         {
-            StatusMessage = $"Lỗi: {ex.Message}";
+            // Silent error
         }
         finally
         {
@@ -165,19 +146,8 @@ public partial class PosViewModel : ObservableObject
     {
         try
         {
-            if (product == null)
+            if (product == null || product.Stock <= 0)
             {
-                StatusMessage = "Sản phẩm không hợp lệ";
-                return;
-            }
-
-            if (product.Stock <= 0)
-            {
-                StatusMessage = $"Sản phẩm '{product.Name}' đã hết hàng";
-                MessageBox.Show($"Sản phẩm '{product.Name}' đã hết hàng!",
-                    "Thông báo",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Warning);
                 return;
             }
 
@@ -189,11 +159,6 @@ public partial class PosViewModel : ObservableObject
                 // Kiểm tra số lượng tối đa
                 if (existingItem.Quantity >= product.Stock)
                 {
-                    StatusMessage = $"Không thể thêm quá {product.Stock} sản phẩm '{product.Name}'";
-                    MessageBox.Show($"Không đủ hàng trong kho!\nSố lượng tối đa: {product.Stock}",
-                        "Thông báo",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Warning);
                     return;
                 }
 
@@ -213,12 +178,10 @@ public partial class PosViewModel : ObservableObject
             }
 
             UpdateTotalAmount();
-            StatusMessage = $"Đã thêm '{product.Name}' vào giỏ hàng";
         }
-        catch (Exception ex)
+        catch
         {
-            StatusMessage = $"Lỗi khi thêm sản phẩm: {ex.Message}";
-            MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            // Silent error
         }
     }
 
@@ -231,23 +194,16 @@ public partial class PosViewModel : ObservableObject
 
             if (product == null)
             {
-                StatusMessage = "Sản phẩm không hợp lệ";
                 return;
             }
 
             if (quantity <= 0)
             {
-                StatusMessage = "Số lượng phải lớn hơn 0";
                 return;
             }
 
             if (product.Stock <= 0)
             {
-                StatusMessage = $"Sản phẩm '{product.Name}' đã hết hàng";
-                MessageBox.Show($"Sản phẩm '{product.Name}' đã hết hàng!",
-                    "Thông báo",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Warning);
                 return;
             }
 
@@ -260,28 +216,17 @@ public partial class PosViewModel : ObservableObject
                 var newQuantity = existingItem.Quantity + quantity;
                 if (newQuantity > product.Stock)
                 {
-                    StatusMessage = $"Không đủ hàng! Tồn kho: {product.Stock}, Đang có trong giỏ: {existingItem.Quantity}";
-                    MessageBox.Show($"Không đủ hàng trong kho!\n\nTồn kho: {product.Stock}\nĐang có trong giỏ: {existingItem.Quantity}\nCó thể thêm tối đa: {product.Stock - existingItem.Quantity}",
-                        "Thông báo",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Warning);
                     return;
                 }
 
                 // Tăng số lượng theo input
                 existingItem.Quantity += quantity;
-                StatusMessage = $"Đã thêm {quantity} '{product.Name}' vào giỏ hàng (Tổng: {existingItem.Quantity})";
             }
             else
             {
                 // Kiểm tra số lượng không vượt quá tồn kho
                 if (quantity > product.Stock)
                 {
-                    StatusMessage = $"Không đủ hàng! Tồn kho chỉ còn: {product.Stock}";
-                    MessageBox.Show($"Không đủ hàng trong kho!\nTồn kho: {product.Stock}",
-                        "Thông báo",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Warning);
                     return;
                 }
 
@@ -294,15 +239,13 @@ public partial class PosViewModel : ObservableObject
                     Quantity = quantity
                 });
 
-                StatusMessage = $"Đã thêm {quantity} '{product.Name}' vào giỏ hàng";
             }
 
             UpdateTotalAmount();
         }
-        catch (Exception ex)
+        catch
         {
-            StatusMessage = $"Lỗi khi thêm sản phẩm: {ex.Message}";
-            MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            // Silent error
         }
     }
 
@@ -313,7 +256,6 @@ public partial class PosViewModel : ObservableObject
 
         CartItems.Remove(cartItem);
         UpdateTotalAmount();
-        StatusMessage = $"Đã xóa {cartItem.ProductName} khỏi giỏ hàng";
     }
 
     [RelayCommand]
@@ -321,48 +263,23 @@ public partial class PosViewModel : ObservableObject
     {
         if (CartItems.Count == 0) return;
 
-        var result = MessageBox.Show(
-            "Bạn có chắc muốn xóa tất cả sản phẩm trong giỏ hàng?",
-            "Xác nhận",
-            MessageBoxButton.YesNo,
-            MessageBoxImage.Question
-        );
-
-        if (result == MessageBoxResult.Yes)
-        {
-            CartItems.Clear();
-            UpdateTotalAmount();
-            StatusMessage = "Đã xóa giỏ hàng";
-        }
+        CartItems.Clear();
+        UpdateTotalAmount();
     }
 
     [RelayCommand]
     private async Task CheckoutAsync()
     {
-        if (CartItems.Count == 0)
-        {
-            MessageBox.Show("Giỏ hàng trống!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
-            return;
-        }
-
-        var result = MessageBox.Show(
-            $"Tổng tiền: {TotalAmount:N0}đ\n\nXác nhận thanh toán?",
-            "Xác nhận",
-            MessageBoxButton.YesNo,
-            MessageBoxImage.Question
-        );
-
-        if (result != MessageBoxResult.Yes) return;
+        if (CartItems.Count == 0) return;
 
         try
         {
             IsLoading = true;
-            StatusMessage = "Đang xử lý đơn hàng...";
 
             // Tạo order DTO
             var createOrderDto = new CreateOrderDto
             {
-                CustomerId = 1, // Default customer (có thể cải tiến sau để chọn khách hàng)
+                CustomerId = 1,
                 EmployeeId = _currentUser.Id,
                 OrderType = "POS",
                 Notes = $"Thanh toán bởi {_currentUser.FullName}",
@@ -382,41 +299,17 @@ public partial class PosViewModel : ObservableObject
 
             if (response?.Success == true)
             {
-                MessageBox.Show(
-                    $"Thanh toán thành công!\nTổng tiền: {TotalAmount:N0}đ",
-                    "Thành công",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information
-                );
-
                 // Clear giỏ hàng
                 CartItems.Clear();
                 UpdateTotalAmount();
-                StatusMessage = "Đơn hàng đã được tạo thành công";
 
                 // Reload products để cập nhật stock
                 await LoadProductsAsync();
             }
-            else
-            {
-                MessageBox.Show(
-                    $"Thanh toán thất bại!\n{response?.Message}",
-                    "Lỗi",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error
-                );
-                StatusMessage = $"Lỗi: {response?.Message}";
-            }
         }
-        catch (Exception ex)
+        catch
         {
-            MessageBox.Show(
-                $"Lỗi: {ex.Message}",
-                "Lỗi",
-                MessageBoxButton.OK,
-                MessageBoxImage.Error
-            );
-            StatusMessage = $"Lỗi: {ex.Message}";
+            // Silent error
         }
         finally
         {

@@ -9,7 +9,6 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <!-- SEARCH BAR -->
@@ -212,8 +211,7 @@
                                        VerticalAlignment="Center"/>
                             <TextBlock HorizontalAlignment="Right" 
                                        FontSize="16" 
-                                       FontWeight="Bold"
-                                       Foreground="Red">
+                                       FontWeight="Bold">
                                 <Run Text="{Binding TotalAmount, StringFormat='{}{0:N0}'}"/>
                                 <Run Text="đ"/>
                             </TextBlock>
@@ -242,15 +240,5 @@
                 </Grid>
             </Border>
         </Grid>
-
-        <!-- STATUS BAR -->
-        <Border Grid.Row="2" 
-                BorderBrush="Gray" 
-                BorderThickness="0,1,0,0" 
-                Padding="10,5"
-                Background="LightGray">
-            <TextBlock Text="{Binding StatusMessage}" 
-                       FontSize="12"/>
-        </Border>
     </Grid>
 </UserControl>

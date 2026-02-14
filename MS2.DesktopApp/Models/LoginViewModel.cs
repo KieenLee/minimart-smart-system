@@ -98,14 +98,6 @@ public partial class LoginViewModel : ObservableObject
                     // Lưu SessionId vào TcpClient
                     _tcpClient.CurrentSessionId = loginResponse.SessionId;
 
-                    // Thông báo thành công
-                    MessageBox.Show(
-                        $"Đăng nhập thành công!\nXin chào, {loginResponse.User?.FullName ?? Username}",
-                        "Thành công",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Information
-                    );
-
                     // Đóng LoginWindow và mở MainWindow
                     Application.Current.Dispatcher.Invoke(() =>
                     {

@@ -50,9 +50,8 @@ public partial class MainViewModel : ObservableObject
             // Initialize async sau khi UI đã render
             await posViewModel.InitializeAsync();
         }
-        catch (Exception ex)
+        catch
         {
-            MessageBox.Show($"Lỗi khi mở POS: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 
@@ -68,9 +67,8 @@ public partial class MainViewModel : ObservableObject
             // Initialize async sau khi UI đã render
             await inventoryViewModel.InitializeAsync();
         }
-        catch (Exception ex)
+        catch
         {
-            MessageBox.Show($"Lỗi khi mở Inventory: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 
@@ -94,30 +92,19 @@ public partial class MainViewModel : ObservableObject
             // Initialize async sau khi UI đã render
             await employeesViewModel.InitializeAsync();
         }
-        catch (Exception ex)
+        catch
         {
-            MessageBox.Show($"Lỗi khi mở Employees: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 
     [RelayCommand]
     private void Logout()
     {
-        var result = MessageBox.Show(
-            "Bạn có chắc muốn đăng xuất?",
-            "Xác nhận",
-            MessageBoxButton.YesNo,
-            MessageBoxImage.Question
-        );
+        // Disconnect TCP
+        _tcpClient.Disconnect();
 
-        if (result == MessageBoxResult.Yes)
-        {
-            // Disconnect TCP
-            _tcpClient.Disconnect();
-
-            // Close MainWindow and show LoginWindow
-            Application.Current.Windows[0]?.Close();
-        }
+        // Close MainWindow and show LoginWindow
+        Application.Current.Windows[0]?.Close();
     }
 
     // Helper method to create welcome view

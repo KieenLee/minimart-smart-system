@@ -34,7 +34,6 @@ public partial class PosView : UserControl
         // Parse số lượng
         if (!int.TryParse(quantityTextBox.Text, out int quantity) || quantity <= 0)
         {
-            MessageBox.Show("Vui lòng nhập số lượng hợp lệ (số nguyên dương)", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Warning);
             quantityTextBox.Text = "1";
             return;
         }
