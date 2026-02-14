@@ -273,9 +273,8 @@ namespace MS2.ServerApp.Business.Services
                     return TcpResponse.CreateError("Invalid role. Only Employee and Admin are allowed.", message.RequestId);
                 }
 
-                // Hash password (simple hash - in production use proper password hashing like BCrypt)
-                string hashedPassword = Convert.ToBase64String(
-                    System.Text.Encoding.UTF8.GetBytes(createUserDto.Password));
+                // Hash password with BCrypt (same as login)
+                string hashedPassword = BCrypt.Net.BCrypt.HashPassword(createUserDto.Password);
 
                 // Create new user entity
                 var newUser = new User

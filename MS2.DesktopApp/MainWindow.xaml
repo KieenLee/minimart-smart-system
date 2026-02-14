@@ -37,11 +37,13 @@
                 <Button Content="KHO HÀNG" 
                         Height="50" 
                         Command="{Binding NavigateToInventoryCommand}"
+                        Visibility="{Binding IsAdmin}"
                         Margin="10,10,10,0"/>
 
                 <Button Content="BÁO CÁO" 
                         Height="50" 
                         Command="{Binding NavigateToReportsCommand}"
+                        Visibility="{Binding IsAdmin}"
                         Margin="10,10,10,0"/>
 
                 <Button Content="NHÂN VIÊN" 

@@ -24,7 +24,8 @@ public partial class EmployeesView : UserControl
             Width = 500,
             Height = 550,
             WindowStartupLocation = WindowStartupLocation.CenterScreen,
-            ResizeMode = ResizeMode.NoResize
+            ResizeMode = ResizeMode.NoResize,
+            DataContext = viewModel // SET DATACONTEXT HERE!
         };
 
         // Create form
