@@ -15,4 +15,7 @@ public interface IUserService
 
     // Tạo user/nhân viên mới
     Task<TcpResponse> CreateUserAsync(TcpMessage message);
+
+    // Cập nhật thông tin profile của user
+    Task<TcpResponse> UpdateUserProfileAsync(TcpMessage message);
 }

@@ -5,6 +5,7 @@ using MS2.DesktopApp.Presentation.POS;
 using MS2.DesktopApp.Presentation.Inventory;
 using MS2.DesktopApp.Presentation.Reports;
 using MS2.DesktopApp.Presentation.Employees;
+using MS2.DesktopApp.Presentation.Profile;
 using MS2.Models.DTOs.Auth;
 using System.Windows;
 
@@ -95,6 +96,14 @@ public partial class MainViewModel : ObservableObject
         catch
         {
         }
+    }
+
+    [RelayCommand]
+    private void NavigateToProfile()
+    {
+        var profileViewModel = new ProfileViewModel(_tcpClient, CurrentUser);
+        var profileView = new ProfileView { DataContext = profileViewModel };
+        CurrentView = profileView;
     }
 
     [RelayCommand]

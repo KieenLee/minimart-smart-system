@@ -85,10 +85,8 @@
                                                        FontWeight="Bold" 
                                                        FontSize="14"/>
                                             <TextBlock Text="{Binding CategoryName}" 
-                                                       FontSize="12" 
-                                                       Foreground="Gray"/>
-                                            <TextBlock FontSize="12" 
-                                                       Foreground="Gray">
+                                                       FontSize="12"/>
+                                            <TextBlock FontSize="12">
                                                 <Run Text="Tồn kho: "/>
                                                 <Run Text="{Binding Stock}"/>
                                             </TextBlock>

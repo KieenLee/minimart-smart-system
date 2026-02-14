@@ -79,11 +79,9 @@
 
                     <StackPanel Grid.Column="0">
                         <TextBlock Text="TỔNG DOANH THU" 
-                                   FontSize="12" 
-                                   Foreground="Gray"/>
+                                   FontSize="12"/>
                         <TextBlock FontSize="24" 
-                                   FontWeight="Bold"
-                                   Foreground="Green">
+                                   FontWeight="Bold">
                             <Run Text="{Binding TotalRevenue, StringFormat='{}{0:N0}'}"/>
                             <Run Text="đ"/>
                         </TextBlock>
@@ -91,11 +89,9 @@
 
                     <StackPanel Grid.Column="1">
                         <TextBlock Text="TỔNG ĐỚN HÀNG" 
-                                   FontSize="12" 
-                                   Foreground="Gray"/>
+                                   FontSize="12"/>
                         <TextBlock FontSize="24" 
-                                   FontWeight="Bold"
-                                   Foreground="Blue">
+                                   FontWeight="Bold">
                             <Run Text="{Binding TotalOrders}"/>
                             <Run Text=" đơn"/>
                         </TextBlock>

@@ -59,8 +59,6 @@
                         Content="➕ TẠO NHÂN VIÊN MỚI" 
                         Width="180"
                         Height="35"
-                        Background="#4CAF50"
-                        Foreground="White"
                         FontWeight="Bold"
                         Click="CreateEmployeeButton_Click"/>
             </Grid>
@@ -88,8 +86,7 @@
         <Border Grid.Row="3" 
                 BorderBrush="Gray" 
                 BorderThickness="0,1,0,0" 
-                Padding="10,5"
-                Background="LightGray">
+                Padding="10,5">
             <TextBlock Text="{Binding StatusMessage}" 
                        FontSize="12"/>
         </Border>

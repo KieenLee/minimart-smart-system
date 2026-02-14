@@ -56,3 +56,5 @@ D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\obj\Debug\net8.0-
 D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\obj\Debug\net8.0-windows\MS2.DesktopApp.pdb
 D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\obj\Debug\net8.0-windows\MS2.DesktopApp.genruntimeconfig.cache
 D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\obj\Debug\net8.0-windows\ref\MS2.DesktopApp.dll
+D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\obj\Debug\net8.0-windows\Presentation\Profile\ProfileView.baml
+D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\obj\Debug\net8.0-windows\Presentation\Profile\ProfileView.g.cs

@@ -95,6 +95,10 @@ namespace MS2.ServerApp.Network
                         .GetRequiredService<IUserService>()
                         .CreateUserAsync(message),
 
+                    TcpActions.UPDATE_USER_PROFILE => await scope.ServiceProvider
+                        .GetRequiredService<IUserService>()
+                        .UpdateUserProfileAsync(message),
+
                     // Unknown Action
                     _ => TcpResponse.CreateError($"Unknown action: {message.Action}", message.RequestId)
                 };

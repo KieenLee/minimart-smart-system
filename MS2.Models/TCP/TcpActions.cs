@@ -28,6 +28,7 @@ public static class TcpActions
     public const string GET_USERS_BY_ROLE = "GET_USERS_BY_ROLE";
     public const string SEARCH_USERS = "SEARCH_USERS";
     public const string CREATE_USER = "CREATE_USER";
+    public const string UPDATE_USER_PROFILE = "UPDATE_USER_PROFILE";
 
     // Categories
     public const string GET_CATEGORIES = "GET_CATEGORIES";

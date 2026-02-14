@@ -23,8 +23,7 @@
                                    FontSize="14" 
                                    FontWeight="Bold"/>
                         <TextBlock Text="{Binding CurrentUser.Role}" 
-                                   FontSize="12" 
-                                   Foreground="Gray"/>
+                                   FontSize="12"/>
                     </StackPanel>
                 </Border>
 
@@ -50,6 +49,11 @@
                         Height="50" 
                         Command="{Binding NavigateToEmployeesCommand}"
                         Visibility="{Binding IsAdmin}"
+                        Margin="10,10,10,0"/>
+
+                <Button Content="HỒ SƠ CÁ NHÂN" 
+                        Height="50" 
+                        Command="{Binding NavigateToProfileCommand}"
                         Margin="10,10,10,0"/>
 
                 <!-- LOGOUT BUTTON (Bottom) -->

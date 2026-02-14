@@ -115,8 +115,7 @@
         <Border Grid.Row="2" 
                 BorderBrush="Gray" 
                 BorderThickness="0,1,0,0" 
-                Padding="10,5"
-                Background="LightGray">
+                Padding="10,5">
             <TextBlock Text="{Binding StatusMessage}" 
                        FontSize="12"/>
         </Border>

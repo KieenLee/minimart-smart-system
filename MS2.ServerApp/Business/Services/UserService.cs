@@ -315,5 +315,92 @@ namespace MS2.ServerApp.Business.Services
                 return TcpResponse.CreateError($"Error creating user: {ex.Message}", message.RequestId);
             }
         }
+
+        public async Task<TcpResponse> UpdateUserProfileAsync(TcpMessage message)
+        {
+            try
+            {
+                // Validate session
+                if (string.IsNullOrWhiteSpace(message.SessionId))
+                {
+                    return TcpResponse.CreateError("Session required", message.RequestId);
+                }
+
+                var session = _sessionManager.GetSession(message.SessionId);
+                if (session == null)
+                {
+                    return TcpResponse.CreateError("Invalid session", message.RequestId);
+                }
+
+                // Deserialize request
+                var updateUserDto = JsonSerializer.Deserialize<UpdateUserDto>(
+                    JsonSerializer.Serialize(message.Data),
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                if (updateUserDto == null)
+                {
+                    return TcpResponse.CreateError("Invalid update data", message.RequestId);
+                }
+
+                // Security: User can only update their own profile unless they are Admin
+                if (updateUserDto.UserId != session.User.Id &&
+                    !session.User.Role.Equals("Admin", StringComparison.OrdinalIgnoreCase))
+                {
+                    return TcpResponse.CreateError("Access denied. You can only update your own profile.", message.RequestId);
+                }
+
+                // Get user from database
+                var user = await _unitOfWork.Users.GetByIdAsync(updateUserDto.UserId);
+                if (user == null)
+                {
+                    return TcpResponse.CreateError("User not found", message.RequestId);
+                }
+
+                // Update user fields
+                user.FullName = updateUserDto.FullName;
+                user.Email = updateUserDto.Email;
+                user.Phone = updateUserDto.Phone;
+                user.Address = updateUserDto.Address;
+
+                // Update password if provided
+                if (!string.IsNullOrWhiteSpace(updateUserDto.NewPassword))
+                {
+                    user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(updateUserDto.NewPassword);
+                }
+
+                // Save changes
+                await _unitOfWork.Users.UpdateAsync(user);
+                await _unitOfWork.SaveChangesAsync();
+
+                // Update session if user updated their own profile
+                if (updateUserDto.UserId == session.User.Id)
+                {
+                    session.User.FullName = user.FullName;
+                    session.User.Email = user.Email;
+                    session.User.Phone = user.Phone;
+                    session.User.Address = user.Address;
+                }
+
+                // Map to UserDto for response
+                var userDto = new UserDto
+                {
+                    Id = user.Id,
+                    Username = user.Username,
+                    FullName = user.FullName,
+                    Email = user.Email,
+                    Phone = user.Phone,
+                    Address = user.Address,
+                    Role = user.Role,
+                    IsActive = user.IsActive,
+                    CreatedAt = user.CreatedAt
+                };
+
+                return TcpResponse.CreateSuccess(userDto, "Profile updated successfully", message.RequestId);
+            }
+            catch (Exception ex)
+            {
+                return TcpResponse.CreateError($"Error updating profile: {ex.Message}", message.RequestId);
+            }
+        }
     }
 }
