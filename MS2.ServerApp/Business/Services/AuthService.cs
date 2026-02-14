@@ -53,8 +53,10 @@ namespace MS2.ServerApp.Business.Services
                     FullName = user.FullName,
                     Email = user.Email,
                     Phone = user.Phone,
+                    Address = user.Address,
                     Role = user.Role,
-                    IsActive = user.IsActive
+                    IsActive = user.IsActive,
+                    CreatedAt = user.CreatedAt
                 };
 
                 // Tạo session

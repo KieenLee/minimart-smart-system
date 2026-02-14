@@ -101,8 +101,8 @@ public partial class ProfileViewModel : ObservableObject
                 UserId = UserId,
                 FullName = FullName,
                 Email = Email,
-                Phone = Phone,
-                Address = Address,
+                Phone = string.IsNullOrWhiteSpace(Phone) ? null : Phone,
+                Address = string.IsNullOrWhiteSpace(Address) ? null : Address,
                 NewPassword = string.IsNullOrWhiteSpace(NewPassword) ? null : NewPassword
             };
 

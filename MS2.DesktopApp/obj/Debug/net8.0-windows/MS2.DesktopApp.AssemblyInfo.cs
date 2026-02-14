@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MS2.DesktopApp")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a0f98b35dc790557d879339c76d8f4911d4d5b80")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+21f9233ffb57983b51bf59816d5e086bb3e3fb63")]
 [assembly: System.Reflection.AssemblyProductAttribute("MS2.DesktopApp")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MS2.DesktopApp")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
