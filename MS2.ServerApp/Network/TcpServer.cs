@@ -1,4 +1,3 @@
-using Microsoft.Extensions.Logging;
 using MS2.Models.TCP;
 using MS2.ServerApp.Models;
 using System.Net;
@@ -10,16 +9,15 @@ namespace MS2.ServerApp.Network
     {
         private readonly TcpSettings _settings;
         private readonly TcpMessageRouter _router;
-        private readonly ILogger<TcpServer> _logger;
         private TcpListener? _listener;
         private readonly List<Task> _clientTasks = new();
         private CancellationTokenSource? _cancellationTokenSource;
+        private int _connectedClients = 0;
 
-        public TcpServer(TcpSettings settings, TcpMessageRouter router, ILogger<TcpServer> logger)
+        public TcpServer(TcpSettings settings, TcpMessageRouter router)
         {
             _settings = settings;
             _router = router;
-            _logger = logger;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -30,16 +28,15 @@ namespace MS2.ServerApp.Network
 
                 var ipAddress = IPAddress.Parse(_settings.Host);
                 _listener = new TcpListener(ipAddress, _settings.Port);
-                _listener.Start(_settings.MaxConnections);
+                _listener.Start();
 
-                _logger.LogInformation("TCP Server started on {Host}:{Port}", _settings.Host, _settings.Port);
-                _logger.LogInformation("Max connections: {MaxConnections}", _settings.MaxConnections);
+                Console.WriteLine($"Server started | {_settings.Host}:{_settings.Port}");
 
                 await AcceptClientsAsync(_cancellationTokenSource.Token);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error starting TCP Server");
+                Console.WriteLine($"Error starting TCP Server: {ex.Message}");
                 throw;
             }
         }
@@ -51,7 +48,9 @@ namespace MS2.ServerApp.Network
                 try
                 {
                     var client = await _listener!.AcceptTcpClientAsync(cancellationToken);
-                    _logger.LogInformation("Client connected: {Endpoint}", client.Client.RemoteEndPoint);
+
+                    Interlocked.Increment(ref _connectedClients);
+                    Console.WriteLine($"{client.Client.RemoteEndPoint} | Connected | Online: {_connectedClients}");
 
                     // Handle client trong Task riêng
                     var clientTask = Task.Run(() => HandleClientAsync(client, cancellationToken), cancellationToken);
@@ -62,12 +61,11 @@ namespace MS2.ServerApp.Network
                 }
                 catch (OperationCanceledException)
                 {
-                    _logger.LogInformation("Server is shutting down...");
                     break;
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Error accepting client");
+                    Console.WriteLine($"Error accepting client: {ex.Message}");
                 }
             }
         }
@@ -94,8 +92,7 @@ namespace MS2.ServerApp.Network
 
                         if (messageLength <= 0 || messageLength > buffer.Length)
                         {
-                            _logger.LogWarning("Invalid message length: {Length} from {Endpoint}", messageLength, endpoint);
-                            break;
+                            break; // Invalid length, close connection
                         }
 
                         // Đọc message body
@@ -112,8 +109,7 @@ namespace MS2.ServerApp.Network
 
                         if (totalRead < messageLength)
                         {
-                            _logger.LogWarning("Incomplete message from {Endpoint}", endpoint);
-                            break;
+                            break; // Incomplete message
                         }
 
                         // Deserialize message
@@ -123,26 +119,26 @@ namespace MS2.ServerApp.Network
                         var messageJson = System.Text.Encoding.UTF8.GetString(messageBytes);
                         var tcpMessage = TcpMessage.FromJson(messageJson);
 
-                        if (tcpMessage == null)
-                        {
-                            _logger.LogWarning("Failed to deserialize message from {Endpoint}", endpoint);
-                            continue;
-                        }
+                        if (tcpMessage == null) continue;
 
-                        _logger.LogInformation("Received [{Action}] from {Endpoint}", tcpMessage.Action, endpoint);
+                        // Log request & response trên 1 dòng
+                        var queryInfo = tcpMessage.Data != null ? $" - {tcpMessage.Data.ToString()?.Substring(0, Math.Min(40, tcpMessage.Data.ToString()?.Length ?? 0))}..." : "";
+
                         // Route và xử lý message
                         var response = await _router.RouteMessageAsync(tcpMessage);
+
+                        // Log: IP:Port | Request | Action - Query | Status | Records | Online
+                        var recordCount = GetRecordCount(response.Data);
+                        var status = response.Success ? "SUCCESS" : "FAILED";
+                        Console.WriteLine($"{endpoint} | Request | {tcpMessage.Action}{queryInfo} | {status} | Records: {recordCount} | Online: {_connectedClients}");
 
                         // Send response
                         var responseBytes = response.ToBytes();
                         await stream.WriteAsync(responseBytes, cancellationToken);
                         await stream.FlushAsync(cancellationToken);
-
-                        _logger.LogInformation("Sent response [{Success}] to {Endpoint}", response.Success, endpoint);
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogError(ex, "Error processing message from {Endpoint}", endpoint);
                         // Send error response
                         var errorResponse = TcpResponse.CreateError($"Server error: {ex.Message}");
                         var errorBytes = errorResponse.ToBytes();
@@ -150,20 +146,36 @@ namespace MS2.ServerApp.Network
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError(ex, "Error handling client {Endpoint}", endpoint);
+                // Silent error handling
             }
             finally
             {
                 client.Close();
-                _logger.LogInformation("Client disconnected: {Endpoint}", endpoint);
+                Interlocked.Decrement(ref _connectedClients);
+                Console.WriteLine($"{endpoint} | Disconnected | Online: {_connectedClients}");
             }
+        }
+
+        private int GetRecordCount(object? data)
+        {
+            if (data == null) return 0;
+
+            // Check if data is array/list
+            if (data is System.Collections.IEnumerable enumerable and not string)
+            {
+                int count = 0;
+                foreach (var _ in enumerable) count++;
+                return count;
+            }
+
+            return 1; // Single object
         }
 
         public async Task StopAsync()
         {
-            _logger.LogInformation("Stopping TCP Server...");
+            Console.WriteLine("Stopping server...");
 
             _cancellationTokenSource?.Cancel();
             _listener?.Stop();
@@ -174,7 +186,7 @@ namespace MS2.ServerApp.Network
                 Task.Delay(5000)
             );
 
-            _logger.LogInformation("TCP Server stopped");
+            Console.WriteLine("Server stopped");
         }
     }
 }
