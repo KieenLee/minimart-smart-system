@@ -1,7 +1,7 @@
 # KẾ HOẠCH TRIỂN KHAI DỰ ÁN MS2 - MINIMART SMART SYSTEM
 
-**Phiên bản:** 3.0  
-**Ngày cập nhật:** 14/02/2026  
+**Phiên bản:** 3.1  
+**Ngày cập nhật:** 15/02/2026  
 **Kiến trúc:** Dual-Path Architecture (Web MVC + TCP Network)
 
 ---
@@ -947,11 +947,15 @@ MS2.DesktopApp/                      # WPF .NET 8
 6. Dialog DataContext - Fixed binding in EmployeesView
 7. Unused variable warnings - Fixed (6 warnings removed)
 8. Build process locking - Resolved with Stop-Process
+9. **Address field bug** - Fixed missing Address mapping in AuthService.LoginAsync
+10. **Entity Framework logging** - Removed by changing to new HostBuilder() instead of CreateApplicationBuilder
+11. **UI colors** - Removed all Background/Foreground color attributes (20+ occurrences across 8+ XAML files)
 
 **TCP Actions Added:**
 
 - ✅ SEARCH_USERS (search by keyword)
 - ✅ CREATE_USER (Admin create employee)
+- ✅ UPDATE_USER_PROFILE (update user info, change password)
 
 **Testing Completed:**
 
