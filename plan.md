@@ -1512,6 +1512,107 @@ dotnet publish MS2.ServerApp/MS2.ServerApp.csproj -c Release -r win-x64 --self-c
 
 ---
 
+## 📄 TỔNG QUAN CẤU TRÚC WEBAPP - 11 TRANG CHÍNH
+
+### **Phân loại theo Module:**
+
+| Module       | Số trang | Controller         | Mục đích                       |
+| ------------ | -------- | ------------------ | ------------------------------ |
+| **Home**     | 2        | HomeController     | Trang chủ và giới thiệu        |
+| **Account**  | 2        | AccountController  | Đăng ký, đăng nhập, đăng xuất  |
+| **Products** | 2        | ProductsController | Xem và tìm kiếm sản phẩm       |
+| **Cart**     | 2        | CartController     | Quản lý giỏ hàng và thanh toán |
+| **Orders**   | 2        | OrdersController   | Lịch sử đơn hàng               |
+| **Profile**  | 1        | ProfileController  | Quản lý thông tin cá nhân      |
+| **Shared**   | 2        | -                  | Layout và Error page           |
+
+### **Chi tiết các trang:**
+
+#### **1. HOME MODULE (2 trang)** - ✅ Public
+
+| Trang            | URL                    | Chức năng                                                                                                               |
+| ---------------- | ---------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| **Index.cshtml** | `/` hoặc `/Home/Index` | - Trang chủ website<br>- Hiển thị sản phẩm nổi bật/mới nhất (6-8 sản phẩm)<br>- Banner quảng cáo<br>- Danh mục sản phẩm |
+| **About.cshtml** | `/Home/About`          | - Giới thiệu về cửa hàng<br>- Thông tin liên hệ                                                                         |
+
+#### **2. ACCOUNT MODULE (2 trang)** - ✅ Public
+
+| Trang               | URL                 | Chức năng                                                                                                                                        |
+| ------------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Login.cshtml**    | `/Account/Login`    | - Form đăng nhập<br>- Username, Password, Remember Me<br>- Link đến Register                                                                     |
+| **Register.cshtml** | `/Account/Register` | - Form đăng ký tài khoản<br>- Username, FullName, Email, Password, Phone, Address<br>- Tự động tạo role "Customer"<br>- Hash password với BCrypt |
+
+**Actions không có View:** `Logout` - Đăng xuất (xóa cookie authentication)
+
+#### **3. PRODUCTS MODULE (2 trang)** - ✅ Public
+
+| Trang              | URL                      | Chức năng                                                                                                                               |
+| ------------------ | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------- |
+| **Index.cshtml**   | `/Products`              | - Danh sách tất cả sản phẩm<br>- Tìm kiếm theo keyword<br>- Lọc theo category<br>- Hiển thị dạng grid (card)<br>- Pagination (tùy chọn) |
+| **Details.cshtml** | `/Products/Details/{id}` | - Chi tiết 1 sản phẩm<br>- Hình ảnh, tên, giá, mô tả, tồn kho<br>- Chọn số lượng<br>- Nút "Thêm vào giỏ hàng"                           |
+
+#### **4. CART MODULE (2 trang)**
+
+| Trang               | URL              | Chức năng                                                                                                                                                                | Auth           |
+| ------------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------- |
+| **Index.cshtml**    | `/Cart`          | - Hiển thị giỏ hàng (từ Session)<br>- Danh sách sản phẩm trong giỏ<br>- Cập nhật số lượng (+/-)<br>- Xóa sản phẩm khỏi giỏ<br>- Hiển thị tổng tiền<br>- Nút "Thanh toán" | ✅ Public      |
+| **Checkout.cshtml** | `/Cart/Checkout` | - Form nhập thông tin giao hàng<br>- FullName, Phone, Address, Notes<br>- Hiển thị tóm tắt đơn hàng<br>- Nút "Đặt hàng"<br>- Sau khi đặt hàng → Xóa giỏ hàng             | 🔒 [Authorize] |
+
+**Actions không có View:**
+
+- `AddToCart(productId, quantity)` - POST thêm vào giỏ
+- `UpdateQuantity(productId, quantity)` - POST cập nhật số lượng
+- `RemoveFromCart(productId)` - POST xóa khỏi giỏ
+- `ClearCart()` - POST xóa toàn bộ giỏ
+
+#### **5. ORDERS MODULE (2 trang)** - 🔒 [Authorize]
+
+| Trang              | URL                    | Chức năng                                                                                                                                        |
+| ------------------ | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Index.cshtml**   | `/Orders`              | - Lịch sử đơn hàng của khách hàng<br>- Danh sách các đơn đã đặt<br>- Hiển thị: Order ID, Ngày đặt, Tổng tiền, Trạng thái<br>- Nút "Xem chi tiết" |
+| **Details.cshtml** | `/Orders/Details/{id}` | - Chi tiết 1 đơn hàng<br>- Thông tin đơn hàng (ngày, địa chỉ, tổng tiền)<br>- Danh sách sản phẩm trong đơn<br>- Trạng thái đơn hàng              |
+
+**Trang bổ sung (tùy chọn):** `Success.cshtml` - Thông báo đặt hàng thành công
+
+#### **6. PROFILE MODULE (1 trang)** - 🔒 [Authorize]
+
+| Trang            | URL        | Chức năng                                                                                                                |
+| ---------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------ |
+| **Index.cshtml** | `/Profile` | - Hiển thị thông tin khách hàng<br>- FullName, Email, Phone, Address<br>- Form edit profile<br>- Đổi mật khẩu (tùy chọn) |
+
+#### **7. SHARED LAYOUTS (2 trang)**
+
+| File                | Mục đích                                                                                                                           |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| **\_Layout.cshtml** | Master template cho toàn bộ website<br>- Header, Navigation Menu, Footer chung<br>- Hiển thị trạng thái đăng nhập (\_LoginPartial) |
+| **Error.cshtml**    | Trang lỗi chung (404, 500...)                                                                                                      |
+
+### **🎯 LUỒNG SỬ DỤNG KHÁCH HÀNG:**
+
+```
+1. Vào trang chủ (/) → Xem sản phẩm nổi bật
+2. Xem tất cả sản phẩm (/Products) → Tìm kiếm, lọc
+3. Xem chi tiết sản phẩm (/Products/Details/{id}) → Thêm vào giỏ
+4. Xem giỏ hàng (/Cart) → Cập nhật số lượng
+5. Đăng ký tài khoản (/Account/Register) - nếu chưa có
+6. Đăng nhập (/Account/Login)
+7. Thanh toán (/Cart/Checkout) → Nhập địa chỉ → Đặt hàng
+8. Xem lịch sử đơn hàng (/Orders)
+9. Xem chi tiết đơn hàng (/Orders/Details/{id})
+10. Quản lý thông tin cá nhân (/Profile)
+```
+
+### **📊 Tổng kết:**
+
+- **Tổng số trang:** 11 trang chính + 2 shared layouts = **13 file .cshtml**
+- **Public pages:** 6 trang (không cần đăng nhập)
+- **Authenticated pages:** 5 trang (cần đăng nhập)
+- **Controllers:** 6 controllers
+- **ViewModels:** 7 ViewModels
+- **Services:** 4 services (Auth, Product, Order, Cart)
+
+---
+
 ## PHASE A1: XÂY DỰNG ASP.NET CORE MVC WEB APPLICATION
 
 > **Lưu ý quan trọng:** KHÔNG sử dụng Web API riêng biệt. Backend và Frontend tích hợp trong cùng một project MVC.  
