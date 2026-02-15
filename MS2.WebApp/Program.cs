@@ -48,12 +48,11 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
 app.UseStaticFiles(); // Serve wwwroot files (CSS, JS, images)
 
 app.UseRouting();
 
-// ===== SESSION MIDDLEWARE (PHẢI ĐẶT TRƯỚC UseAuthorization) =====
+// ===== SESSION MIDDLEWARE =====
 app.UseSession();
 
 app.UseAuthorization();

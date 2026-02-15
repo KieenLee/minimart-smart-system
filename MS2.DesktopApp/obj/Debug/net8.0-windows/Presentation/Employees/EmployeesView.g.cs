@@ -51,7 +51,7 @@ namespace MS2.DesktopApp.Presentation.Employees {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/MS2.DesktopApp;V1.0.0.0;component/presentation/employees/employeesview.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/MS2.DesktopApp;component/presentation/employees/employeesview.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\..\Presentation\Employees\EmployeesView.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

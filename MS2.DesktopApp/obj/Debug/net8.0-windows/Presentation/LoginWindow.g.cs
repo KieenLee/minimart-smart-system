@@ -67,7 +67,7 @@ namespace MS2.DesktopApp.Presentation {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/MS2.DesktopApp;V1.0.0.0;component/presentation/loginwindow.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/MS2.DesktopApp;component/presentation/loginwindow.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\Presentation\LoginWindow.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

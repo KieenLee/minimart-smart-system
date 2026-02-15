@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - MiniMart Smart System</title>
+    
+    <!-- Bootstrap 5.3 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    
+    <!-- Swiper -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="~/css/vendor.css" />
+    <link rel="stylesheet" href="~/css/normalize.css" />
+    <link rel="stylesheet" href="~/css/style.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Open+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- SVG Icons -->
+    <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+        <defs>
+            <symbol id="search" viewBox="0 0 24 24">
+                <path fill="currentColor" d="M21.71 20.29L18 16.61A9 9 0 1 0 16.61 18l3.68 3.68a1 1 0 0 0 1.42 0a1 1 0 0 0 0-1.39ZM11 18a7 7 0 1 1 7-7a7 7 0 0 1-7 7Z"/>
+            </symbol>
+            <symbol id="user" viewBox="0 0 24 24">
+                <path fill="currentColor" d="M15.71 12.71a6 6 0 1 0-7.42 0a10 10 0 0 0-6.22 8.18a1 1 0 0 0 2 .22a8 8 0 0 1 15.9 0a1 1 0 0 0 1 .89h.11a1 1 0 0 0 .88-1.1a10 10 0 0 0-6.25-8.19ZM12 12a4 4 0 1 1 4-4a4 4 0 0 1-4 4Z"/>
+            </symbol>
+            <symbol id="cart" viewBox="0 0 24 24">
+                <path fill="currentColor" d="M8.5 19a1.5 1.5 0 1 0 1.5 1.5A1.5 1.5 0 0 0 8.5 19ZM19 16H7a1 1 0 0 1 0-2h8.491a3.013 3.013 0 0 0 2.885-2.176l1.585-5.55A1 1 0 0 0 19 5H6.74a3.007 3.007 0 0 0-2.82-2H3a1 1 0 0 0 0 2h.921a1.005 1.005 0 0 1 .962.725l.155.545v.005l1.641 5.742A3 3 0 0 0 7 18h12a1 1 0 0 0 0-2Zm-1.326-9l-1.22 4.274a1.005 1.005 0 0 1-.963.726H8.754l-.255-.892L7.326 7ZM16.5 19a1.5 1.5 0 1 0 1.5 1.5a1.5 1.5 0 0 0-1.5-1.5Z"/>
+            </symbol>
+            <symbol id="heart" viewBox="0 0 24 24">
+                <path fill="currentColor" d="M20.16 4.61A6.27 6.27 0 0 0 12 4a6.27 6.27 0 0 0-8.16 9.48l7.45 7.45a1 1 0 0 0 1.42 0l7.45-7.45a6.27 6.27 0 0 0 0-8.87Zm-1.41 7.46L12 18.81l-6.75-6.74a4.28 4.28 0 0 1 3-7.3a4.25 4.25 0 0 1 3 1.25a1 1 0 0 0 1.42 0a4.27 4.27 0 0 1 6 6.05Z"/>
+            </symbol>
+        </defs>
+    </svg>
+
+    <!-- Header -->
+    <header>
+        <div class="container-fluid">
+            <div class="row py-3 border-bottom">
+                
+                <!-- Logo -->
+                <div class="col-sm-4 col-lg-3 text-center text-sm-start">
+                    <div class="main-logo">
+                        <a asp-controller="Home" asp-action="Index">
+                            <h2 class="text-primary">MiniMart</h2>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Search Bar -->
+                <div class="col-sm-6 offset-sm-2 offset-md-0 col-lg-5 d-none d-lg-block">
+                    <div class="search-bar row bg-light p-2 my-2 rounded-3">
+                        <div class="col-md-10">
+                            <form asp-controller="Products" asp-action="Search" method="get">
+                                <input type="text" name="keyword" class="form-control border-0 bg-transparent" 
+                                       placeholder="Tìm kiếm sản phẩm..." />
+                            </form>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-primary rounded-1">
+                                <svg class="search" width="24" height="24">
+                                    <use xlink:href="#search"></use>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right Icons -->
+                <div class="col-sm-8 col-lg-4 d-flex justify-content-end gap-5 align-items-center mt-4 mt-sm-0 justify-content-center justify-content-sm-end">
+                    
+                    <!-- User Account -->
+                    <div class="d-flex align-items-center">
+                        <a asp-controller="Account" asp-action="Profile" class="text-decoration-none">
+                            <svg class="user" width="24" height="24">
+                                <use xlink:href="#user"></use>
+                            </svg>
+                            <span class="ms-1">
+                                @if (Context.Session.GetString("Username") != null)
+                                {
+                                    @Context.Session.GetString("FullName")
+                                }
+                                else
+                                {
+                                    @:Tài khoản
+                                }
+                            </span>
+                        </a>
+                    </div>
+                    
+                    <!-- Cart -->
+                    <div class="d-flex align-items-center">
+                        <a asp-controller="Cart" asp-action="Index" class="text-decoration-none position-relative">
+                            <svg class="cart" width="24" height="24">
+                                <use xlink:href="#cart"></use>
+                            </svg>
+                            <span class="ms-1">Giỏ hàng</span>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
+                                0
+                            </span>
+                        </a>
+                    </div>
+                    
+                </div>
+                
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="container-fluid">
+            <div class="row py-3">
+                <div class="d-flex justify-content-center justify-content-sm-between align-items-center">
+                    <nav class="main-menu d-flex navbar navbar-expand-lg">
+                        
+                        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
+                                aria-controls="offcanvasNavbar">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        
+                        <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+                            
+                            <div class="offcanvas-header justify-content-center">
+                                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                            </div>
+                            
+                            <div class="offcanvas-body">
+                                <ul class="navbar-nav justify-content-end menu-list list-unstyled d-flex gap-md-3 mb-0">
+                                    <li class="nav-item">
+                                        <a asp-controller="Home" asp-action="Index" class="nav-link">Trang chủ</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a asp-controller="Products" asp-action="Index" class="nav-link">Sản phẩm</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a asp-controller="Cart" asp-action="Index" class="nav-link">Giỏ hàng</a>
+                                    </li>
+                                    @if (Context.Session.GetString("Username") != null)
+                                    {
+                                        <li class="nav-item">
+                                            <a asp-controller="Order" asp-action="History" class="nav-link">Đơn hàng</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a asp-controller="Account" asp-action="Profile" class="nav-link">Tài khoản</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                                                <button type="submit" class="btn btn-link nav-link">Đăng xuất</button>
+                                            </form>
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        <li class="nav-item">
+                                            <a asp-controller="Account" asp-action="Login" class="nav-link">Đăng nhập</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a asp-controller="Account" asp-action="Register" class="nav-link">Đăng ký</a>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                            
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        @RenderBody()
+    </main>
+
+    <!-- Footer -->
+    <footer id="footer" class="mt-5">
+        <div class="container">
+            <div class="row py-5">
+                <div class="col-md-4">
+                    <h5 class="text-primary">MiniMart Smart System</h5>
+                    <p>Hệ thống quản lý siêu thị thông minh</p>
+                </div>
+                <div class="col-md-4">
+                    <h6>Liên kết nhanh</h6>
+                    <ul class="list-unstyled">
+                        <li><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+                        <li><a asp-controller="Products" asp-action="Index">Sản phẩm</a></li>
+                        <li><a asp-controller="Account" asp-action="Login">Đăng nhập</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h6>Liên hệ</h6>
+                    <p>Email: support@minimart.com<br>
+                    Hotline: 1900-xxxx</p>
+                </div>
+            </div>
+            <div class="row border-top pt-3">
+                <div class="col-md-12 text-center">
+                    <p>&copy; 2026 MiniMart Smart System. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+    <script src="~/js/jquery-1.11.0.min.js"></script>
+    <script src="~/js/plugins.js"></script>
+    <script src="~/js/script.js"></script>
+    <script src="~/js/site.js"></script>
+    
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
