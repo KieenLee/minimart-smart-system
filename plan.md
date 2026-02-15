@@ -1,8 +1,8 @@
 # KẾ HOẠCH TRIỂN KHAI DỰ ÁN MS2 - MINIMART SMART SYSTEM
 
-**Phiên bản:** 3.1  
+**Phiên bản:** 3.2  
 **Ngày cập nhật:** 15/02/2026  
-**Kiến trúc:** Dual-Path Architecture (Web MVC + TCP Network)
+**Kiến trúc:** Dual-Path Architecture (ASP.NET Core MVC Razor Views + TCP Network)
 
 ---
 
@@ -168,7 +168,7 @@ Dự án chia thành 3 phase theo thứ tự triển khai:
 
 1. **Phase 0 - FOUNDATION:** Database, Models, Repositories (Shared cho cả 2 flows)
 2. **Phase B - DESKTOP APP (Flow B):** WPF Client + TCP Server (Internal POS System)
-3. **Phase A - WEB APP (Flow A):** ASP.NET MVC + Web API (Public Customer Portal)
+3. **Phase A - WEB APP (Flow A):** ASP.NET Core MVC với Razor Views (.cshtml) - Backend & Frontend tích hợp
 
 **Lý do thứ tự:**
 
@@ -582,7 +582,7 @@ dotnet add MS2.ServerApp package BCrypt.Net-Next
 - ✅ Simplified, minimalist UI
 - ✅ End-to-end testing successful
 
-**→ Sẵn sàng Phase A: Web Application (ASP.NET MVC + Web API)**
+**→ Sẵn sàng Phase A: Web Application (ASP.NET Core MVC với Razor Views - Backend & Frontend tích hợp)**
 
 ---
 
@@ -1506,73 +1506,309 @@ dotnet publish MS2.ServerApp/MS2.ServerApp.csproj -c Release -r win-x64 --self-c
 # PHASE A: WEB APP (FLOW A) - PUBLIC PATH
 
 > **Target Users:** Khách hàng trực tuyến  
-> **Tech Stack:** ASP.NET Core MVC (.cshtml) + Web API + JWT Authentication  
+> **Tech Stack:** ASP.NET Core MVC với Razor Views (.cshtml) - Backend & Frontend tích hợp, Cookie Authentication  
+> **Kiến trúc:** Monolithic - Controllers xử lý logic và trả về Views, KHÔNG sử dụng Web API riêng  
 > **Ưu tiên:** Thấp hơn Desktop App (triển khai sau)
 
 ---
 
-## PHASE A1: XÂY DỰNG WEB API BACKEND
+## PHASE A1: XÂY DỰNG ASP.NET CORE MVC WEB APPLICATION
+
+> **Lưu ý quan trọng:** KHÔNG sử dụng Web API riêng biệt. Backend và Frontend tích hợp trong cùng một project MVC.  
+> **Controllers xử lý logic nghiệp vụ trực tiếp** (gọi Services → Repositories → Database) và trả về Views (.cshtml) với dữ liệu.  
+> **Razor Views (.cshtml)** cho phép nhúng code C# vào HTML với cú pháp @Model, @foreach, @if...
 
 ---
 
-## Task A1.1: Setup Web API Project
+## Task A1.1: Setup MVC Project
 
 **Folder Structure:**
 
 ```
-MS2.WebAPI/                    # ASP.NET Core Web API .NET 8
+MS2.WebApp/                         # ASP.NET Core MVC .NET 8
 ├── Program.cs
 ├── appsettings.json
-├── Controllers/
-│   ├── AuthController.cs
-│   ├── ProductsController.cs
-│   ├── OrdersController.cs
-│   ├── CustomersController.cs
-│   └── CategoriesController.cs
-├── Services/
-│   ├── IJwtTokenService.cs
-│   ├── JwtTokenService.cs
-│   ├── IAuthService.cs
-│   └── AuthService.cs
-├── Models/
-│   ├── JwtSettings.cs
-│   └── ApiResponse.cs
-├── Middleware/
-│   ├── ExceptionHandlingMiddleware.cs
-│   └── LoggingMiddleware.cs
-└── Extensions/
-    ├── ServiceExtensions.cs
-    └── SwaggerExtensions.cs
+│
+├── Controllers/                    # Controllers xử lý logic và trả về Views
+│   ├── HomeController.cs           # Homepage, About
+│   ├── AccountController.cs        # Login, Register, Logout
+│   ├── ProductsController.cs       # Product listing, Details, Search
+│   ├── CartController.cs           # Cart management, Checkout
+│   ├── OrdersController.cs         # Order history, Order details
+│   └── ProfileController.cs        # Customer profile
+│
+├── Services/                       # Business Logic Layer (gọi Repository)
+│   ├── IAuthService.cs             # Authentication service interface
+│   ├── AuthService.cs              # Login, Register, Password hashing (BCrypt)
+│   ├── IProductService.cs          # Product service interface
+│   ├── ProductService.cs           # Product business logic
+│   ├── IOrderService.cs            # Order service interface
+│   ├── OrderService.cs             # Order processing, Create order
+│   ├── ICartService.cs             # Cart service interface (Session-based)
+│   └── CartService.cs              # Cart operations (Add, Remove, Clear)
+│
+├── ViewModels/                     # ViewModels cho Views
+│   ├── LoginViewModel.cs
+│   ├── RegisterViewModel.cs
+│   ├── ProductListViewModel.cs
+│   ├── ProductDetailViewModel.cs
+│   ├── CartViewModel.cs
+│   ├── CheckoutViewModel.cs
+│   └── OrderHistoryViewModel.cs
+│
+├── Views/                          # Razor Views (.cshtml)
+│   ├── Shared/
+│   │   ├── _Layout.cshtml          # Master layout
+│   │   ├── _LoginPartial.cshtml    # Login status partial
+│   │   └── Error.cshtml
+│   ├── Home/
+│   │   ├── Index.cshtml            # Homepage with featured products
+│   │   └── About.cshtml
+│   ├── Account/
+│   │   ├── Login.cshtml
+│   │   └── Register.cshtml
+│   ├── Products/
+│   │   ├── Index.cshtml            # Product listing with search/filter
+│   │   └── Details.cshtml          # Product details
+│   ├── Cart/
+│   │   ├── Index.cshtml            # Cart view
+│   │   └── Checkout.cshtml         # Checkout form
+│   ├── Orders/
+│   │   ├── Index.cshtml            # Order history
+│   │   └── Details.cshtml          # Order details
+│   └── Profile/
+│       └── Index.cshtml            # Customer profile
+│
+├── Models/                         # Local models (không dùng từ MS2.Models)
+│   └── CartItemModel.cs            # Session cart model
+│
+└── wwwroot/                        # Static files
+    ├── css/
+    │   ├── site.css
+    │   └── bootstrap/
+    ├── js/
+    │   ├── site.js
+    │   └── cart.js
+    └── images/
+        └── products/
 ```
 
 **NuGet Packages:**
 
-- [ ] `Microsoft.AspNetCore.Authentication.JwtBearer`
-- [ ] `Swashbuckle.AspNetCore` (Swagger)
-- [ ] `BCrypt.Net-Next`
-- [ ] `System.IdentityModel.Tokens.Jwt`
+- [ ] `Microsoft.AspNetCore.Authentication.Cookies` (Cookie-based authentication)
+- [ ] `BCrypt.Net-Next` (Password hashing)
+- [ ] `Microsoft.EntityFrameworkCore.SqlServer` (đã có từ MS2.DataAccess)
+- [ ] `Microsoft.AspNetCore.Session` (Session management cho cart)
 
 **Todo List:**
 
-- [ ] Tạo project `MS2.WebAPI` (ASP.NET Core Web API .NET 8)
+- [ ] Tạo project `MS2.WebApp` (ASP.NET Core MVC .NET 8)
 - [ ] Reference `MS2.Models` và `MS2.DataAccess`
 - [ ] Cài đặt packages
-- [ ] Setup `appsettings.json` với JWT settings
+- [ ] Setup `appsettings.json` với ConnectionString
 - [ ] Add project vào solution
+- [ ] Tạo folder structure (Controllers, Services, ViewModels, Views)
 
 **CLI Commands:**
 
 ```bash
-dotnet new webapi -n MS2.WebAPI -f net8.0
-dotnet sln add MS2.WebAPI/MS2.WebAPI.csproj
-dotnet add MS2.WebAPI reference MS2.Models
-dotnet add MS2.WebAPI reference MS2.DataAccess
-dotnet add MS2.WebAPI package Microsoft.AspNetCore.Authentication.JwtBearer
-dotnet add MS2.WebAPI package Swashbuckle.AspNetCore
-dotnet add MS2.WebAPI package BCrypt.Net-Next
+dotnet new mvc -n MS2.WebApp -f net8.0
+dotnet sln add MS2.WebApp/MS2.WebApp.csproj
+dotnet add MS2.WebApp reference MS2.Models
+dotnet add MS2.WebApp reference MS2.DataAccess
+dotnet add MS2.WebApp package Microsoft.AspNetCore.Authentication.Cookies
+dotnet add MS2.WebApp package BCrypt.Net-Next
+dotnet add MS2.WebApp package Microsoft.AspNetCore.Session
 ```
 
 **appsettings.json:**
+
+```json
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=WIN-R972FJEQE2C\\SQLEXPRESS;Database=MiniMart_Smart;Trusted_Connection=True;TrustServerCertificate=True;"
+  },
+  "SessionSettings": {
+    "IdleTimeout": 30
+  }
+}
+```
+
+---
+
+## Task A1.2: Configure Program.cs (DI Container & Middleware)
+
+**Program.cs Configuration:**
+
+```csharp
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container
+builder.Services.AddControllersWithViews();
+
+// Configure Session (cho Cart)
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
+// Configure Cookie Authentication
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Account/Login";
+        options.LogoutPath = "/Account/Logout";
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+        options.SlidingExpiration = true;
+    });
+
+// Register DbContext
+builder.Services.AddDbContext<MS2DbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Register Repositories
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+// Register Business Services
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<ICartService, CartService>();
+
+var app = builder.Build();
+
+// Configure middleware pipeline
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Home/Error");
+    app.UseHsts();
+}
+
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+app.UseRouting();
+app.UseSession();              // Phải trước UseAuthentication
+app.UseAuthentication();       // Phải trước UseAuthorization
+app.UseAuthorization();
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.Run();
+```
+
+**Todo List:**
+
+- [ ] Configure Cookie Authentication
+- [ ] Configure Session management
+- [ ] Register DbContext với ConnectionString
+- [ ] Register IUnitOfWork và Repositories
+- [ ] Register Business Services (Auth, Product, Order, Cart)
+- [ ] Configure middleware pipeline (Session → Authentication → Authorization)
+- [ ] Test build
+
+---
+
+## Task A1.3: Implement Business Services
+
+### IAuthService & AuthService
+
+**Interface:**
+
+```csharp
+public interface IAuthService
+{
+    Task<UserDto?> LoginAsync(string username, string password);
+    Task<bool> RegisterAsync(RegisterViewModel model);
+    Task<UserDto?> GetUserByIdAsync(int userId);
+}
+```
+
+**Implementation:**
+
+- LoginAsync: BCrypt password verification, return UserDto
+- RegisterAsync: Hash password với BCrypt, create Customer user (Role = "Customer")
+- GetUserByIdAsync: Get user info by ID
+
+### IProductService & ProductService
+
+**Interface:**
+
+```csharp
+public interface IProductService
+{
+    Task<List<ProductDto>> GetAllProductsAsync();
+    Task<ProductDto?> GetProductByIdAsync(int id);
+    Task<List<ProductDto>> SearchProductsAsync(string keyword);
+    Task<List<ProductDto>> GetProductsByCategoryAsync(int categoryId);
+    Task<List<CategoryDto>> GetAllCategoriesAsync();
+}
+```
+
+**Implementation:**
+
+- Gọi IUnitOfWork.Products để lấy dữ liệu
+- Map từ Entity → DTO
+
+### IOrderService & OrderService
+
+**Interface:**
+
+```csharp
+public interface IOrderService
+{
+    Task<int> CreateOrderAsync(CreateOrderDto orderDto);
+    Task<List<OrderDto>> GetOrdersByCustomerAsync(int customerId);
+    Task<OrderDto?> GetOrderDetailsAsync(int orderId);
+}
+```
+
+**Implementation:**
+
+- CreateOrderAsync: Create Order + OrderDetails với transaction
+- Validate stock availability
+- Map từ CreateOrderDto → Order Entity
+
+### ICartService & CartService (Session-based)
+
+**Interface:**
+
+```csharp
+public interface ICartService
+{
+    void AddToCart(int productId, string productName, decimal price, int quantity);
+    void RemoveFromCart(int productId);
+    void UpdateQuantity(int productId, int quantity);
+    List<CartItemModel> GetCartItems();
+    void ClearCart();
+    decimal GetCartTotal();
+    int GetCartItemCount();
+}
+```
+
+**Implementation:**
+
+- Lưu cart trong Session với key "ShoppingCart"
+- Serialize/Deserialize List<CartItemModel> to JSON
+- KHÔNG lưu vào database (cart tạm thời)
+- Inject IHttpContextAccessor để access Session
+
+**Todo List:**
+
+- [ ] Tạo 4 Service interfaces
+- [ ] Implement AuthService với BCrypt password hashing
+- [ ] Implement ProductService (gọi IUnitOfWork.Products)
+- [ ] Implement OrderService (gọi IUnitOfWork.Orders)
+- [ ] Implement CartService (Session-based, không dùng database)
+- [ ] Test services
+
+---
+
+## Task A1.4: Implement ViewModels
 
 ```json
 {
@@ -2252,8 +2488,7 @@ MS2.sln
 ├── MS2.ServerApp/                 # Flow B: TCP Server (Console)
 ├── MS2.DesktopApp/                # Flow B: WPF Desktop App
 │
-├── MS2.WebAPI/                    # Flow A: Web API Backend
-└── MS2.WebApp/                    # Flow A: ASP.NET MVC Web App
+└── MS2.WebApp/                    # Flow A: ASP.NET Core MVC (Backend & Frontend tích hợp)
 ```
 
 ---
@@ -2267,21 +2502,18 @@ MS2.sln
                      │
          ┌───────────▼──────────┐
          │   MS2.WebApp (MVC)   │  (Public Web - Port 443)
-         │  https://ms2.com     │
-         └───────────┬──────────┘
-                     │
-         ┌───────────▼──────────┐
-         │   MS2.WebAPI         │  (REST API - Port 7000)
+         │  https://ms2.com     │  (Backend & Frontend tích hợp)
+         │  Controllers + Views │
          └───────────┬──────────┘
                      │
          ┌───────────▼──────────┐
          │   SQL Server         │  (Database)
-         │   MS2Database        │
+         │   MiniMart_Smart     │
          └───────────▲──────────┘
                      │
          ┌───────────┴──────────┐
          │   MS2.ServerApp      │  (TCP Server - Port 5000)
-         │   (Windows Service)  │
+         │   (Windows Service)  │  (Internal Network Only)
          └───────────▲──────────┘
                      │
      ┌───────────────┼───────────────┐
@@ -2342,16 +2574,15 @@ MS2.sln
 
 ## Công cụ & Technologies Summary
 
-| Layer               | Technology                                       |
-| ------------------- | ------------------------------------------------ |
-| **Shared**          | .NET 8, EF Core, SQL Server                      |
-| **Desktop Client**  | WPF, CommunityToolkit.Mvvm, 3-Layer Architecture |
-| **Internal Server** | Console App, TCP/IP Sockets, DI Container        |
-| **Web Backend**     | ASP.NET Core Web API, JWT, Swagger               |
-| **Web Frontend**    | ASP.NET Core MVC, Razor Views, Bootstrap         |
-| **Database**        | SQL Server, EF Core Migrations                   |
-| **Security**        | JWT Bearer, BCrypt, Cookie Authentication        |
-| **Deployment**      | IIS, Azure App Service, Windows Service          |
+| Layer               | Technology                                                       |
+| ------------------- | ---------------------------------------------------------------- |
+| **Shared**          | .NET 8, EF Core, SQL Server                                      |
+| **Desktop Client**  | WPF, CommunityToolkit.Mvvm, 3-Layer Architecture                 |
+| **Internal Server** | Console App, TCP/IP Sockets, DI Container                        |
+| **Web Application** | ASP.NET Core MVC, Razor Views (.cshtml), Bootstrap               |
+| **Database**        | SQL Server, EF Core Migrations                                   |
+| **Security**        | BCrypt (Passwords), Cookie Authentication (Web), SessionId (TCP) |
+| **Deployment**      | IIS, Azure App Service, Windows Service                          |
 
 ---
 
@@ -2364,11 +2595,10 @@ MS2.sln
 | Phase B2: WPF Desktop App             | 5-7 days       |
 | Phase B3: Testing & Deployment Flow B | 2-3 days       |
 | **Total Flow B**                      | **13-19 days** |
-| Phase A1: Web API                     | 2-3 days       |
-| Phase A2: ASP.NET MVC Web App         | 4-6 days       |
-| Phase A3: Testing & Deployment Flow A | 2-3 days       |
-| **Total Flow A**                      | **8-12 days**  |
-| **GRAND TOTAL**                       | **24-36 days** |
+| Phase A1: ASP.NET MVC Web App         | 5-7 days       |
+| Phase A2: Testing & Deployment Flow A | 2-3 days       |
+| **Total Flow A**                      | **7-10 days**  |
+| **GRAND TOTAL**                       | **23-34 days** |
 
 ---
 
@@ -2387,9 +2617,10 @@ MS2.sln
 
 **Lưu ý bảo mật:**
 
-- JWT tokens khác nhau cho TCP Server và Web API (different secrets)
+- Cookie-based authentication cho Web App (Session cookies)
+- SessionId authentication cho TCP Server (internal network only)
 - TCP Server chỉ listen trên internal network (127.0.0.1 hoặc private IP)
-- Web API expose ra internet cần hardening (rate limiting, HTTPS, CORS)
+- Web App expose ra internet cần hardening (rate limiting, HTTPS, CSRF protection)
 
 ---
 

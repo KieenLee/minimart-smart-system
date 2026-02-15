@@ -25,13 +25,18 @@ Hệ thống được chia thành **hai kênh độc lập**, cùng kết nối 
 **Phương thức:**
 
 ```
-ASP.NET Core MVC (.cshtml) <-> ASP.NET Web API <-> Database (EF Core)
+ASP.NET Core MVC với Razor Views (.cshtml)
+   <-> Services Layer (Business Logic)
+   <-> Database (EF Core + Repositories)
 ```
 
 **Mục đích:**
 
 - Phục vụ khách hàng truy cập từ Internet
-- Thực hiện các thao tác **không yêu cầu kết nối liên tục**
+- Backend và Frontend tích hợp trong cùng một project
+- Code C# nhúng trực tiếp vào HTML qua Razor syntax (@Model, @foreach, @if...)
+- Controllers xử lý logic nghiệp vụ và trả về Views
+- KHÔNG sử dụng Web API riêng biệt
 
 ---
 
@@ -87,17 +92,18 @@ Desktop App (WPF)
 
 ## 5. Danh mục công nghệ (Tech Stack)
 
-| Thành phần      | Công nghệ                      |
-| --------------- | ------------------------------ |
-| Web UI          | ASP.NET Core MVC (.cshtml)     |
-| Web Backend     | ASP.NET Core Web API (RESTful) |
-| Desktop Client  | WPF (.NET 8)                   |
-| Internal Server | Console App (TCP Listener)     |
-| Communication   | System.Net.Sockets (TCP/IP)    |
-| Data Access     | Entity Framework Core          |
-| Database        | SQL Server                     |
-| Security (Web)  | JWT Bearer Authentication      |
-| Security (TCP)  | Session-based (SessionId)      |
+| Thành phần      | Công nghệ                                                  |
+| --------------- | ---------------------------------------------------------- |
+| Web UI          | ASP.NET Core MVC với Razor Views (.cshtml) - Tích hợp B&F  |
+| Web Backend     | Controllers + Services (Business Logic) trong cùng project |
+| Desktop Client  | WPF (.NET 8)                                               |
+| Internal Server | Console App (TCP Listener)                                 |
+| Communication   | System.Net.Sockets (TCP/IP)                                |
+| Data Access     | Entity Framework Core                                      |
+| Database        | SQL Server                                                 |
+| Security (Web)  | Cookie Authentication                                      |
+| Security (TCP)  | Session-based (SessionId)                                  |
+| Logging (TCP)   | Console.WriteLine (simplified)                             |
 
 ---
 
@@ -113,7 +119,7 @@ Desktop App (WPF)
 
 ---
 
-## 7. Tiến độ dự án (Cập nhật: 14/02/2026)
+## 7. Tiến độ dự án (Cập nhật: 15/02/2026)
 
 ### Phase 0: FOUNDATION - ✅ 100% Complete
 
@@ -142,27 +148,33 @@ Desktop App (WPF)
 - ✅ Task B2.6: Inventory View (price/stock updates)
 - ✅ Task B2.7: Reports View (date range, statistics)
 - ✅ Task B2.8: Employees View (search, create employee)
+- ✅ Task B2.9: Profile View (user profile management)
 
 **Phase B Features:**
 
-- ✅ 12+ TCP Actions (LOGIN, GET_PRODUCTS, CREATE_ORDER, UPDATE_PRICE, UPDATE_STOCK, GET_SALES_REPORT, GET_EMPLOYEES, SEARCH_USERS, CREATE_USER...)
-- ✅ Session-based authentication (SessionId)
+- ✅ 13+ TCP Actions (LOGIN, GET_PRODUCTS, CREATE_ORDER, UPDATE_PRICE, UPDATE_STOCK, GET_SALES_REPORT, GET_EMPLOYEES, SEARCH_USERS, CREATE_USER, UPDATE_USER_PROFILE...)
+- ✅ Session-based authentication (SessionId with Address field mapping)
 - ✅ Role-based access control (Employee: POS only, Admin: all features)
 - ✅ Employee management (search, create with BCrypt hashing)
-- ✅ Minimalist UI (no popups, no decorative elements)
+- ✅ Profile management (edit fullname, email, phone, address, change password)
+- ✅ Minimalist UI (no decorative colors, default Windows theme)
 - ✅ Real-time cart updates (ObservableObject pattern)
 - ✅ Silent error handling
+- ✅ Simplified logging (Console.WriteLine with online user count)
+- ✅ Single-line log format: IP:Port | Event | Action | Status | Records | Online
 - ✅ End-to-end testing successful
 
 ### Phase A: WEB APP - ⏸️ Not Started (NEXT PHASE)
 
 **Next Steps:**
 
-1. Setup ASP.NET Core MVC project (MS2.WebApp)
-2. Setup ASP.NET Core Web API project (MS2.WebAPI)
-3. Implement JWT authentication for web
-4. Implement customer-facing features
-5. Online ordering system
+1. Setup ASP.NET Core MVC project (MS2.WebApp) - tích hợp Backend & Frontend
+2. Implement Cookie authentication (không dùng JWT)
+3. Implement Services layer (gọi Repositories trực tiếp)
+4. Implement Controllers (xử lý logic và trả về Views)
+5. Implement Razor Views (.cshtml) với C# nhúng vào HTML
+6. Implement customer-facing features (Product browsing, Cart, Checkout)
+7. Session-based shopping cart (không lưu database)
 
 ---
 
@@ -191,8 +203,9 @@ Desktop App (WPF)
 │ │ ├── Auth/
 │ │ │ ├── LoginRequestDto.cs
 │ │ │ ├── LoginResponseDto.cs # SessionId + UserDto
-│ │ │ ├── UserDto.cs
-│ │ │ └── CreateUserDto.cs # For employee creation
+│ │ │ ├── UserDto.cs # With Address field
+│ │ │ ├── CreateUserDto.cs # For employee creation
+│ │ │ └── UpdateUserDto.cs # For profile updates
 │ │ │
 │ │ ├── Product/
 │ │ │ ├── ProductDto.cs
@@ -209,7 +222,7 @@ Desktop App (WPF)
 │ └── TCP/ # TCP Protocol Models
 │ ├── TcpMessage.cs # Action, Data, SessionId, RequestId
 │ ├── TcpResponse.cs # Success, Data, Message
-│ └── TcpActions.cs # 12+ action constants
+│ └── TcpActions.cs # 13+ action constants
 │
 │
 ├── MS2.DataAccess/ # Data Access Layer
@@ -241,7 +254,7 @@ Desktop App (WPF)
 │
 ├── MS2.ServerApp/ # Flow B: TCP Server (Console App)
 │ ├── MS2.ServerApp.csproj
-│ ├── Program.cs # DI Container + TcpServer startup
+│ ├── Program.cs # HostBuilder + TcpServer (no logging providers)
 │ ├── appsettings.json # TcpSettings (Host: 127.0.0.1, Port: 5000)
 │ │
 │ ├── Models/
@@ -249,7 +262,7 @@ Desktop App (WPF)
 │ │ └── UserSession.cs # SessionId, User, LoginTime
 │ │
 │ ├── Network/ # TCP Communication Layer
-│ │ ├── TcpServer.cs # TcpListener + client handling
+│ │ ├── TcpServer.cs # TcpListener + Console.WriteLine logging + online count
 │ │ └── TcpMessageRouter.cs # Route messages to Business Services
 │ │
 │ └── Business/ # Business Logic Layer
@@ -259,14 +272,14 @@ Desktop App (WPF)
 │ │ ├── IProductService.cs
 │ │ ├── IOrderService.cs
 │ │ ├── ICategoryService.cs
-│ │ └── IUserService.cs # Search users, create employee
+│ │ └── IUserService.cs # Search, create, update profile
 │ └── Services/
 │ ├── SessionManager.cs # ConcurrentDictionary sessions
-│ ├── AuthService.cs # BCrypt password verification
+│ ├── AuthService.cs # BCrypt + Address field mapping
 │ ├── ProductService.cs
 │ ├── OrderService.cs
 │ ├── CategoryService.cs
-│ └── UserService.cs # Search, create employee
+│ └── UserService.cs # Search, create, update profile
 │
 │
 └── MS2.DesktopApp/ # Flow B: WPF Desktop App
@@ -287,7 +300,8 @@ Desktop App (WPF)
 │ ├── PosViewModel.cs # POS logic (~300 LOC)
 │ ├── InventoryViewModel.cs # Inventory management (~250 LOC)
 │ ├── ReportsViewModel.cs # Sales reports (~100 LOC)
-│ └── EmployeesViewModel.cs # Employee management (~150 LOC)
+│ ├── EmployeesViewModel.cs # Employee management (~150 LOC)
+│ └── ProfileViewModel.cs # Profile editing (~200 LOC)
 │
 ├── Network/ # TCP Client Layer
 │ └── TcpClientService.cs # Connect, SendMessage, Disconnect
@@ -310,9 +324,13 @@ Desktop App (WPF)
 │ ├── ReportsView.xaml # Sales report
 │ └── ReportsView.xaml.cs
 │
-└── Employees/
-├── EmployeesView.xaml # Employee list + search + create
-└── EmployeesView.xaml.cs # Create employee dialog
+├── Employees/
+│ ├── EmployeesView.xaml # Employee list + search + create
+│ └── EmployeesView.xaml.cs # Create employee dialog
+│
+└── Profile/
+├── ProfileView.xaml # User profile editing (all roles)
+└── ProfileView.xaml.cs
 │ │ │
 │ │ ├── Product/
 │ │ │ ├── ProductDto.cs
@@ -375,37 +393,73 @@ Desktop App (WPF)
 │ └── DataSeeder.cs
 │
 │
-├── MS2.WebAPI/ # Flow A: Web API Backend
-│ ├── MS2.WebAPI.csproj
+├── MS2.WebApp/ # Flow A: ASP.NET Core MVC (Backend & Frontend tích hợp)
+│ ├── MS2.WebApp.csproj
 │ ├── appsettings.json
-│ ├── appsettings.Development.json
 │ ├── Program.cs
 │ │
-│ ├── Controllers/
-│ │ ├── AuthController.cs
-│ │ ├── ProductsController.cs
-│ │ ├── OrdersController.cs
-│ │ ├── CustomersController.cs
-│ │ ├── CategoriesController.cs
-│ │ └── EmployeesController.cs
+│ ├── Controllers/ # Controllers xử lý logic và trả về Views
+│ │ ├── HomeController.cs # Homepage, About
+│ │ ├── AccountController.cs # Login, Register, Logout
+│ │ ├── ProductsController.cs # Product listing, Search, Details
+│ │ ├── CartController.cs # Cart management, Checkout
+│ │ ├── OrdersController.cs # Order history, Order details
+│ │ └── ProfileController.cs # Customer profile
 │ │
-│ ├── Services/ # Business Logic Services
-│ │ ├── IJwtTokenService.cs
-│ │ ├── JwtTokenService.cs
+│ ├── Services/ # Business Logic Layer
 │ │ ├── IAuthService.cs
-│ │ └── AuthService.cs
+│ │ ├── AuthService.cs # Login, Register, BCrypt hashing
+│ │ ├── IProductService.cs
+│ │ ├── ProductService.cs
+│ │ ├── IOrderService.cs
+│ │ ├── OrderService.cs
+│ │ ├── ICartService.cs
+│ │ └── CartService.cs # Session-based cart
+│ │
+│ ├── ViewModels/ # ViewModels cho Views
+│ │ ├── LoginViewModel.cs
+│ │ ├── RegisterViewModel.cs
+│ │ ├── ProductListViewModel.cs
+│ │ ├── ProductDetailViewModel.cs
+│ │ ├── CartViewModel.cs
+│ │ ├── CheckoutViewModel.cs
+│ │ └── OrderHistoryViewModel.cs
+│ │
+│ ├── Views/ # Razor Views (.cshtml)
+│ │ ├── Shared/
+│ │ │ ├── \_Layout.cshtml
+│ │ │ ├── \_LoginPartial.cshtml
+│ │ │ └── Error.cshtml
+│ │ ├── Home/
+│ │ │ ├── Index.cshtml
+│ │ │ └── About.cshtml
+│ │ ├── Account/
+│ │ │ ├── Login.cshtml
+│ │ │ └── Register.cshtml
+│ │ ├── Products/
+│ │ │ ├── Index.cshtml
+│ │ │ └── Details.cshtml
+│ │ ├── Cart/
+│ │ │ ├── Index.cshtml
+│ │ │ └── Checkout.cshtml
+│ │ ├── Orders/
+│ │ │ ├── Index.cshtml
+│ │ │ └── Details.cshtml
+│ │ └── Profile/
+│ │ └── Index.cshtml
 │ │
 │ ├── Models/
-│ │ ├── JwtSettings.cs
-│ │ └── ApiResponse.cs
+│ │ └── CartItemModel.cs # Session cart model
 │ │
-│ ├── Middleware/
-│ │ ├── ExceptionHandlingMiddleware.cs
-│ │ └── LoggingMiddleware.cs
-│ │
-│ └── Extensions/
-│ ├── ServiceExtensions.cs
-│ └── SwaggerExtensions.cs
+│ └── wwwroot/ # Static files
+│ ├── css/
+│ │ ├── site.css
+│ │ └── bootstrap/
+│ ├── js/
+│ │ ├── site.js
+│ │ └── cart.js
+│ └── images/
+│ └── products/
 │
 │
 ├── MS2.ServerApp/ # Flow B: TCP Server (Console App)
@@ -434,99 +488,6 @@ Desktop App (WPF)
 │ ├── ProductService.cs
 │ ├── OrderService.cs
 │ └── CategoryService.cs
-│
-│
-├── MS2.BlazorApp/ # Flow A: Blazor Web App (FUTURE)
-│ ├── MS2.BlazorApp.csproj
-│ ├── Program.cs
-│ ├── App.razor
-│ ├── \_Imports.razor
-│ ├── Routes.razor
-│ │
-│ ├── wwwroot/
-│ │ ├── appsettings.json
-│ │ ├── css/
-│ │ │ ├── app.css
-│ │ │ └── bootstrap/
-│ │ ├── js/
-│ │ │ └── site.js
-│ │ └── images/
-│ │
-│ ├── Pages/ # Blazor Pages
-│ │ ├── Index.razor
-│ │ ├── Login.razor
-│ │ ├── Register.razor
-│ │ ├── Products.razor
-│ │ ├── ProductDetail.razor
-│ │ ├── Cart.razor
-│ │ ├── Checkout.razor
-│ │ ├── Orders.razor
-│ │ └── OrderDetail.razor
-│ │
-│ ├── Components/ # Reusable Components
-│ │ ├── Layout/
-│ │ │ ├── MainLayout.razor
-│ │ │ ├── NavMenu.razor
-│ │ │ └── Footer.razor
-│ │ │
-│ │ ├── Product/
-│ │ │ ├── ProductCard.razor
-│ │ │ ├── ProductList.razor
-│ │ │ └── ProductFilter.razor
-│ │ │
-│ │ ├── Cart/
-│ │ │ ├── CartItem.razor
-│ │ │ └── CartSummary.razor
-│ │ │
-│ │ └── Order/
-│ │ ├── OrderItem.razor
-│ │ └── OrderSummary.razor
-│ │
-│ ├── Services/ # HTTP Services
-│ │ ├── IAuthService.cs
-│ │ ├── AuthService.cs
-│ │ ├── IProductService.cs
-│ │ ├── ProductService.cs
-│ │ ├── IOrderService.cs
-│ │ ├── OrderService.cs
-│ │ ├── ICartService.cs
-│ │ └── CartService.cs
-│ │
-│ ├── Auth/
-│ │ ├── CustomAuthStateProvider.cs
-│ │ └── AuthenticationHeaderHandler.cs
-│ │
-│ └── Models/
-│ ├── CartItem.cs
-│ └── CheckoutModel.cs
-│
-│
-├── MS2.ServerApp/ # Flow B: TCP Server
-│ ├── MS2.ServerApp.csproj
-│ ├── Program.cs
-│ ├── appsettings.json
-│ ├── appsettings.Development.json
-│ │
-│ ├── Services/
-│ │ ├── TcpServer.cs
-│ │ ├── ITcpMessageHandler.cs
-│ │ ├── TcpMessageHandler.cs
-│ │ ├── IJwtTokenService.cs
-│ │ └── JwtTokenService.cs
-│ │
-│ ├── Handlers/ # TCP Action Handlers
-│ │ ├── LoginHandler.cs
-│ │ ├── ProductHandler.cs
-│ │ ├── OrderHandler.cs
-│ │ ├── InventoryHandler.cs
-│ │ └── ReportHandler.cs
-│ │
-│ ├── Models/
-│ │ ├── TcpSettings.cs
-│ │ └── JwtSettings.cs
-│ │
-│ └── Extensions/
-│ └── ServiceExtensions.cs
 │
 │
 └── MS2.DesktopApp/ # Flow B: WPF Desktop App
