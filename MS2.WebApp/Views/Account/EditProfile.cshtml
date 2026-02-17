@@ -1,0 +1,77 @@
+@model MS2.WebApp.Models.EditProfileViewModel
+@{
+    ViewData["Title"] = "Chỉnh sửa hồ sơ";
+}
+
+<section class="py-5">
+    <div class="container">
+        
+        <!-- Page Header -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <h2 class="text-primary">Chỉnh sửa hồ sơ</h2>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+                        <li class="breadcrumb-item"><a asp-action="Profile">Hồ sơ</a></li>
+                        <li class="breadcrumb-item active">Chỉnh sửa</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <form asp-action="EditProfile" method="post">
+                            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                            <div class="mb-3">
+                                <label asp-for="FullName" class="form-label">Họ và tên <span class="text-danger">*</span></label>
+                                <input asp-for="FullName" class="form-control" placeholder="Nhập họ và tên" />
+                                <span asp-validation-for="FullName" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="Email" class="form-label">Email <span class="text-danger">*</span></label>
+                                <input asp-for="Email" class="form-control" type="email" placeholder="Nhập địa chỉ email" />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="Phone" class="form-label">Số điện thoại</label>
+                                <input asp-for="Phone" class="form-control" placeholder="Nhập số điện thoại" />
+                                <span asp-validation-for="Phone" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-4">
+                                <label asp-for="Address" class="form-label">Địa chỉ</label>
+                                <textarea asp-for="Address" class="form-control" rows="3" 
+                                          placeholder="Nhập địa chỉ chi tiết"></textarea>
+                                <span asp-validation-for="Address" class="text-danger"></span>
+                            </div>
+
+                            <div class="d-flex gap-2 justify-content-end">
+                                <a asp-action="Profile" class="btn btn-outline-secondary">
+                                    Hủy
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <svg width="16" height="16" class="me-1" viewBox="0 0 24 24">
+                                        <path fill="currentColor" d="M21 7v12q0 .825-.587 1.413T19 21H5q-.825 0-1.412-.587T3 19V5q0-.825.588-1.412T5 3h12zm-9 11q1.25 0 2.125-.875T15 15q0-1.25-.875-2.125T12 12q-1.25 0-2.125.875T9 15q0 1.25.875 2.125T12 18m-6-8h9V6H6z"/>
+                                    </svg>
+                                    Lưu thay đổi
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

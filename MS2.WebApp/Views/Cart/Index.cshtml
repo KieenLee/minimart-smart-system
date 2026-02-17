@@ -1,0 +1,198 @@
+@model MS2.WebApp.Models.CartViewModel
+@{
+    ViewData["Title"] = "Giỏ hàng";
+}
+
+<section class="py-5">
+    <div class="container">
+        
+        <!-- Page Header -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <h2 class="text-primary">Giỏ hàng của bạn</h2>
+            </div>
+        </div>
+
+        <!-- Messages -->
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                @TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        @if (Model.IsEmpty)
+        {
+            <!-- Empty Cart -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card border-0 shadow-sm text-center p-5">
+                        <div class="card-body">
+                            <svg class="cart text-muted mb-3" width="80" height="80">
+                                <use xlink:href="#cart"></use>
+                            </svg>
+                            <h4 class="text-muted mb-3">Giỏ hàng trống</h4>
+                            <p class="text-muted mb-4">Hãy thêm sản phẩm vào giỏ hàng để tiếp tục mua sắm!</p>
+                            <a asp-controller="Products" asp-action="Index" class="btn btn-primary">
+                                Xem sản phẩm
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <!-- Cart Items -->
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table align-middle">
+                                    <thead>
+                                        <tr>
+                                            <th>Sản phẩm</th>
+                                            <th class="text-center">Giá</th>
+                                            <th class="text-center">Số lượng</th>
+                                            <th class="text-center">Tổng</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.Items)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="me-3">
+                                                            <svg class="text-primary" width="50" height="50">
+                                                                <use xlink:href="#cart"></use>
+                                                            </svg>
+                                                        </div>
+                                                        <div>
+                                                            <h6 class="mb-0">@item.ProductName</h6>
+                                                            <small class="text-muted">Còn: @item.Stock</small>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="text-center">
+                                                    <strong>@item.Price.ToString("N0") đ</strong>
+                                                </td>
+                                                <td>
+                                                    <form asp-action="UpdateQuantity" method="post" class="d-flex justify-content-center align-items-center gap-2">
+                                                        <input type="hidden" name="productId" value="@item.ProductId" />
+                                                        <button type="submit" name="quantity" value="@(item.Quantity - 1)" 
+                                                                class="btn btn-sm btn-outline-secondary" 
+                                                                @(item.Quantity <= 1 ? "disabled" : "")>
+                                                            -
+                                                        </button>
+                                                        <input type="number" name="quantity" value="@item.Quantity" 
+                                                               min="1" max="@item.Stock" 
+                                                               class="form-control form-control-sm text-center" 
+                                                               style="width: 60px;"
+                                                               onchange="this.form.submit()" />
+                                                        <button type="submit" name="quantity" value="@(item.Quantity + 1)" 
+                                                                class="btn btn-sm btn-outline-secondary"
+                                                                @(item.Quantity >= item.Stock ? "disabled" : "")>
+                                                            +
+                                                        </button>
+                                                    </form>
+                                                </td>
+                                                <td class="text-center">
+                                                    <strong class="text-primary">@item.Subtotal.ToString("N0") đ</strong>
+                                                </td>
+                                                <td class="text-center">
+                                                    <form asp-action="RemoveItem" method="post" class="d-inline">
+                                                        <input type="hidden" name="productId" value="@item.ProductId" />
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger" 
+                                                                onclick="return confirm('Bạn có chắc muốn xóa sản phẩm này?')">
+                                                            Xóa
+                                                        </button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="d-flex justify-content-between">
+                        <a asp-controller="Products" asp-action="Index" class="btn btn-outline-primary">
+                            <svg width="16" height="16" class="me-1">
+                                <use xlink:href="#search"></use>
+                            </svg>
+                            Tiếp tục mua sắm
+                        </a>
+                        <form asp-action="Clear" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-outline-danger" 
+                                    onclick="return confirm('Bạn có chắc muốn xóa toàn bộ giỏ hàng?')">
+                                Xóa giỏ hàng
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Cart Summary -->
+                <div class="col-lg-4">
+                    <div class="card border-0 shadow-sm sticky-top" style="top: 20px;">
+                        <div class="card-body">
+                            <h5 class="card-title mb-4">Tóm tắt đơn hàng</h5>
+                            
+                            <div class="d-flex justify-content-between mb-3">
+                                <span>Tổng sản phẩm:</span>
+                                <strong>@Model.TotalItems</strong>
+                            </div>
+
+                            <div class="d-flex justify-content-between mb-3">
+                                <span>Tạm tính:</span>
+                                <strong>@Model.TotalAmount.ToString("N0") đ</strong>
+                            </div>
+
+                            <hr />
+
+                            <div class="d-flex justify-content-between mb-4">
+                                <h5>Tổng cộng:</h5>
+                                <h5 class="text-primary">@Model.TotalAmount.ToString("N0") đ</h5>
+                            </div>
+
+                            @if (Context.Session.GetString("UserId") != null)
+                            {
+                                <div class="d-grid">
+                                    <a asp-controller="Order" asp-action="Checkout" class="btn btn-primary btn-lg">
+                                        Thanh toán
+                                    </a>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="d-grid">
+                                    <a asp-controller="Account" asp-action="Login" 
+                                       asp-route-returnUrl="@Url.Action("Checkout", "Order")" 
+                                       class="btn btn-primary btn-lg">
+                                        Đăng nhập để thanh toán
+                                    </a>
+                                </div>
+                                <p class="text-muted small text-center mt-2">
+                                    Bạn cần đăng nhập để tiếp tục
+                                </p>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+    </div>
+</section>

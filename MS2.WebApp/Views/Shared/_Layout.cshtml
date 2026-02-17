@@ -78,8 +78,9 @@
                 <div class="col-sm-8 col-lg-4 d-flex justify-content-end gap-5 align-items-center mt-4 mt-sm-0 justify-content-center justify-content-sm-end">
                     
                     <!-- User Account -->
-                    <div class="d-flex align-items-center">
-                        <a asp-controller="Account" asp-action="Profile" class="text-decoration-none">
+                    <div class="d-flex align-items-center dropdown">
+                        <a href="#" class="text-decoration-none dropdown-toggle" id="userDropdown" 
+                           data-bs-toggle="dropdown" aria-expanded="false">
                             <svg class="user" width="24" height="24">
                                 <use xlink:href="#user"></use>
                             </svg>
@@ -94,6 +95,52 @@
                                 }
                             </span>
                         </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            @if (Context.Session.GetString("Username") != null)
+                            {
+                                <li>
+                                    <h6 class="dropdown-header">@Context.Session.GetString("FullName")</h6>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Order" asp-action="History">
+                                        <svg width="16" height="16" class="me-2">
+                                            <use xlink:href="#cart"></use>
+                                        </svg>
+                                        Lịch sử đơn hàng
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Account" asp-action="Profile">
+                                        <svg width="16" height="16" class="me-2">
+                                            <use xlink:href="#user"></use>
+                                        </svg>
+                                        Hồ sơ cá nhân
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form asp-controller="Account" asp-action="Logout" method="post">
+                                        <button type="submit" class="dropdown-item">
+                                            Đăng xuất
+                                        </button>
+                                    </form>
+                                </li>
+                            }
+                            else
+                            {
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Account" asp-action="Login">
+                                        Đăng nhập
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Account" asp-action="Register">
+                                        Đăng ký
+                                    </a>
+                                </li>
+                            }
+                        </ul>
                     </div>
                     
                     <!-- Cart -->
@@ -103,9 +150,25 @@
                                 <use xlink:href="#cart"></use>
                             </svg>
                             <span class="ms-1">Giỏ hàng</span>
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
-                                0
-                            </span>
+                            @{
+                                var cartJson = Context.Session.GetString("Cart");
+                                var cartCount = 0;
+                                if (!string.IsNullOrEmpty(cartJson))
+                                {
+                                    try
+                                    {
+                                        var cart = System.Text.Json.JsonSerializer.Deserialize<MS2.WebApp.Models.CartViewModel>(cartJson);
+                                        cartCount = cart?.TotalItems ?? 0;
+                                    }
+                                    catch { }
+                                }
+                            }
+                            @if (cartCount > 0)
+                            {
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
+                                    @cartCount
+                                </span>
+                            }
                         </a>
                     </div>
                     

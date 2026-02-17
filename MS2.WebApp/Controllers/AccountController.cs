@@ -203,5 +203,126 @@ namespace MS2.WebApp.Controllers
 
             return View(user);
         }
+
+        // ===== EDIT PROFILE =====
+        [HttpGet]
+        public async Task<IActionResult> EditProfile()
+        {
+            if (!IsLoggedIn())
+            {
+                return RedirectToAction("Login", new { returnUrl = "/Account/EditProfile" });
+            }
+
+            var userId = GetCurrentUserId();
+            var user = await _unitOfWork.Users.GetByIdAsync(userId!.Value);
+
+            if (user == null)
+            {
+                HttpContext.Session.Clear();
+                return RedirectToAction("Login");
+            }
+
+            var model = new EditProfileViewModel
+            {
+                FullName = user.FullName,
+                Email = user.Email,
+                Phone = user.Phone,
+                Address = user.Address
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditProfile(EditProfileViewModel model)
+        {
+            if (!IsLoggedIn())
+            {
+                return RedirectToAction("Login");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var userId = GetCurrentUserId();
+            var user = await _unitOfWork.Users.GetByIdAsync(userId!.Value);
+
+            if (user == null)
+            {
+                HttpContext.Session.Clear();
+                return RedirectToAction("Login");
+            }
+
+            // Cập nhật thông tin
+            user.FullName = model.FullName;
+            user.Email = model.Email;
+            user.Phone = model.Phone;
+            user.Address = model.Address;
+
+            await _unitOfWork.Users.UpdateAsync(user);
+            await _unitOfWork.SaveChangesAsync();
+
+            // Cập nhật session
+            HttpContext.Session.SetString("FullName", user.FullName);
+            HttpContext.Session.SetString("Email", user.Email);
+
+            TempData["SuccessMessage"] = "Cập nhật thông tin thành công!";
+            return RedirectToAction("Profile");
+        }
+
+        // ===== CHANGE PASSWORD =====
+        [HttpGet]
+        public IActionResult ChangePassword()
+        {
+            if (!IsLoggedIn())
+            {
+                return RedirectToAction("Login", new { returnUrl = "/Account/ChangePassword" });
+            }
+
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (!IsLoggedIn())
+            {
+                return RedirectToAction("Login");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var userId = GetCurrentUserId();
+            var user = await _unitOfWork.Users.GetByIdAsync(userId!.Value);
+
+            if (user == null)
+            {
+                HttpContext.Session.Clear();
+                return RedirectToAction("Login");
+            }
+
+            // Kiểm tra mật khẩu hiện tại
+            if (!BCrypt.Net.BCrypt.Verify(model.CurrentPassword, user.PasswordHash))
+            {
+                ModelState.AddModelError("CurrentPassword", "Mật khẩu hiện tại không đúng");
+                return View(model);
+            }
+
+            // Cập nhật mật khẩu mới
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.NewPassword);
+            await _unitOfWork.Users.UpdateAsync(user);
+            await _unitOfWork.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Đổi mật khẩu thành công!";
+            return RedirectToAction("Profile");
+        }
     }
 }
+

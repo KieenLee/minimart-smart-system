@@ -65,42 +65,6 @@ namespace MS2.WebApp.Controllers
             return View(viewModel);
         }
 
-        // GET: Products/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var product = await _unitOfWork.Products.GetByIdAsync(id.Value);
-
-            if (product == null || !product.IsActive)
-            {
-                return NotFound();
-            }
-
-            // Lấy category
-            var category = await _unitOfWork.Categories.GetByIdAsync(product.CategoryId);
-
-            // Lấy sản phẩm liên quan (cùng category, max 4 sản phẩm)
-            var relatedProducts = (await _unitOfWork.Products.GetAllAsync())
-                .Where(p => p.CategoryId == product.CategoryId
-                         && p.Id != product.Id
-                         && p.IsActive)
-                .Take(4)
-                .ToList();
-
-            var viewModel = new ProductDetailViewModel
-            {
-                Product = product,
-                Category = category,
-                RelatedProducts = relatedProducts
-            };
-
-            return View(viewModel);
-        }
-
         // GET: Products/Search
         public async Task<IActionResult> Search(string keyword)
         {

@@ -51,7 +51,7 @@ namespace MS2.DesktopApp.Presentation.Reports {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/MS2.DesktopApp;component/presentation/reports/reportsview.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/MS2.DesktopApp;V1.0.0.0;component/presentation/reports/reportsview.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\..\Presentation\Reports\ReportsView.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

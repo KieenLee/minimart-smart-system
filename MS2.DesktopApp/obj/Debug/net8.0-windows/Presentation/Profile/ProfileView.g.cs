@@ -67,7 +67,7 @@ namespace MS2.DesktopApp.Presentation.Profile {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/MS2.DesktopApp;component/presentation/profile/profileview.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/MS2.DesktopApp;V1.0.0.0;component/presentation/profile/profileview.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\..\Presentation\Profile\ProfileView.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

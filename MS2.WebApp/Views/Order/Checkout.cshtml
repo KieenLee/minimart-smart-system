@@ -1,0 +1,134 @@
+@model MS2.WebApp.Models.CheckoutViewModel
+@{
+    ViewData["Title"] = "Thanh toán";
+}
+
+<section class="py-5">
+    <div class="container">
+        
+        <!-- Page Header -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <h2 class="text-primary">Thanh toán đơn hàng</h2>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+                        <li class="breadcrumb-item"><a asp-controller="Cart" asp-action="Index">Giỏ hàng</a></li>
+                        <li class="breadcrumb-item active">Thanh toán</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+
+        <form asp-action="Checkout" method="post">
+            <div class="row">
+                <!-- Form thông tin giao hàng -->
+                <div class="col-lg-7">
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title mb-4">Thông tin giao hàng</h5>
+
+                            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                            <div class="mb-3">
+                                <label asp-for="ReceiverName" class="form-label">Tên người nhận <span class="text-danger">*</span></label>
+                                <input asp-for="ReceiverName" class="form-control" placeholder="Nhập tên người nhận" />
+                                <span asp-validation-for="ReceiverName" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="PhoneNumber" class="form-label">Số điện thoại <span class="text-danger">*</span></label>
+                                <input asp-for="PhoneNumber" class="form-control" placeholder="Nhập số điện thoại" />
+                                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="DeliveryAddress" class="form-label">Địa chỉ giao hàng <span class="text-danger">*</span></label>
+                                <textarea asp-for="DeliveryAddress" class="form-control" rows="3" 
+                                          placeholder="Nhập địa chỉ chi tiết (số nhà, đường, phường/xã, quận/huyện, tỉnh/thành phố)"></textarea>
+                                <span asp-validation-for="DeliveryAddress" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="Note" class="form-label">Ghi chú</label>
+                                <textarea asp-for="Note" class="form-control" rows="2" 
+                                          placeholder="Ghi chú thêm cho đơn hàng (không bắt buộc)"></textarea>
+                                <span asp-validation-for="Note" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tóm tắt đơn hàng -->
+                <div class="col-lg-5">
+                    <div class="card border-0 shadow-sm sticky-top" style="top: 20px;">
+                        <div class="card-body">
+                            <h5 class="card-title mb-4">Đơn hàng của bạn</h5>
+
+                            <!-- Danh sách sản phẩm -->
+                            <div class="mb-3">
+                                @foreach (var item in Model.CartItems)
+                                {
+                                    <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
+                                        <div class="flex-grow-1">
+                                            <h6 class="mb-0">@item.ProductName</h6>
+                                            <small class="text-muted">@item.Price.ToString("N0") đ × @item.Quantity</small>
+                                        </div>
+                                        <strong>@item.Subtotal.ToString("N0") đ</strong>
+                                    </div>
+                                }
+                            </div>
+
+                            <hr />
+
+                            <!-- Tổng tiền -->
+                            <div class="d-flex justify-content-between mb-3">
+                                <span>Tổng sản phẩm:</span>
+                                <strong>@Model.CartItems.Sum(i => i.Quantity)</strong>
+                            </div>
+
+                            <div class="d-flex justify-content-between mb-3">
+                                <span>Tạm tính:</span>
+                                <strong>@Model.TotalAmount.ToString("N0") đ</strong>
+                            </div>
+
+                            <div class="d-flex justify-content-between mb-3">
+                                <span>Phí vận chuyển:</span>
+                                <strong class="text-success">Miễn phí</strong>
+                            </div>
+
+                            <hr />
+
+                            <div class="d-flex justify-content-between mb-4">
+                                <h5>Tổng cộng:</h5>
+                                <h5 class="text-primary">@Model.TotalAmount.ToString("N0") đ</h5>
+                            </div>
+
+                            <!-- Buttons -->
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <svg width="20" height="20" class="me-2">
+                                        <use xlink:href="#cart"></use>
+                                    </svg>
+                                    Đặt hàng
+                                </button>
+                                <a asp-controller="Cart" asp-action="Index" class="btn btn-outline-secondary">
+                                    Quay lại giỏ hàng
+                                </a>
+                            </div>
+
+                            <p class="text-muted small text-center mt-3 mb-0">
+                                Bằng cách đặt hàng, bạn đồng ý với điều khoản sử dụng của chúng tôi
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
