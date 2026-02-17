@@ -225,7 +225,11 @@ namespace MS2.WebApp.Controllers
             // Load product cho mỗi order detail
             foreach (var detail in orderDetails)
             {
-                detail.Product = await _unitOfWork.Products.GetByIdAsync(detail.ProductId);
+                var product = await _unitOfWork.Products.GetByIdAsync(detail.ProductId);
+                if (product != null)
+                {
+                    detail.Product = product;
+                }
             }
 
             var model = new OrderDetailViewModel
