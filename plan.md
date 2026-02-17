@@ -1,8 +1,9 @@
 # KẾ HOẠCH TRIỂN KHAI DỰ ÁN MS2 - MINIMART SMART SYSTEM
 
-**Phiên bản:** 3.2  
-**Ngày cập nhật:** 15/02/2026  
-**Kiến trúc:** Dual-Path Architecture (ASP.NET Core MVC Razor Views + TCP Network)
+**Phiên bản:** 4.0  
+**Ngày cập nhật:** 17/02/2026  
+**Kiến trúc:** Dual-Path Architecture (ASP.NET Core MVC Razor Views + TCP Network)  
+**Status:** ✅ Phase 0, Phase B, Phase A - ALL COMPLETE
 
 ---
 
@@ -1503,12 +1504,207 @@ dotnet publish MS2.ServerApp/MS2.ServerApp.csproj -c Release -r win-x64 --self-c
 
 ---
 
-# PHASE A: WEB APP (FLOW A) - PUBLIC PATH
+# PHASE A: WEB APP (FLOW A) - PUBLIC PATH - ✅ 100% HOÀN THÀNH
 
 > **Target Users:** Khách hàng trực tuyến  
-> **Tech Stack:** ASP.NET Core MVC với Razor Views (.cshtml) - Backend & Frontend tích hợp, Cookie Authentication  
+> **Tech Stack:** ASP.NET Core MVC với Razor Views (.cshtml) - Backend & Frontend tích hợp, Session Authentication  
 > **Kiến trúc:** Monolithic - Controllers xử lý logic và trả về Views, KHÔNG sử dụng Web API riêng  
-> **Ưu tiên:** Thấp hơn Desktop App (triển khai sau)
+> **Status:** ✅ Đã hoàn thành và build thành công
+
+---
+
+## 📊 PHASE A - TỔNG KẾT HOÀN THÀNH
+
+### ✅ Controllers Implemented (6 controllers, ~800+ LOC)
+
+1. **HomeController.cs** - 3 actions
+   - Index: Homepage với featured products
+   - Privacy: Privacy policy page
+   - Error: Error handling page
+
+2. **AccountController.cs** - 7 actions
+   - Login (GET/POST): Username/Password authentication với session
+   - Register (GET/POST): Create new Customer với BCrypt hashing
+   - Logout: Clear session, redirect to Home
+   - Profile (GET): Show current user info [Authorize]
+   - EditProfile (GET/POST): Update FullName, Email, Phone [Authorize]
+   - ChangePassword (GET/POST): Validate old password, update với BCrypt [Authorize]
+
+3. **ProductsController.cs** - 1 action (simplified per user request)
+   - Index: Product grid với search (keyword), filter (categoryId), pagination (12/page)
+   - **Removed**: Details action (per user request - direct "Add to Cart" instead)
+
+4. **CartController.cs** - 5 actions
+   - Index: Display cart from session
+   - AddToCart (POST): Add/increment product in cart
+   - UpdateQuantity (POST): Update quantity (+/- buttons)
+   - RemoveItem (POST): Remove product from cart
+   - Clear (POST): Clear entire cart
+
+5. **OrderController.cs** - 5 actions
+   - Checkout (GET): Show checkout form [Authorize]
+   - Checkout (POST): Create order, add OrderDetails, decrease stock, clear cart [Authorize]
+   - OrderConfirmation (GET): Success page after checkout [Authorize]
+   - History (GET): List orders for current user với pagination [Authorize]
+   - Details (GET): Show order details với items [Authorize]
+
+### ✅ Views Implemented (15+ .cshtml files, ~1200+ LOC)
+
+**Shared:**
+
+- \_Layout.cshtml: Master template với Profile dropdown, Cart badge (dynamic count)
+- Error.cshtml: Error display page
+
+**Home:**
+
+- Index.cshtml: Featured products, conditional "Đăng ký ngay" button
+- Privacy.cshtml: Privacy policy
+
+**Account:**
+
+- Login.cshtml: Username/Password form
+- Register.cshtml: Registration form (Username, FullName, Email, Password, Phone, Address)
+- Profile.cshtml: User info display (Role badge, IsActive status)
+- EditProfile.cshtml: Edit form (FullName, Email, Phone, Address)
+- ChangePassword.cshtml: Password change form (OldPassword, NewPassword, ConfirmPassword)
+
+**Products:**
+
+- Index.cshtml: Product grid với search bar, category dropdown, "Thêm vào giỏ hàng" buttons
+
+**Cart:**
+
+- Index.cshtml: Cart table với +/- quantity buttons, Remove, Clear, sticky summary sidebar
+
+**Order:**
+
+- Checkout.cshtml: 2-column layout (checkout form + order summary)
+- OrderConfirmation.cshtml: Success page với order number
+- History.cshtml: Order list với status badges, pagination
+- Details.cshtml: Order details với Notes display (delivery info)
+
+### ✅ ViewModels Implemented (10 models, ~400+ LOC)
+
+1. **LoginViewModel**: Username, Password
+2. **RegisterViewModel**: Username, FullName, Email, Password, ConfirmPassword, PhoneNumber, Address
+3. **EditProfileViewModel**: FullName, Email, PhoneNumber, Address
+4. **ChangePasswordViewModel**: OldPassword, NewPassword, ConfirmPassword
+5. **ProductListViewModel**: Products, Categories, SearchKeyword, SelectedCategoryId, PageNumber, PageSize, TotalPages
+6. **CartViewModel**: CartItems, TotalItems, TotalAmount
+7. **CartItemViewModel**: ProductId, ProductName, UnitPrice, Quantity, Subtotal
+8. **CheckoutViewModel**: ReceiverName, PhoneNumber, DeliveryAddress, Note + GetOrderNotes() helper
+9. **OrderHistoryViewModel**: Orders, PageNumber, PageSize, TotalPages
+10. **OrderDetailViewModel**: Order, OrderDetails
+
+### ✅ Key Implementation Details
+
+**Authentication:**
+
+- Session-based (no JWT, no cookies)
+- Session keys: UserId, Username, Email, Role, FullName
+- 30-minute idle timeout
+- BCrypt.Net-Next for password hashing
+- SetUserSession() helper method
+
+**Shopping Cart:**
+
+- Session-based storage (key: "Cart")
+- JSON serialization: List<CartItemViewModel>
+- GetCart() / SaveCart() helper methods
+- Cart badge in \_Layout deserializes session JSON để show count
+
+**Order Processing:**
+
+- CheckoutViewModel.GetOrderNotes() formats delivery info
+- Order.Notes stores: "Người nhận: ...\nSĐT: ...\nĐịa chỉ: ...\nGhi chú: ..."
+- OrderDetails added via \_unitOfWork.Context.OrderDetails.AddAsync()
+- Stock validation before order creation
+- Decreases product stock after successful order
+- Clears cart from session after checkout
+
+**Entity Adaptations:**
+
+- User.Phone (not PhoneNumber) - ViewModel uses PhoneNumber, maps to user.Phone
+- Order.CustomerId (not UserId) - Maps to logged-in user
+- Order.Notes (not separate delivery fields) - Stores formatted string
+- OrderDetail.UnitPrice (not Price) - Product price at time of order
+- OrderDetail.Subtotal - Calculated property
+
+**UI Improvements:**
+
+- Profile dropdown replaces navbar Login/Register links
+- Cart badge shows dynamic count (sum of cart quantities)
+- Products/Details removed - direct "Add to Cart" on product cards
+- Home page has conditional "Đăng ký ngay" button (hidden if logged in)
+
+### ✅ Build Status
+
+**Success:**
+
+- Build succeeded: "Build succeeded with 1 warning(s) in 4.5s"
+- MS2.WebApp.dll generated successfully
+- All 15+ views compiled
+- All 6 controllers compiled
+- All 10 ViewModels valid
+
+**Warning:**
+
+- CS8601 at OrderController.cs line 228: Possible null reference assignment
+- Status: Non-breaking, accepted
+
+**Running Configuration:**
+
+- URL: http://localhost:5023
+- Database: Server=WIN-R972FJEQE2C\\SQLEXPRESS;Database=MiniMart_Smart
+- Session timeout: 30 minutes
+
+### ✅ Technology Stack
+
+**Backend:**
+
+- ASP.NET Core MVC 8.0
+- Entity Framework Core (SQL Server)
+- BCrypt.Net-Next (password hashing)
+- System.Text.Json (cart serialization)
+
+**Frontend:**
+
+- Bootstrap 5.3
+- FoodMart HTML template (grocery store theme)
+- Font Awesome icons
+- Razor syntax (@Model, @foreach, @if)
+
+**Database:**
+
+- Uses MS2.DataAccess project
+- Repository Pattern + UnitOfWork
+- No additional Services layer (Controllers use UnitOfWork directly)
+
+### 🎯 Next Steps
+
+**Testing:**
+
+- [ ] End-to-end testing with sample data
+- [ ] Test all user flows (register → browse → cart → checkout → history)
+- [ ] Test validation (login, registration, checkout form)
+- [ ] Test session timeout behavior
+- [ ] Test cart persistence across pages
+
+**Deployment:**
+
+- [ ] Configure production database connection
+- [ ] Setup IIS hosting or Azure App Service
+- [ ] Configure SSL certificate
+- [ ] Setup error logging
+- [ ] Performance testing
+
+**Enhancements (Optional):**
+
+- [ ] Add product images
+- [ ] Add order status tracking
+- [ ] Add email notifications for orders
+- [ ] Add payment gateway integration
+- [ ] Add product reviews/ratings
 
 ---
 
