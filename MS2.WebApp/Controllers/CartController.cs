@@ -26,6 +26,19 @@ namespace MS2.WebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> AddToCart(int productId, int quantity = 1)
         {
+            // Validate quantity
+            if (quantity < 1)
+            {
+                TempData["ErrorMessage"] = "Số lượng phải lớn hơn 0.";
+                return RedirectToAction("Index", "Products");
+            }
+
+            if (quantity > 100)
+            {
+                TempData["ErrorMessage"] = "Số lượng tối đa mỗi lần thêm là 100.";
+                return RedirectToAction("Index", "Products");
+            }
+
             // Kiểm tra sản phẩm có tồn tại không
             var product = await _unitOfWork.Products.GetByIdAsync(productId);
 

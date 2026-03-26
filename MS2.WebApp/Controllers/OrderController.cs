@@ -17,6 +17,7 @@ namespace MS2.WebApp.Controllers
         }
 
         // GET: Order/Checkout
+        [HttpGet]
         public async Task<IActionResult> Checkout()
         {
             // Kiểm tra đăng nhập
@@ -146,6 +147,7 @@ namespace MS2.WebApp.Controllers
         }
 
         // GET: Order/OrderConfirmation/5
+        [HttpGet]
         public async Task<IActionResult> OrderConfirmation(int orderId)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
@@ -165,6 +167,7 @@ namespace MS2.WebApp.Controllers
         }
 
         // GET: Order/History
+        [HttpGet]
         public async Task<IActionResult> History(int page = 1)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
@@ -202,6 +205,7 @@ namespace MS2.WebApp.Controllers
         }
 
         // GET: Order/Details/5
+        [HttpGet]
         public async Task<IActionResult> Details(int id)
         {
             var userId = HttpContext.Session.GetInt32("UserId");

@@ -3,16 +3,8 @@
   "WorkspaceRootPath": "D:\\Workspace\\Project_.Net\\minimart-smart-system\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{BD55DC10-7D6D-D975-0840-90F3D3BFBA14}|MS2.DesktopApp\\MS2.DesktopApp.csproj|d:\\workspace\\project_.net\\minimart-smart-system\\ms2.desktopapp\\presentation\\reports\\reportsview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{BD55DC10-7D6D-D975-0840-90F3D3BFBA14}|MS2.DesktopApp\\MS2.DesktopApp.csproj|solutionrelative:ms2.desktopapp\\presentation\\reports\\reportsview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{BD55DC10-7D6D-D975-0840-90F3D3BFBA14}|MS2.DesktopApp\\MS2.DesktopApp.csproj|d:\\workspace\\project_.net\\minimart-smart-system\\ms2.desktopapp\\presentation\\pos\\posview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{BD55DC10-7D6D-D975-0840-90F3D3BFBA14}|MS2.DesktopApp\\MS2.DesktopApp.csproj|solutionrelative:ms2.desktopapp\\presentation\\pos\\posview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{BD55DC10-7D6D-D975-0840-90F3D3BFBA14}|MS2.DesktopApp\\MS2.DesktopApp.csproj|d:\\workspace\\project_.net\\minimart-smart-system\\ms2.desktopapp\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{BD55DC10-7D6D-D975-0840-90F3D3BFBA14}|MS2.DesktopApp\\MS2.DesktopApp.csproj|solutionrelative:ms2.desktopapp\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+      "AbsoluteMoniker": "D:0:0:{896BF495-43E6-9FA9-BB6A-96ACC4DC617A}|MS2.WebApp\\MS2.WebApp.csproj|d:\\workspace\\project_.net\\minimart-smart-system\\ms2.webapp\\ms2.webapp.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{896BF495-43E6-9FA9-BB6A-96ACC4DC617A}|MS2.WebApp\\MS2.WebApp.csproj|solutionrelative:ms2.webapp\\ms2.webapp.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     },
     {
       "AbsoluteMoniker": "D:0:0:{BD55DC10-7D6D-D975-0840-90F3D3BFBA14}|MS2.DesktopApp\\MS2.DesktopApp.csproj|d:\\workspace\\project_.net\\minimart-smart-system\\ms2.desktopapp\\presentation\\employees\\employeesview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
@@ -25,8 +17,8 @@
       "VerticalTabListWidth": 256,
       "DocumentGroups": [
         {
-          "DockedWidth": 253,
-          "SelectedChildIndex": 3,
+          "DockedWidth": 52,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Bookmark",
@@ -34,51 +26,27 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 0,
+              "Title": "MS2.WebApp.csproj",
+              "DocumentMoniker": "D:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.WebApp\\MS2.WebApp.csproj",
+              "RelativeDocumentMoniker": "MS2.WebApp\\MS2.WebApp.csproj",
+              "ToolTip": "D:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.WebApp\\MS2.WebApp.csproj",
+              "RelativeToolTip": "MS2.WebApp\\MS2.WebApp.csproj",
+              "ViewState": "AgIAAAEAAAAAAAAAAAAkwB8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-02-15T17:53:27.155Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "EmployeesView.xaml",
               "DocumentMoniker": "D:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.DesktopApp\\Presentation\\Employees\\EmployeesView.xaml",
               "RelativeDocumentMoniker": "MS2.DesktopApp\\Presentation\\Employees\\EmployeesView.xaml",
               "ToolTip": "D:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.DesktopApp\\Presentation\\Employees\\EmployeesView.xaml",
               "RelativeToolTip": "MS2.DesktopApp\\Presentation\\Employees\\EmployeesView.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-02-13T04:45:19.236Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "MainWindow.xaml",
-              "DocumentMoniker": "D:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.DesktopApp\\MainWindow.xaml",
-              "RelativeDocumentMoniker": "MS2.DesktopApp\\MainWindow.xaml",
-              "ToolTip": "D:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.DesktopApp\\MainWindow.xaml",
-              "RelativeToolTip": "MS2.DesktopApp\\MainWindow.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-02-13T04:04:30.232Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "ReportsView.xaml",
-              "DocumentMoniker": "D:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.DesktopApp\\Presentation\\Reports\\ReportsView.xaml",
-              "RelativeDocumentMoniker": "MS2.DesktopApp\\Presentation\\Reports\\ReportsView.xaml",
-              "ToolTip": "D:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.DesktopApp\\Presentation\\Reports\\ReportsView.xaml",
-              "RelativeToolTip": "MS2.DesktopApp\\Presentation\\Reports\\ReportsView.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-02-13T04:04:20.862Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "PosView.xaml",
-              "DocumentMoniker": "D:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.DesktopApp\\Presentation\\POS\\PosView.xaml",
-              "RelativeDocumentMoniker": "MS2.DesktopApp\\Presentation\\POS\\PosView.xaml",
-              "ToolTip": "D:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.DesktopApp\\Presentation\\POS\\PosView.xaml",
-              "RelativeToolTip": "MS2.DesktopApp\\Presentation\\POS\\PosView.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-02-13T04:04:17.277Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-13T04:45:19.236Z"
             }
           ]
         }

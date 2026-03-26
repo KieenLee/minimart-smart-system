@@ -11,77 +11,77 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = MS2.WebApp
 build_property.RootNamespace = MS2.WebApp
-build_property.ProjectDir = D:\Workspace\Project_.Net\minimart-smart-system\MS2.WebApp\
+build_property.ProjectDir = d:\Workspace\Project_.Net\minimart-smart-system\MS2.WebApp\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 8.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = D:\Workspace\Project_.Net\minimart-smart-system\MS2.WebApp
+build_property.MSBuildProjectDirectory = d:\Workspace\Project_.Net\minimart-smart-system\MS2.WebApp
 build_property._RazorSourceGeneratorDebug = 
 build_property.EffectiveAnalysisLevelStyle = 8.0
 build_property.EnableCodeStyleSeverity = 
 
-[D:/Workspace/Project_.Net/minimart-smart-system/MS2.WebApp/Views/Account/ChangePassword.cshtml]
+[d:/Workspace/Project_.Net/minimart-smart-system/MS2.WebApp/Views/Account/ChangePassword.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxDaGFuZ2VQYXNzd29yZC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Workspace/Project_.Net/minimart-smart-system/MS2.WebApp/Views/Account/EditProfile.cshtml]
+[d:/Workspace/Project_.Net/minimart-smart-system/MS2.WebApp/Views/Account/EditProfile.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxFZGl0UHJvZmlsZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Workspace/Project_.Net/minimart-smart-system/MS2.WebApp/Views/Account/Login.cshtml]
+[d:/Workspace/Project_.Net/minimart-smart-system/MS2.WebApp/Views/Account/Login.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxMb2dpbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Workspace/Project_.Net/minimart-smart-system/MS2.WebApp/Views/Account/Profile.cshtml]
+[d:/Workspace/Project_.Net/minimart-smart-system/MS2.WebApp/Views/Account/Profile.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxQcm9maWxlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Workspace/Project_.Net/minimart-smart-system/MS2.WebApp/Views/Account/Register.cshtml]
+[d:/Workspace/Project_.Net/minimart-smart-system/MS2.WebApp/Views/Account/Register.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxSZWdpc3Rlci5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Workspace/Project_.Net/minimart-smart-system/MS2.WebApp/Views/Cart/Index.cshtml]
+[d:/Workspace/Project_.Net/minimart-smart-system/MS2.WebApp/Views/Cart/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2FydFxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Workspace/Project_.Net/minimart-smart-system/MS2.WebApp/Views/Home/Index.cshtml]
+[d:/Workspace/Project_.Net/minimart-smart-system/MS2.WebApp/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Workspace/Project_.Net/minimart-smart-system/MS2.WebApp/Views/Order/Checkout.cshtml]
+[d:/Workspace/Project_.Net/minimart-smart-system/MS2.WebApp/Views/Order/Checkout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJcQ2hlY2tvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Workspace/Project_.Net/minimart-smart-system/MS2.WebApp/Views/Order/Details.cshtml]
+[d:/Workspace/Project_.Net/minimart-smart-system/MS2.WebApp/Views/Order/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJcRGV0YWlscy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Workspace/Project_.Net/minimart-smart-system/MS2.WebApp/Views/Order/History.cshtml]
+[d:/Workspace/Project_.Net/minimart-smart-system/MS2.WebApp/Views/Order/History.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJcSGlzdG9yeS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Workspace/Project_.Net/minimart-smart-system/MS2.WebApp/Views/Order/OrderConfirmation.cshtml]
+[d:/Workspace/Project_.Net/minimart-smart-system/MS2.WebApp/Views/Order/OrderConfirmation.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJcT3JkZXJDb25maXJtYXRpb24uY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Workspace/Project_.Net/minimart-smart-system/MS2.WebApp/Views/Products/Index.cshtml]
+[d:/Workspace/Project_.Net/minimart-smart-system/MS2.WebApp/Views/Products/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdHNcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Workspace/Project_.Net/minimart-smart-system/MS2.WebApp/Views/Shared/_Layout.cshtml]
+[d:/Workspace/Project_.Net/minimart-smart-system/MS2.WebApp/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Workspace/Project_.Net/minimart-smart-system/MS2.WebApp/Views/Shared/_ValidationScriptsPartial.cshtml]
+[d:/Workspace/Project_.Net/minimart-smart-system/MS2.WebApp/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Workspace/Project_.Net/minimart-smart-system/MS2.WebApp/Views/_ViewImports.cshtml]
+[d:/Workspace/Project_.Net/minimart-smart-system/MS2.WebApp/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Workspace/Project_.Net/minimart-smart-system/MS2.WebApp/Views/_ViewStart.cshtml]
+[d:/Workspace/Project_.Net/minimart-smart-system/MS2.WebApp/Views/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 

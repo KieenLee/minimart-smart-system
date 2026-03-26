@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.DataAccess\\MS2.DataAccess.csproj": {}
+    "d:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.DataAccess\\MS2.DataAccess.csproj": {}
   },
   "projects": {
-    "D:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.DataAccess\\MS2.DataAccess.csproj": {
+    "d:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.DataAccess\\MS2.DataAccess.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.DataAccess\\MS2.DataAccess.csproj",
+        "projectUniqueName": "d:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.DataAccess\\MS2.DataAccess.csproj",
         "projectName": "MS2.DataAccess",
-        "projectPath": "D:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.DataAccess\\MS2.DataAccess.csproj",
+        "projectPath": "d:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.DataAccess\\MS2.DataAccess.csproj",
         "packagesPath": "C:\\Users\\Administrator\\.nuget\\packages\\",
-        "outputPath": "D:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.DataAccess\\obj\\",
+        "outputPath": "d:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.DataAccess\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -32,8 +32,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "D:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.Models\\MS2.Models.csproj": {
-                "projectPath": "D:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.Models\\MS2.Models.csproj"
+              "d:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.Models\\MS2.Models.csproj": {
+                "projectPath": "d:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.Models\\MS2.Models.csproj"
               }
             }
           }
@@ -99,18 +99,18 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.103/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.104/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.Models\\MS2.Models.csproj": {
+    "d:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.Models\\MS2.Models.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.Models\\MS2.Models.csproj",
+        "projectUniqueName": "d:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.Models\\MS2.Models.csproj",
         "projectName": "MS2.Models",
-        "projectPath": "D:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.Models\\MS2.Models.csproj",
+        "projectPath": "d:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.Models\\MS2.Models.csproj",
         "packagesPath": "C:\\Users\\Administrator\\.nuget\\packages\\",
-        "outputPath": "D:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.Models\\obj\\",
+        "outputPath": "d:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.Models\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -174,7 +174,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.103/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.104/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

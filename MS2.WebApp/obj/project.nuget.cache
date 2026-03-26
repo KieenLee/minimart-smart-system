@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "6u5HGg0miKg=",
+  "dgSpecHash": "7VrBtSvIKtc=",
   "success": true,
-  "projectFilePath": "D:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.WebApp\\MS2.WebApp.csproj",
+  "projectFilePath": "d:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.WebApp\\MS2.WebApp.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Administrator\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
     "C:\\Users\\Administrator\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",
