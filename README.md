@@ -6,21 +6,6 @@
 
 > Hệ thống quản lý bán lẻ hiện đại với kiến trúc phân tán, hỗ trợ bán hàng tại quầy (POS) và bán hàng trực tuyến.
 
-## 📋 Mục lục
-
-- [Giới thiệu](#giới-thiệu)
-- [Kiến trúc hệ thống](#kiến-trúc-hệ-thống)
-- [Công nghệ sử dụng](#công-nghệ-sử-dụng)
-- [Tính năng chính](#tính-năng-chính)
-- [Yêu cầu hệ thống](#yêu-cầu-hệ-thống)
-- [Cài đặt và Chạy](#cài-đặt-và-chạy)
-- [Cấu trúc dự án](#cấu-trúc-dự-án)
-- [API Documentation](#api-documentation)
-- [Đóng góp](#đóng-góp)
-- [License](#license)
-
----
-
 ## 🎯 Giới thiệu
 
 **MiniMart Smart System (MS2)** là một hệ thống quản lý bán lẻ toàn diện được thiết kế để giải quyết nhu cầu:
