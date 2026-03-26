@@ -17,7 +17,7 @@ namespace MS2.WebApp.Services
             var products = await _unitOfWork.Products.GetAllAsync();
 
             // Only active products with images or not – show all active ones
-            var query = products.Where(p => p.IsActive == true).AsEnumerable();
+            var query = products.Where(p => p.IsActive == true && p.Stock > 0).AsEnumerable();
 
             if (!string.IsNullOrWhiteSpace(search))
             {
