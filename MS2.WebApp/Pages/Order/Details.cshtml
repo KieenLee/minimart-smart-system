@@ -1,0 +1,79 @@
+@page "{orderId:int}"
+@model MS2.WebApp.Pages.Order.DetailsModel
+@{
+    ViewData["Title"] = $"Đơn hàng #{Model.Order?.Id}";
+}
+
+<div class="container py-4" style="max-width:760px">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb ms2-breadcrumb">
+            <li class="breadcrumb-item"><a asp-page="/Order/History" style="color:#6366f1">Đơn hàng</a></li>
+            <li class="breadcrumb-item active">Chi tiết #@Model.Order?.Id</li>
+        </ol>
+    </nav>
+
+    @if (Model.Order == null)
+    {
+        <div class="alert alert-danger">Không tìm thấy đơn hàng.</div>
+    }
+    else
+    {
+        <div class="ms2-card p-4 mb-4">
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <h5 class="fw-700 mb-0"><i class="bi bi-receipt me-2" style="color:#6366f1"></i>Đơn hàng #@Model.Order.Id</h5>
+                <span class="badge status-badge-completed px-3 py-2">Đã đặt hàng</span>
+            </div>
+
+            <!-- Delivery Info (parse from Notes) -->
+            @if (!string.IsNullOrEmpty(Model.Order.Notes))
+            {
+                <div class="p-3 rounded-3 mb-4" style="background:#f8fafc">
+                    <div class="fw-semibold small mb-2"><i class="bi bi-geo-alt me-1 text-primary"></i>Thông tin giao hàng</div>
+                    <pre class="mb-0 text-muted" style="font-family:inherit;font-size:0.875rem;white-space:pre-wrap">@Model.Order.Notes</pre>
+                </div>
+            }
+
+            <!-- Order Items -->
+            <h6 class="fw-700 mb-3">Sản phẩm đã đặt</h6>
+            <div class="table-responsive">
+                <table class="table cart-table align-middle">
+                    <thead>
+                        <tr>
+                            <th>Sản phẩm</th>
+                            <th class="text-center">Đơn giá</th>
+                            <th class="text-center">SL</th>
+                            <th class="text-end">Thành tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var detail in Model.Order.OrderDetails ?? new List<MS2.Models.Entities.OrderDetail>())
+                        {
+                            <tr>
+                                <td class="fw-500">@(detail.Product?.Name ?? $"Sản phẩm #{detail.ProductId}")</td>
+                                <td class="text-center text-muted small">@detail.UnitPrice.ToString("N0")₫</td>
+                                <td class="text-center">×@detail.Quantity</td>
+                                <td class="text-end fw-700" style="color:#6366f1">@detail.Subtotal.ToString("N0")₫</td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot class="border-top">
+                        <tr>
+                            <td colspan="3" class="fw-700 text-end">Tổng cộng:</td>
+                            <td class="fw-700 text-end" style="color:#6366f1;font-size:1.1rem">
+                                @((Model.Order.OrderDetails?.Sum(d => d.Subtotal) ?? 0).ToString("N0"))₫
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <div class="text-muted small mt-2">
+                <i class="bi bi-calendar me-1"></i>Ngày đặt: @Model.Order.OrderDate.ToString("dd/MM/yyyy HH:mm")
+            </div>
+        </div>
+
+        <a asp-page="/Order/History" class="btn btn-ms2-outline px-4">
+            <i class="bi bi-arrow-left me-2"></i>Quay lại lịch sử
+        </a>
+    }
+</div>

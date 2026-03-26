@@ -4569,11 +4569,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "d:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.WebApp\\MS2.WebApp.csproj",
+      "projectUniqueName": "D:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.WebApp\\MS2.WebApp.csproj",
       "projectName": "MS2.WebApp",
-      "projectPath": "d:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.WebApp\\MS2.WebApp.csproj",
+      "projectPath": "D:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.WebApp\\MS2.WebApp.csproj",
       "packagesPath": "C:\\Users\\Administrator\\.nuget\\packages\\",
-      "outputPath": "d:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.WebApp\\obj\\",
+      "outputPath": "D:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.WebApp\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -4594,11 +4594,11 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "d:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.DataAccess\\MS2.DataAccess.csproj": {
-              "projectPath": "d:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.DataAccess\\MS2.DataAccess.csproj"
+            "D:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.DataAccess\\MS2.DataAccess.csproj": {
+              "projectPath": "D:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.DataAccess\\MS2.DataAccess.csproj"
             },
-            "d:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.Models\\MS2.Models.csproj": {
-              "projectPath": "d:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.Models\\MS2.Models.csproj"
+            "D:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.Models\\MS2.Models.csproj": {
+              "projectPath": "D:\\Workspace\\Project_.Net\\minimart-smart-system\\MS2.Models\\MS2.Models.csproj"
             }
           }
         }

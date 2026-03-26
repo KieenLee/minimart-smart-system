@@ -2,11 +2,12 @@ using Microsoft.EntityFrameworkCore;
 using MS2.DataAccess.Data;
 using MS2.DataAccess.Interfaces;
 using MS2.DataAccess.Repositories;
+using MS2.WebApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddControllersWithViews();
+// ===== RAZOR PAGES =====
+builder.Services.AddRazorPages();
 
 // ===== DATABASE CONFIGURATION =====
 builder.Services.AddDbContext<MS2DbContext>(options =>
@@ -20,20 +21,20 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<ICartItemRepository, CartItemRepository>();
 
-// ===== BUSINESS SERVICES =====
-// Sẽ tạo sau trong Services folder
-// builder.Services.AddScoped<IAuthService, AuthService>();
-// builder.Services.AddScoped<IProductService, ProductService>();
-// builder.Services.AddScoped<ICartService, CartService>();
-// builder.Services.AddScoped<IOrderService, OrderService>();
+// ===== BUSINESS SERVICES - DEPENDENCY INJECTION =====
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 
 // ===== SESSION CONFIGURATION =====
-builder.Services.AddDistributedMemoryCache(); // In-memory cache for session
+builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(30); // Session timeout 30 phút
-    options.Cookie.HttpOnly = true; // Bảo mật, không cho JS truy cập
-    options.Cookie.IsEssential = true; // Bắt buộc phải có
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+    options.Cookie.Name = ".MS2.Session";
 });
 
 // ===== HTTP CONTEXT ACCESSOR =====
@@ -44,11 +45,12 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
+    app.UseExceptionHandler("/Error");
     app.UseHsts();
 }
 
-app.UseStaticFiles(); // Serve wwwroot files (CSS, JS, images)
+app.UseHttpsRedirection();
+app.UseStaticFiles();
 
 app.UseRouting();
 
@@ -57,9 +59,7 @@ app.UseSession();
 
 app.UseAuthorization();
 
-// ===== DEFAULT ROUTE =====
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+// ===== RAZOR PAGES ROUTING =====
+app.MapRazorPages();
 
 app.Run();

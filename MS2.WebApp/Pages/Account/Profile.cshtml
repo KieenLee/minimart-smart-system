@@ -1,0 +1,63 @@
+@page
+@model MS2.WebApp.Pages.Account.ProfileModel
+@{
+    ViewData["Title"] = "Hồ sơ cá nhân";
+}
+
+<div class="container py-5" style="max-width:760px">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb ms2-breadcrumb">
+            <li class="breadcrumb-item"><a asp-page="/Index" style="color:#6366f1">Trang chủ</a></li>
+            <li class="breadcrumb-item active">Hồ sơ</li>
+        </ol>
+    </nav>
+
+    <div class="ms2-card p-4 p-md-5">
+        <div class="d-flex align-items-center gap-4 mb-4 pb-4 border-bottom">
+            <div class="profile-avatar">
+                @(Model.CurrentUser?.FullName?.Length > 0 ? Model.CurrentUser.FullName[0].ToString().ToUpper() : "U")
+            </div>
+            <div>
+                <h4 class="fw-700 mb-1">@(Model.CurrentUser?.FullName ?? Model.CurrentUser?.Username)</h4>
+                <span class="badge ms2-role-badge">@Model.CurrentUser?.Role</span>
+                <div class="text-muted small mt-1">@Model.CurrentUser?.Email</div>
+            </div>
+            <div class="ms-auto d-flex gap-2">
+                <a asp-page="/Account/EditProfile" class="btn btn-ms2 btn-sm px-3">
+                    <i class="bi bi-pencil me-1"></i>Sửa
+                </a>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-sm-6">
+                <div class="fw-semibold text-muted small mb-1"><i class="bi bi-person me-1"></i>Họ và tên</div>
+                <div>@(Model.CurrentUser?.FullName ?? "—")</div>
+            </div>
+            <div class="col-sm-6">
+                <div class="fw-semibold text-muted small mb-1"><i class="bi bi-at me-1"></i>Tên đăng nhập</div>
+                <div>@Model.CurrentUser?.Username</div>
+            </div>
+            <div class="col-sm-6">
+                <div class="fw-semibold text-muted small mb-1"><i class="bi bi-envelope me-1"></i>Email</div>
+                <div>@(Model.CurrentUser?.Email ?? "—")</div>
+            </div>
+            <div class="col-sm-6">
+                <div class="fw-semibold text-muted small mb-1"><i class="bi bi-telephone me-1"></i>Số điện thoại</div>
+                <div>@(Model.CurrentUser?.Phone ?? "—")</div>
+            </div>
+        </div>
+
+        <div class="mt-4 pt-4 border-top d-flex gap-2 flex-wrap">
+            <a asp-page="/Account/EditProfile" class="btn btn-ms2-outline btn-sm">
+                <i class="bi bi-pencil-square me-1"></i>Chỉnh sửa thông tin
+            </a>
+            <a asp-page="/Account/ChangePassword" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-key me-1"></i>Đổi mật khẩu
+            </a>
+            <a asp-page="/Order/History" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-clock-history me-1"></i>Lịch sử đơn hàng
+            </a>
+        </div>
+    </div>
+</div>

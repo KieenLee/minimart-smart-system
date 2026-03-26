@@ -1,0 +1,75 @@
+@page
+@model MS2.WebApp.Pages.Account.LoginModel
+@{
+    ViewData["Title"] = "Đăng nhập";
+    Layout = "_Layout";
+}
+
+<div class="auth-page">
+    <div class="auth-card card">
+        <div class="auth-header">
+            <div class="auth-header-icon">
+                <i class="bi bi-person-lock"></i>
+            </div>
+            <h4 class="text-white fw-700 mb-1">Chào mừng trở lại</h4>
+            <p class="text-muted mb-0" style="font-size:0.875rem">Đăng nhập để tiếp tục mua sắm</p>
+        </div>
+        <div class="auth-body">
+            @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+            {
+                <div class="alert alert-danger d-flex align-items-center gap-2 mb-4">
+                    <i class="bi bi-exclamation-circle-fill"></i>
+                    @Model.ErrorMessage
+                </div>
+            }
+
+            <form method="post">
+                @Html.AntiForgeryToken()
+                <div class="mb-3">
+                    <label asp-for="Input.Username" class="form-label"></label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-person"></i></span>
+                        <input asp-for="Input.Username" class="form-control" placeholder="Nhập tên đăng nhập" autocomplete="username" />
+                    </div>
+                    <span asp-validation-for="Input.Username" class="text-danger text-validation"></span>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="Input.Password" class="form-label"></label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                        <input asp-for="Input.Password" class="form-control" placeholder="Nhập mật khẩu" autocomplete="current-password" />
+                        <button class="btn input-group-text toggle-pw" type="button" onclick="togglePw(this)">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
+                    <span asp-validation-for="Input.Password" class="text-danger text-validation"></span>
+                </div>
+
+                <button type="submit" class="btn btn-ms2 w-100 py-2 mb-3">
+                    <i class="bi bi-box-arrow-in-right me-2"></i>Đăng nhập
+                </button>
+
+                <div class="text-center">
+                    <span class="text-muted small">Chưa có tài khoản?</span>
+                    <a asp-page="/Account/Register" class="fw-semibold ms-1" style="color:#6366f1">Đăng ký ngay</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function togglePw(btn) {
+            var input = btn.previousElementSibling;
+            var icon = btn.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text'; icon.className = 'bi bi-eye-slash';
+            } else {
+                input.type = 'password'; icon.className = 'bi bi-eye';
+            }
+        }
+    </script>
+}

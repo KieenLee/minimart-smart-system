@@ -1,0 +1,71 @@
+@page
+@model MS2.WebApp.Pages.Order.HistoryModel
+@{
+    ViewData["Title"] = "Lịch sử đơn hàng";
+}
+
+<div class="container py-4" style="max-width:900px">
+    <div class="d-flex align-items-center gap-2 mb-4">
+        <h4 class="section-title mb-0"><i class="bi bi-clock-history me-2" style="color:#6366f1"></i>Lịch sử đơn hàng</h4>
+    </div>
+
+    @if (Model.Orders.Any())
+    {
+        <div class="d-flex flex-column gap-3">
+            @foreach (var order in Model.Orders)
+            {
+                var itemCount = order.OrderDetails?.Sum(d => d.Quantity) ?? 0;
+                var total = order.TotalAmount;
+                <div class="ms2-card p-4">
+                    <div class="d-flex align-items-start justify-content-between flex-wrap gap-2 mb-3">
+                        <div>
+                            <span class="fw-700" style="color:#6366f1">Đơn #@order.Id</span>
+                            <span class="text-muted ms-2 small">@order.OrderDate.ToString("dd/MM/yyyy HH:mm")</span>
+                        </div>
+                        <span class="badge status-badge-completed px-3 py-2">Đã đặt hàng</span>
+                    </div>
+
+                    @if (order.OrderDetails != null && order.OrderDetails.Any())
+                    {
+                        <div class="border rounded-3 overflow-hidden mb-3">
+                            @foreach (var detail in order.OrderDetails.Take(3))
+                            {
+                                <div class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom">
+                                    <span style="font-size:0.875rem">@(detail.Product?.Name ?? $"Sản phẩm #{detail.ProductId}")</span>
+                                    <span class="text-muted small">x@detail.Quantity × @detail.UnitPrice.ToString("N0")₫</span>
+                                </div>
+                            }
+                            @if (order.OrderDetails.Count > 3)
+                            {
+                                <div class="px-3 py-2 text-muted small text-center" style="background:#f8fafc">
+                                    +@(order.OrderDetails.Count - 3) sản phẩm khác
+                                </div>
+                            }
+                        </div>
+                    }
+
+                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                        <div class="text-muted small">
+                            @itemCount sản phẩm &bull;
+                            <span class="fw-700" style="color:#0f172a">Tổng: @total.ToString("N0")₫</span>
+                        </div>
+                        <a asp-page="/Order/Details" asp-route-orderId="@order.Id" class="btn btn-ms2-outline btn-sm px-3">
+                            Xem chi tiết <i class="bi bi-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="empty-state">
+            <div class="empty-state-icon"><i class="bi bi-bag-x"></i></div>
+            <h5>Bạn chưa có đơn hàng nào</h5>
+            <p>Khám phá và mua sắm ngay hôm nay!</p>
+            <a asp-page="/Products/Index" class="btn btn-ms2 mt-2 px-4">
+                <i class="bi bi-grid me-2"></i>Mua sắm ngay
+            </a>
+        </div>
+    }
+</div>

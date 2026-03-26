@@ -1,0 +1,23 @@
+@page "{orderId:int}"
+@model MS2.WebApp.Pages.Order.ConfirmationModel
+@{
+    ViewData["Title"] = "Đặt hàng thành công";
+}
+
+<div class="container py-5 text-center" style="max-width:560px">
+    <div class="ms2-card p-5">
+        <div style="width:80px;height:80px;background:linear-gradient(135deg,#dcfce7,#bbf7d0);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2.2rem;margin:0 auto 1.5rem">✅</div>
+        <h4 class="fw-700 mb-2">Đặt hàng thành công!</h4>
+        <p class="text-muted mb-1">Mã đơn hàng: <span class="fw-700" style="color:#6366f1">#@Model.OrderId</span></p>
+        <p class="text-muted small mb-4">Chúng tôi đã nhận được đơn hàng của bạn và sẽ liên hệ trong thời gian sớm nhất.</p>
+
+        <div class="d-flex gap-3 justify-content-center">
+            <a asp-page="/Order/History" class="btn btn-ms2 px-4">
+                <i class="bi bi-clock-history me-2"></i>Xem đơn hàng
+            </a>
+            <a asp-page="/Products/Index" class="btn btn-ms2-outline px-4">
+                Tiếp tục mua sắm
+            </a>
+        </div>
+    </div>
+</div>
