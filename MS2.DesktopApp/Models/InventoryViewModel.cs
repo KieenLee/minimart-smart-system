@@ -7,11 +7,12 @@ using MS2.Models.TCP;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using Microsoft.AspNetCore.SignalR.Client;
+using ClosedXML.Excel;
+using Microsoft.Win32;
 
 namespace MS2.DesktopApp.Models;
 
@@ -399,5 +400,122 @@ public partial class InventoryViewModel : ObservableObject
             MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
         }
         finally { IsLoading = false; }
+    }
+
+    [RelayCommand]
+    private void ExportTemplate()
+    {
+        var dialog = new SaveFileDialog
+        {
+            Title = "Lưu file mẫu nhập kho",
+            Filter = "Excel Workbook (*.xlsx)|*.xlsx",
+            FileName = "MauNhapKho.xlsx",
+            DefaultExt = "xlsx"
+        };
+        if (dialog.ShowDialog() != true) return;
+
+        try
+        {
+            using var wb = new XLWorkbook();
+            var ws = wb.Worksheets.Add("Sản phẩm");
+
+            var headers = new[] { "Tên SP *", "Giá Bán (đ) *", "Số lượng NK", "Barcode", "Mô tả" };
+            for (int i = 0; i < headers.Length; i++)
+            {
+                var cell = ws.Cell(1, i + 1);
+                cell.Value = headers[i];
+                cell.Style.Font.Bold = true;
+                cell.Style.Fill.BackgroundColor = XLColor.FromHtml("#1A2340");
+                cell.Style.Font.FontColor = XLColor.White;
+                cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            }
+
+            // Dòng mẫu
+            ws.Cell(2, 1).Value = "Coca Cola 330ml";
+            ws.Cell(2, 2).Value = 15000;
+            ws.Cell(2, 3).Value = 50;
+            ws.Cell(2, 4).Value = "COCA330";
+            ws.Cell(2, 5).Value = "Nước ngọt có ga";
+
+            ws.Columns().AdjustToContents();
+            wb.SaveAs(dialog.FileName);
+
+            MessageBox.Show($"✅ File mẫu đã lưu!\n{dialog.FileName}\n\nHướng dẫn:\n- Tên/Barcode đã có → cộng thêm số lượng\n- Tên/Barcode chưa có → thêm sản phẩm mới",
+                "Xuất File Mẫu", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    [RelayCommand]
+    private async Task ImportProductsAsync()
+    {
+        var dialog = new OpenFileDialog
+        {
+            Title = "Chọn file Excel nhập kho",
+            Filter = "Excel Workbook (*.xlsx)|*.xlsx",
+            Multiselect = false
+        };
+        if (dialog.ShowDialog() != true) return;
+
+        try
+        {
+            IsLoading = true;
+            StatusMessage = "Đang đọc file Excel...";
+
+            var importRows = new System.Collections.Generic.List<object>();
+
+            using var wb = new XLWorkbook(dialog.FileName);
+            var ws = wb.Worksheets.First();
+            int lastRow = ws.LastRowUsed()?.RowNumber() ?? 1;
+
+            for (int r = 2; r <= lastRow; r++)
+            {
+                var name = ws.Cell(r, 1).GetString().Trim();
+                if (string.IsNullOrWhiteSpace(name)) continue;
+
+                decimal.TryParse(ws.Cell(r, 2).GetString().Replace(",", ""), out var price);
+                int.TryParse(ws.Cell(r, 3).GetString().Replace(",", ""), out var stock);
+                var barcode = ws.Cell(r, 4).GetString().Trim();
+                var description = ws.Cell(r, 5).GetString().Trim();
+
+                importRows.Add(new { Name = name, Price = price, Stock = stock, Barcode = barcode, Description = description, CategoryId = 1 });
+            }
+
+            if (importRows.Count == 0)
+            {
+                MessageBox.Show("File Excel không có dữ liệu hợp lệ!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            StatusMessage = $"Đang gửi {importRows.Count} dòng lên server...";
+
+            var response = await _tcpClient.SendMessageAsync(
+                TcpActions.BATCH_UPSERT_PRODUCTS,
+                importRows,
+                _tcpClient.CurrentSessionId
+            );
+
+            if (response?.Success == true)
+            {
+                MessageBox.Show($"✅ {response.Message}", "Import thành công", MessageBoxButton.OK, MessageBoxImage.Information);
+                await LoadProductsAsync();
+            }
+            else
+            {
+                MessageBox.Show($"Lỗi: {response?.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Lỗi đọc file: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+        finally
+        {
+            IsLoading = false;
+            StatusMessage = "";
+        }
     }
 }

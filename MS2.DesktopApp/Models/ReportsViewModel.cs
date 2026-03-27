@@ -1,9 +1,10 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.AspNetCore.SignalR.Client;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Threading;
+using ClosedXML.Excel;
+using Microsoft.Win32;
 
 namespace MS2.DesktopApp.Models;
 
@@ -50,7 +51,6 @@ public partial class ReportsViewModel : ObservableObject
     {
         await LoadReportAsync();
 
-        // Auto-refresh mỗi 30 giây
         _autoRefreshTimer = new DispatcherTimer
         {
             Interval = TimeSpan.FromSeconds(30)
@@ -61,7 +61,6 @@ public partial class ReportsViewModel : ObservableObject
 
     public void Cleanup() => _autoRefreshTimer?.Stop();
 
-    // Gọi lại khi ngày thay đổi
     partial void OnFromDateChanged(DateTime value) => _ = LoadReportAsync();
     partial void OnToDateChanged(DateTime value) => _ = LoadReportAsync();
 
@@ -113,6 +112,105 @@ public partial class ReportsViewModel : ObservableObject
         finally
         {
             IsLoading = false;
+        }
+    }
+
+    [RelayCommand]
+    private void ExportReport()
+    {
+        if (Orders.Count == 0)
+        {
+            MessageBox.Show("Không có dữ liệu để xuất!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+            return;
+        }
+
+        var dialog = new SaveFileDialog
+        {
+            Title = "Lưu báo cáo doanh thu",
+            Filter = "Excel Workbook (*.xlsx)|*.xlsx",
+            FileName = $"BaoCaoDoanhThu_{FromDate:ddMMyyyy}_{ToDate:ddMMyyyy}.xlsx",
+            DefaultExt = "xlsx"
+        };
+
+        if (dialog.ShowDialog() != true) return;
+
+        try
+        {
+            using var wb = new XLWorkbook();
+            var ws = wb.Worksheets.Add("Doanh Thu");
+
+            // Tiêu đề
+            ws.Range("A1:F1").Merge();
+            ws.Cell("A1").Value = "BÁO CÁO DOANH THU";
+            ws.Cell("A1").Style.Font.Bold = true;
+            ws.Cell("A1").Style.Font.FontSize = 16;
+            ws.Cell("A1").Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            ws.Cell("A1").Style.Fill.BackgroundColor = XLColor.FromHtml("#1A2340");
+            ws.Cell("A1").Style.Font.FontColor = XLColor.White;
+
+            ws.Range("A2:F2").Merge();
+            ws.Cell("A2").Value = $"Từ ngày {FromDate:dd/MM/yyyy} đến {ToDate:dd/MM/yyyy}";
+            ws.Cell("A2").Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            ws.Cell("A2").Style.Font.Italic = true;
+
+            // KPI
+            ws.Cell("A4").Value = "Tổng Doanh Thu (đ)";
+            ws.Cell("B4").Value = (double)TotalRevenue;
+            ws.Cell("B4").Style.NumberFormat.Format = "#,##0";
+            ws.Cell("B4").Style.Font.Bold = true;
+            ws.Cell("D4").Value = "Số Đơn Hàng";
+            ws.Cell("E4").Value = TotalOrders;
+            ws.Cell("A5").Value = "Giá Trị TB/Đơn (đ)";
+            ws.Cell("B5").Value = (double)AverageOrderValue;
+            ws.Cell("B5").Style.NumberFormat.Format = "#,##0";
+
+            // Header
+            int headerRow = 7;
+            var headers = new[] { "STT", "Mã Đơn", "Ngày Đặt", "Tổng Tiền (đ)", "Trạng Thái", "Ghi Chú" };
+            for (int i = 0; i < headers.Length; i++)
+            {
+                var cell = ws.Cell(headerRow, i + 1);
+                cell.Value = headers[i];
+                cell.Style.Font.Bold = true;
+                cell.Style.Fill.BackgroundColor = XLColor.FromHtml("#2563EB");
+                cell.Style.Font.FontColor = XLColor.White;
+                cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            }
+
+            // Data rows
+            int row = headerRow + 1;
+            int stt = 1;
+            foreach (var order in Orders)
+            {
+                ws.Cell(row, 1).Value = stt++;
+                ws.Cell(row, 2).Value = order.Id;
+                ws.Cell(row, 3).Value = order.OrderDate.ToString("dd/MM/yyyy HH:mm");
+                ws.Cell(row, 4).Value = (double)order.TotalAmount;
+                ws.Cell(row, 4).Style.NumberFormat.Format = "#,##0";
+                ws.Cell(row, 5).Value = order.Status ?? "";
+                ws.Cell(row, 6).Value = order.Notes ?? "";
+                if (row % 2 == 0)
+                    ws.Row(row).Style.Fill.BackgroundColor = XLColor.FromHtml("#F8FAFC");
+                row++;
+            }
+
+            // Tổng cộng
+            ws.Cell(row, 3).Value = "TỔNG CỘNG";
+            ws.Cell(row, 3).Style.Font.Bold = true;
+            ws.Cell(row, 4).FormulaA1 = $"=SUM(D{headerRow + 1}:D{row - 1})";
+            ws.Cell(row, 4).Style.NumberFormat.Format = "#,##0";
+            ws.Cell(row, 4).Style.Font.Bold = true;
+            ws.Cell(row, 4).Style.Font.FontColor = XLColor.FromHtml("#DC2626");
+
+            ws.Columns().AdjustToContents();
+            wb.SaveAs(dialog.FileName);
+
+            MessageBox.Show($"✅ Xuất báo cáo thành công!\n{dialog.FileName}", "Xuất Excel",
+                MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Lỗi xuất Excel: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 }

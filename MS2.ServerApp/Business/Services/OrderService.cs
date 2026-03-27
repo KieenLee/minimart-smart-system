@@ -180,7 +180,7 @@ namespace MS2.ServerApp.Business.Services
                 {
                     Id = o.Id,
                     CustomerId = o.CustomerId,
-                    CustomerName = o.Customer?.FullName ?? "",
+                    CustomerName = o.OrderType == "POS" ? "Khách bán lẻ" : (o.Customer?.FullName ?? ""),
                     EmployeeId = o.EmployeeId,
                     EmployeeName = o.Employee?.FullName ?? "",
                     OrderDate = o.OrderDate,
@@ -232,7 +232,7 @@ namespace MS2.ServerApp.Business.Services
                 {
                     Id = order.Id,
                     CustomerId = order.CustomerId,
-                    CustomerName = order.Customer?.FullName ?? "",
+                    CustomerName = order.OrderType == "POS" ? "Khách bán lẻ" : (order.Customer?.FullName ?? ""),
                     EmployeeId = order.EmployeeId,
                     EmployeeName = order.Employee?.FullName ?? "",
                     OrderDate = order.OrderDate,

@@ -117,7 +117,7 @@ public class OrderRepository : Repository<Order>, IOrderRepository
             {
                 Id = o.Id,
                 CustomerId = o.CustomerId,
-                CustomerName = o.Customer?.FullName ?? "",
+                CustomerName = o.OrderType == "POS" ? "Khách bán lẻ" : (o.Customer?.FullName ?? ""),
                 EmployeeId = o.EmployeeId,
                 EmployeeName = o.Employee?.FullName ?? "",
                 OrderDate = o.OrderDate,

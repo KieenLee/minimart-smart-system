@@ -24,5 +24,8 @@ namespace MS2.ServerApp.Business.Interfaces
 
         // Tạo sản phẩm mới
         Task<TcpResponse> CreateProductAsync(TcpMessage message);
+
+        // Import hàng loạt (Upsert by Name/Barcode)
+        Task<TcpResponse> BatchUpsertProductsAsync(TcpMessage message);
     }
 }

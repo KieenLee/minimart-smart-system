@@ -60,6 +60,10 @@ namespace MS2.ServerApp.Network
                         .GetRequiredService<IProductService>()
                         .CreateProductAsync(message),
 
+                    TcpActions.BATCH_UPSERT_PRODUCTS => await scope.ServiceProvider
+                        .GetRequiredService<IProductService>()
+                        .BatchUpsertProductsAsync(message),
+
                     // Order Actions
                     TcpActions.CREATE_ORDER => await scope.ServiceProvider
                         .GetRequiredService<IOrderService>()

@@ -291,5 +291,69 @@ namespace MS2.ServerApp.Business.Services
                 return TcpResponse.CreateError($"Create product error: {ex.Message}", message.RequestId);
             }
         }
+
+        public async Task<TcpResponse> BatchUpsertProductsAsync(TcpMessage message)
+        {
+            try
+            {
+                if (!_sessionManager.IsValidSession(message.SessionId))
+                    return TcpResponse.CreateError("Invalid session", message.RequestId);
+
+                var rows = JsonSerializer.Deserialize<List<CreateProductDto>>(
+                    JsonSerializer.Serialize(message.Data),
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                if (rows == null || rows.Count == 0)
+                    return TcpResponse.CreateError("Không có dữ liệu để import", message.RequestId);
+
+                int added = 0, updated = 0;
+
+                foreach (var row in rows)
+                {
+                    if (string.IsNullOrWhiteSpace(row.Name)) continue;
+
+                    // Tìm theo Barcode trước, rồi theo Tên
+                    MS2.Models.Entities.Product? existing = null;
+                    if (!string.IsNullOrWhiteSpace(row.Barcode))
+                        existing = await _unitOfWork.Products.GetByBarcodeAsync(row.Barcode);
+                    if (existing == null)
+                        existing = (await _unitOfWork.Products.FindAsync(p => p.Name == row.Name)).FirstOrDefault();
+
+                    if (existing != null)
+                    {
+                        // Cập nhật tồn kho (cộng thêm số lượng từ file)
+                        existing.Stock += row.Stock;
+                        if (row.Price > 0) existing.Price = row.Price;
+                        await _unitOfWork.Products.UpdateAsync(existing);
+                        updated++;
+                    }
+                    else
+                    {
+                        // Thêm sản phẩm mới
+                        var product = new MS2.Models.Entities.Product
+                        {
+                            Name = row.Name,
+                            CategoryId = row.CategoryId > 0 ? row.CategoryId : 1,
+                            Price = row.Price,
+                            Stock = row.Stock,
+                            Barcode = row.Barcode,
+                            Description = row.Description,
+                            IsActive = true,
+                            CreatedAt = DateTime.Now
+                        };
+                        await _unitOfWork.Products.AddAsync(product);
+                        added++;
+                    }
+                }
+
+                await _unitOfWork.SaveChangesAsync();
+                return TcpResponse.CreateSuccess(new { Added = added, Updated = updated },
+                    $"Import hoàn tất: +{added} mới, ~{updated} cập nhật", message.RequestId);
+            }
+            catch (Exception ex)
+            {
+                return TcpResponse.CreateError($"Batch upsert error: {ex.Message}", message.RequestId);
+            }
+        }
     }
-}
+}

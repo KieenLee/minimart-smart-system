@@ -80,3 +80,9 @@ D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\obj\Debug\net8.0-
 D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\obj\Debug\net8.0-windows\Presentation\Orders\OrderDetailWindow.baml
 D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\obj\Debug\net8.0-windows\Presentation\Inventory\CreateProductWindow.g.cs
 D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\obj\Debug\net8.0-windows\Presentation\Orders\OrderDetailWindow.g.cs
+D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\bin\Debug\net8.0-windows\ClosedXML.dll
+D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\bin\Debug\net8.0-windows\DocumentFormat.OpenXml.dll
+D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\bin\Debug\net8.0-windows\ExcelNumberFormat.dll
+D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\bin\Debug\net8.0-windows\Irony.dll
+D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\bin\Debug\net8.0-windows\SixLabors.Fonts.dll
+D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\bin\Debug\net8.0-windows\XLParser.dll

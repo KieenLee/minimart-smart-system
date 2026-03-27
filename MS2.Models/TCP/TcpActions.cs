@@ -13,6 +13,7 @@ public static class TcpActions
     public const string UPDATE_PRODUCT_PRICE = "UPDATE_PRODUCT_PRICE";
     public const string UPDATE_PRODUCT_STOCK = "UPDATE_PRODUCT_STOCK";
     public const string CREATE_PRODUCT = "CREATE_PRODUCT";
+    public const string BATCH_UPSERT_PRODUCTS = "BATCH_UPSERT_PRODUCTS";
 
     // Orders
     public const string CREATE_ORDER = "CREATE_ORDER";
