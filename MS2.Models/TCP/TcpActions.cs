@@ -12,6 +12,7 @@ public static class TcpActions
     public const string GET_PRODUCT_BY_BARCODE = "GET_PRODUCT_BY_BARCODE";
     public const string UPDATE_PRODUCT_PRICE = "UPDATE_PRODUCT_PRICE";
     public const string UPDATE_PRODUCT_STOCK = "UPDATE_PRODUCT_STOCK";
+    public const string CREATE_PRODUCT = "CREATE_PRODUCT";
 
     // Orders
     public const string CREATE_ORDER = "CREATE_ORDER";

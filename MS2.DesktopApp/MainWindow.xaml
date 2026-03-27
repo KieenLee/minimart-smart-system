@@ -1,87 +1,108 @@
 <Window x:Class="MS2.DesktopApp.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="HỆ THỐNG QUẢN LÝ MINIMART" 
-        Height="600" 
-        Width="900"
+        Title="MiniMart Smart System"
+        Height="700" Width="1100"
         WindowStartupLocation="CenterScreen"
-        WindowState="Maximized">
-    
+        WindowState="Maximized"
+        Background="#F1F5F9">
+
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="220"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <!-- LEFT MENU -->
-        <Border Grid.Column="0" BorderBrush="Gray" BorderThickness="0,0,1,0">
-            <StackPanel>
-                <!-- HEADER -->
-                <Border BorderBrush="Gray" BorderThickness="0,0,0,1" Padding="10">
+        <!-- ===== SIDEBAR ===== -->
+        <Border Grid.Column="0" Background="#1A2340">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- LOGO -->
+                <Border Grid.Row="0" Padding="20,24,20,16">
                     <StackPanel>
-                        <TextBlock Text="{Binding CurrentUser.FullName}" 
-                                   FontSize="14" 
-                                   FontWeight="Bold"/>
-                        <TextBlock Text="{Binding CurrentUser.Role}" 
-                                   FontSize="12"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                            <Border Background="#F59E0B" CornerRadius="8" Width="32" Height="32" Margin="0,0,10,0">
+                                <TextBlock Text="🛒" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <TextBlock Text="MiniMart" FontSize="18" FontWeight="Bold"
+                                       Foreground="White" VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <TextBlock Text="Smart System" FontSize="11" Foreground="#64748B" Margin="42,0,0,0"/>
                     </StackPanel>
                 </Border>
 
-                <!-- MENU BUTTONS -->
-                <Button Content="BÁN HÀNG (POS)" 
-                        Height="50" 
-                        Command="{Binding NavigateToPosCommand}"
-                        Margin="10,20,10,0"/>
+                <!-- USER INFO -->
+                <Border Grid.Row="1" Margin="12,0,12,12" Background="#243060" CornerRadius="10" Padding="14,12">
+                    <StackPanel>
+                        <TextBlock Text="{Binding CurrentUser.FullName}"
+                                   FontSize="14" FontWeight="SemiBold"
+                                   Foreground="White" TextTrimming="CharacterEllipsis"/>
+                        <TextBlock Text="{Binding CurrentUser.Role}"
+                                   FontSize="11" Foreground="#F59E0B" Margin="0,2,0,0"/>
+                    </StackPanel>
+                </Border>
 
-                <Button Content="ĐƠN HÀNG ONLINE" 
-                        Height="50" 
-                        Command="{Binding NavigateToOrdersCommand}"
-                        Margin="10,10,10,0"
-                        Background="#FFFFDEAB"
-                        FontWeight="Bold"/>
+                <!-- NAV MENU -->
+                <StackPanel Grid.Row="2">
+                    <!-- Section: General -->
+                    <TextBlock Text="CHỨC NĂNG" FontSize="10" FontWeight="Bold"
+                               Foreground="#475569" Margin="20,8,0,4"/>
 
-                <Button Content="KHO HÀNG" 
-                        Height="50" 
-                        Command="{Binding NavigateToInventoryCommand}"
-                        Visibility="{Binding IsAdmin}"
-                        Margin="10,10,10,0"/>
+                    <Button Content="🛍  BÁN HÀNG (POS)"
+                            Command="{Binding NavigateToPosCommand}"
+                            Style="{StaticResource NavButton}"/>
 
-                <Button Content="📋 QUẢN LÝ ĐƠN ONLINE" 
-                        Height="50" 
-                        Command="{Binding NavigateToAdminOrdersCommand}"
-                        Visibility="{Binding IsAdmin}"
-                        Background="#E3F2FD"
-                        FontWeight="Bold"
-                        Margin="10,10,10,0"/>
+                    <Button Content="📦  ĐƠN HÀNG ONLINE"
+                            Command="{Binding NavigateToOrdersCommand}"
+                            Style="{StaticResource NavButton}"/>
 
-                <Button Content="BÁO CÁO" 
-                        Height="50" 
-                        Command="{Binding NavigateToReportsCommand}"
-                        Visibility="{Binding IsAdmin}"
-                        Margin="10,10,10,0"/>
+                    <Button Content="👤  HỒ SƠ CÁ NHÂN"
+                            Command="{Binding NavigateToProfileCommand}"
+                            Style="{StaticResource NavButton}"/>
 
-                <Button Content="NHÂN VIÊN" 
-                        Height="50" 
-                        Command="{Binding NavigateToEmployeesCommand}"
-                        Visibility="{Binding IsAdmin}"
-                        Margin="10,10,10,0"/>
+                    <!-- Section: Admin only -->
+                    <TextBlock Text="QUẢN TRỊ" FontSize="10" FontWeight="Bold"
+                               Foreground="#475569" Margin="20,16,0,4"
+                               Visibility="{Binding IsAdmin}"/>
 
-                <Button Content="HỒ SƠ CÁ NHÂN" 
-                        Height="50" 
-                        Command="{Binding NavigateToProfileCommand}"
-                        Margin="10,10,10,0"/>
+                    <Button Content="📋  QUẢN LÝ ĐƠN ONLINE"
+                            Command="{Binding NavigateToAdminOrdersCommand}"
+                            Style="{StaticResource NavAdminButton}"
+                            Visibility="{Binding IsAdmin}"/>
 
-                <!-- LOGOUT BUTTON (Bottom) -->
-                <Button Content="ĐĂNG XUẤT" 
-                        Height="40" 
-                        Command="{Binding LogoutCommand}"
-                        Margin="10,40,10,10"
-                        VerticalAlignment="Bottom"/>
-            </StackPanel>
+                    <Button Content="📊  KHO HÀNG"
+                            Command="{Binding NavigateToInventoryCommand}"
+                            Style="{StaticResource NavButton}"
+                            Visibility="{Binding IsAdmin}"/>
+
+                    <Button Content="📈  BÁO CÁO"
+                            Command="{Binding NavigateToReportsCommand}"
+                            Style="{StaticResource NavButton}"
+                            Visibility="{Binding IsAdmin}"/>
+
+                    <Button Content="👥  NHÂN VIÊN"
+                            Command="{Binding NavigateToEmployeesCommand}"
+                            Style="{StaticResource NavButton}"
+                            Visibility="{Binding IsAdmin}"/>
+                </StackPanel>
+
+                <!-- LOGOUT -->
+                <Border Grid.Row="3" BorderBrush="#243060" BorderThickness="0,1,0,0" Margin="0,0,0,8">
+                    <Button Content="🚪  ĐĂNG XUẤT"
+                            Command="{Binding LogoutCommand}"
+                            Style="{StaticResource LogoutButton}"/>
+                </Border>
+            </Grid>
         </Border>
 
-        <!-- RIGHT CONTENT AREA -->
-        <Border Grid.Column="1" Padding="20">
+        <!-- ===== CONTENT AREA ===== -->
+        <Border Grid.Column="1" Background="#F1F5F9" Padding="0">
             <ContentControl Content="{Binding CurrentView}"/>
         </Border>
     </Grid>

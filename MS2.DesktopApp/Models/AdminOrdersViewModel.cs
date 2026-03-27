@@ -99,6 +99,15 @@ public partial class AdminOrdersViewModel : ObservableObject
         }
     }
 
+    [RelayCommand]
+    private void ShowOrderDetail(OnlineOrderDto? order)
+    {
+        if (order == null) return;
+        var detailWindow = new MS2.DesktopApp.Presentation.Orders.OrderDetailWindow(order);
+        detailWindow.Owner = System.Windows.Application.Current.MainWindow;
+        detailWindow.ShowDialog();
+    }
+
     partial void OnSelectedFilterChanged(string value) => ApplyFilter();
 
     private void ApplyFilter()

@@ -42,6 +42,13 @@ public partial class InventoryViewModel : ObservableObject
     [ObservableProperty]
     private int newStock = 0;
 
+    // Fields for creating new product
+    [ObservableProperty]
+    private List<MS2.Models.DTOs.Product.CategoryDto> categories = new();
+
+    [ObservableProperty]
+    private int selectedCategoryId = 0;
+
     private readonly HubConnection _hubConnection;
 
     public InventoryViewModel(TcpClientService tcpClient, UserDto currentUser, HubConnection hubConnection)
@@ -314,5 +321,76 @@ public partial class InventoryViewModel : ObservableObject
         {
             IsLoading = false;
         }
+    }
+
+    [RelayCommand]
+    private async Task LoadCategoriesAsync()
+    {
+        try
+        {
+            var response = await _tcpClient.SendMessageAsync(
+                TcpActions.GET_CATEGORIES, null, _tcpClient.CurrentSessionId);
+            if (response?.Success == true)
+            {
+                var json = response.Data?.ToString() ?? "[]";
+                var list = System.Text.Json.JsonSerializer.Deserialize<List<MS2.Models.DTOs.Product.CategoryDto>>(
+                    json, new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                Categories = list ?? new();
+            }
+        }
+        catch { }
+    }
+
+    [RelayCommand]
+    private void OpenCreateProductDialog()
+    {
+        _ = LoadCategoriesAsync();
+        SelectedCategoryId = 0;
+        var dialog = new MS2.DesktopApp.Presentation.Inventory.CreateProductWindow(this);
+        dialog.Owner = System.Windows.Application.Current.MainWindow;
+        dialog.ShowDialog();
+
+        if (dialog.IsConfirmed)
+            _ = DoCreateProductAsync(dialog);
+    }
+
+    private async Task DoCreateProductAsync(MS2.DesktopApp.Presentation.Inventory.CreateProductWindow dialog)
+    {
+        try
+        {
+            IsLoading = true;
+            StatusMessage = "Đang tạo sản phẩm...";
+
+            var response = await _tcpClient.SendMessageAsync(
+                TcpActions.CREATE_PRODUCT,
+                new
+                {
+                    Name = dialog.ProductName,
+                    CategoryId = SelectedCategoryId,
+                    Price = dialog.Price,
+                    Stock = dialog.Stock,
+                    Barcode = dialog.Barcode
+                },
+                _tcpClient.CurrentSessionId
+            );
+
+            if (response?.Success == true)
+            {
+                MessageBox.Show("✅ Tạo sản phẩm thành công!", "Thành công",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+                await LoadProductsAsync();
+            }
+            else
+            {
+                MessageBox.Show($"Lỗi: {response?.Message}", "Lỗi",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                StatusMessage = $"Lỗi tạo SP: {response?.Message}";
+            }
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+        finally { IsLoading = false; }
     }
 }

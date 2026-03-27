@@ -56,6 +56,10 @@ namespace MS2.ServerApp.Network
                         .GetRequiredService<IProductService>()
                         .GetLowStockProductsAsync(message),
 
+                    TcpActions.CREATE_PRODUCT => await scope.ServiceProvider
+                        .GetRequiredService<IProductService>()
+                        .CreateProductAsync(message),
+
                     // Order Actions
                     TcpActions.CREATE_ORDER => await scope.ServiceProvider
                         .GetRequiredService<IOrderService>()

@@ -75,3 +75,8 @@ D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\obj\Debug\net8.0-
 D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\obj\Debug\net8.0-windows\Presentation\Orders\OrdersView.g.cs
 D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\obj\Debug\net8.0-windows\Presentation\Orders\AdminOrdersView.baml
 D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\obj\Debug\net8.0-windows\Presentation\Orders\AdminOrdersView.g.cs
+D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\obj\Debug\net8.0-windows\App.baml
+D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\obj\Debug\net8.0-windows\Presentation\Inventory\CreateProductWindow.baml
+D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\obj\Debug\net8.0-windows\Presentation\Orders\OrderDetailWindow.baml
+D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\obj\Debug\net8.0-windows\Presentation\Inventory\CreateProductWindow.g.cs
+D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\obj\Debug\net8.0-windows\Presentation\Orders\OrderDetailWindow.g.cs

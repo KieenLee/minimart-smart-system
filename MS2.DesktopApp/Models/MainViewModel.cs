@@ -71,8 +71,9 @@ public partial class MainViewModel : ObservableObject
             // Initialize async sau khi UI đã render
             await posViewModel.InitializeAsync();
         }
-        catch
+        catch (Exception ex)
         {
+            MessageBox.Show($"Lỗi NavigateToPos: {ex.Message}\n{ex.InnerException?.Message}");
         }
     }
 
@@ -94,11 +95,19 @@ public partial class MainViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void NavigateToReports()
+    private async Task NavigateToReports()
     {
-        var reportsViewModel = new ReportsViewModel(_tcpClient, CurrentUser);
-        var reportsView = new ReportsView { DataContext = reportsViewModel };
-        CurrentView = reportsView;
+        try
+        {
+            var reportsViewModel = new ReportsViewModel(_tcpClient, CurrentUser);
+            var reportsView = new ReportsView { DataContext = reportsViewModel };
+            CurrentView = reportsView;
+            await reportsViewModel.InitializeAsync();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Lỗi mở Báo cáo: {ex.Message}");
+        }
     }
 
     [RelayCommand]

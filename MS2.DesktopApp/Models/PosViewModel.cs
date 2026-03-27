@@ -23,6 +23,12 @@ public partial class PosViewModel : ObservableObject
     [ObservableProperty]
     private string searchKeyword = "";
 
+    partial void OnSearchKeywordChanged(string value)
+    {
+        // Tự động tìm kiếm ngay sau khi gõ kí tự
+        SearchProductsCommand.Execute(null);
+    }
+
     [ObservableProperty]
     private ObservableCollection<ProductDto> products = new();
 
@@ -58,6 +64,17 @@ public partial class PosViewModel : ObservableObject
                     else
                     {
                         Products[index] = product; // Gán chèn lại lên chính index đó để kích gõ CollectionChanged đến UI Grid WPF
+                    }
+                }
+
+                // Cập nhật giỏ hàng nếu sản phẩm đang tồn tại trong giỏ
+                var cartItem = CartItems.FirstOrDefault(c => c.ProductId == productId);
+                if (cartItem != null)
+                {
+                    cartItem.MaxQuantity = stock;
+                    if (cartItem.Quantity > stock)
+                    {
+                        cartItem.Quantity = stock; // Tự động kích hoạt Quantity setter để hạ số lượng xuống tồn kho tối đa
                     }
                 }
             });
@@ -198,7 +215,9 @@ public partial class PosViewModel : ObservableObject
                     ProductId = product.Id,
                     ProductName = product.Name ?? "Unknown",
                     UnitPrice = product.Price,
-                    Quantity = 1
+                    MaxQuantity = product.Stock,
+                    Quantity = 1,
+                    QuantityChangedCallback = UpdateTotalAmount
                 });
             }
 
@@ -261,7 +280,9 @@ public partial class PosViewModel : ObservableObject
                     ProductId = product.Id,
                     ProductName = product.Name ?? "Unknown",
                     UnitPrice = product.Price,
-                    Quantity = quantity
+                    MaxQuantity = product.Stock,
+                    Quantity = quantity,
+                    QuantityChangedCallback = UpdateTotalAmount
                 });
 
             }

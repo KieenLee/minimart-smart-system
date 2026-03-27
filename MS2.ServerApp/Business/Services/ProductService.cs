@@ -243,5 +243,53 @@ namespace MS2.ServerApp.Business.Services
                 return TcpResponse.CreateError($"Get low stock error: {ex.Message}", message.RequestId);
             }
         }
+
+        public async Task<TcpResponse> CreateProductAsync(TcpMessage message)
+        {
+            try
+            {
+                if (!_sessionManager.IsValidSession(message.SessionId))
+                {
+                    return TcpResponse.CreateError("Invalid session", message.RequestId);
+                }
+
+                var createDto = JsonSerializer.Deserialize<CreateProductDto>(
+                    JsonSerializer.Serialize(message.Data));
+
+                if (createDto == null)
+                {
+                    return TcpResponse.CreateError("Invalid product data", message.RequestId);
+                }
+
+                if (!string.IsNullOrEmpty(createDto.Barcode))
+                {
+                    bool exists = await _unitOfWork.Products.BarcodeExistsAsync(createDto.Barcode);
+                    if (exists)
+                        return TcpResponse.CreateError("Barcode đã tồn tại", message.RequestId);
+                }
+
+                var product = new MS2.Models.Entities.Product
+                {
+                    Name = createDto.Name,
+                    CategoryId = createDto.CategoryId,
+                    Price = createDto.Price,
+                    Stock = createDto.Stock,
+                    Barcode = createDto.Barcode,
+                    Description = createDto.Description,
+                    ImageUrl = createDto.ImageUrl,
+                    IsActive = true,
+                    CreatedAt = DateTime.Now
+                };
+
+                await _unitOfWork.Products.AddAsync(product);
+                await _unitOfWork.SaveChangesAsync();
+
+                return TcpResponse.CreateSuccess(null, "Product created successfully", message.RequestId);
+            }
+            catch (Exception ex)
+            {
+                return TcpResponse.CreateError($"Create product error: {ex.Message}", message.RequestId);
+            }
+        }
     }
-}
+}

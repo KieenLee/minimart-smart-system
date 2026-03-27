@@ -21,5 +21,8 @@ namespace MS2.ServerApp.Business.Interfaces
 
         // Lấy danh sách sản phẩm tồn kho thấp
         Task<TcpResponse> GetLowStockProductsAsync(TcpMessage message);
+
+        // Tạo sản phẩm mới
+        Task<TcpResponse> CreateProductAsync(TcpMessage message);
     }
 }

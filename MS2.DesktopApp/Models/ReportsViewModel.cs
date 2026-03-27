@@ -1,30 +1,26 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MS2.DesktopApp.Network;
-using MS2.Models.DTOs.Auth;
-using MS2.Models.DTOs.Order;
-using MS2.Models.TCP;
-using System;
+using Microsoft.AspNetCore.SignalR.Client;
 using System.Collections.ObjectModel;
-using System.Text.Json;
-using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace MS2.DesktopApp.Models;
 
 public partial class ReportsViewModel : ObservableObject
 {
-    private readonly TcpClientService _tcpClient;
-    private readonly UserDto _currentUser;
+    private readonly Network.TcpClientService _tcpClient;
+    private readonly MS2.Models.DTOs.Auth.UserDto _currentUser;
+    private DispatcherTimer? _autoRefreshTimer;
 
     [ObservableProperty]
-    private DateTime fromDate = DateTime.Now.AddDays(-7);
+    private DateTime fromDate = DateTime.Today.AddDays(-30);
 
     [ObservableProperty]
-    private DateTime toDate = DateTime.Now;
+    private DateTime toDate = DateTime.Today;
 
     [ObservableProperty]
-    private ObservableCollection<OrderDto> orders = new();
+    private ObservableCollection<MS2.Models.DTOs.Order.OrderDto> orders = new();
 
     [ObservableProperty]
     private bool isLoading = false;
@@ -41,11 +37,33 @@ public partial class ReportsViewModel : ObservableObject
     [ObservableProperty]
     private decimal averageOrderValue = 0;
 
-    public ReportsViewModel(TcpClientService tcpClient, UserDto currentUser)
+    [ObservableProperty]
+    private string lastUpdated = "";
+
+    public ReportsViewModel(Network.TcpClientService tcpClient, MS2.Models.DTOs.Auth.UserDto currentUser)
     {
         _tcpClient = tcpClient;
         _currentUser = currentUser;
     }
+
+    public async Task InitializeAsync()
+    {
+        await LoadReportAsync();
+
+        // Auto-refresh mỗi 30 giây
+        _autoRefreshTimer = new DispatcherTimer
+        {
+            Interval = TimeSpan.FromSeconds(30)
+        };
+        _autoRefreshTimer.Tick += async (s, e) => await LoadReportAsync();
+        _autoRefreshTimer.Start();
+    }
+
+    public void Cleanup() => _autoRefreshTimer?.Stop();
+
+    // Gọi lại khi ngày thay đổi
+    partial void OnFromDateChanged(DateTime value) => _ = LoadReportAsync();
+    partial void OnToDateChanged(DateTime value) => _ = LoadReportAsync();
 
     [RelayCommand]
     private async Task LoadReportAsync()
@@ -56,17 +74,17 @@ public partial class ReportsViewModel : ObservableObject
             StatusMessage = "Đang tải báo cáo...";
 
             var response = await _tcpClient.SendMessageAsync(
-                TcpActions.GET_SALES_REPORT,
-                new { FromDate = FromDate, ToDate = ToDate },
+                MS2.Models.TCP.TcpActions.GET_SALES_REPORT,
+                new { FromDate = FromDate, ToDate = ToDate.AddDays(1).AddSeconds(-1) },
                 _tcpClient.CurrentSessionId
             );
 
             if (response?.Success == true)
             {
                 var jsonString = response.Data?.ToString() ?? "{}";
-                var report = JsonSerializer.Deserialize<SalesReportDto>(
+                var report = System.Text.Json.JsonSerializer.Deserialize<MS2.Models.DTOs.Order.SalesReportDto>(
                     jsonString,
-                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+                    new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true }
                 );
 
                 Orders.Clear();
@@ -75,17 +93,13 @@ public partial class ReportsViewModel : ObservableObject
                     TotalRevenue = report.TotalRevenue;
                     TotalOrders = report.TotalOrders;
                     AverageOrderValue = report.AverageOrderValue;
-
                     if (report.Orders != null)
-                    {
                         foreach (var order in report.Orders)
-                        {
                             Orders.Add(order);
-                        }
-                    }
                 }
 
-                StatusMessage = $"Đã tải {Orders.Count} đơn hàng";
+                LastUpdated = $"Cập nhật: {DateTime.Now:HH:mm:ss}";
+                StatusMessage = $"Tổng {Orders.Count} đơn | Khoảng {FromDate:dd/MM} – {ToDate:dd/MM}";
             }
             else
             {
@@ -95,7 +109,6 @@ public partial class ReportsViewModel : ObservableObject
         catch (Exception ex)
         {
             StatusMessage = $"Lỗi: {ex.Message}";
-            MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
         }
         finally
         {

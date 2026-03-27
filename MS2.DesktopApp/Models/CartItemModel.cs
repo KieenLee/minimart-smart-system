@@ -18,16 +18,33 @@ public partial class CartItemModel : ObservableObject
     private decimal unitPrice;
 
     [ObservableProperty]
-    private int quantity;
+    private int maxQuantity;
+
+    private int _quantity;
+    public int Quantity
+    {
+        get => _quantity;
+        set
+        {
+            int newVal = value;
+            if (MaxQuantity > 0 && newVal > MaxQuantity) newVal = MaxQuantity;
+            if (newVal < 1) newVal = 1;
+            
+            if (SetProperty(ref _quantity, newVal))
+            {
+                OnPropertyChanged(nameof(Subtotal));
+                QuantityChangedCallback?.Invoke();
+            }
+        }
+    }
+
+    [JsonIgnore]
+    public Action? QuantityChangedCallback { get; set; }
 
     [JsonIgnore]
     public decimal Subtotal => UnitPrice * Quantity;
 
-    // Notify Subtotal khi Quantity hoặc UnitPrice thay đổi
-    partial void OnQuantityChanged(int value)
-    {
-        OnPropertyChanged(nameof(Subtotal));
-    }
+    // Notify Subtotal khi UnitPrice thay đổi
 
     partial void OnUnitPriceChanged(decimal value)
     {

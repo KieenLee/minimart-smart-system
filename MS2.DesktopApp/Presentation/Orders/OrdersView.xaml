@@ -1,33 +1,53 @@
 <UserControl x:Class="MS2.DesktopApp.Presentation.Orders.OrdersView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             Background="White">
-    <Grid Margin="20">
+             Background="#F1F5F9">
+    <Grid Margin="16">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        
-        <TextBlock Text="ĐƠN HÀNG ONLINE (ĐANG CHỜ DUYỆT)" FontSize="24" FontWeight="Bold" Margin="0,0,0,20"/>
-        
-        <DataGrid Grid.Row="1" ItemsSource="{Binding PendingOrders}" AutoGenerateColumns="False" IsReadOnly="True" HeadersVisibility="Column" RowHeight="40" FontSize="14">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Mã Đơn" Binding="{Binding Id}" Width="80"/>
-                <DataGridTextColumn Header="Khách Hàng" Binding="{Binding CustomerName}" Width="140"/>
-                <DataGridTextColumn Header="Ngày Đặt" Binding="{Binding OrderDate, StringFormat=dd/MM/yyyy HH:mm}" Width="150"/>
-                <DataGridTextColumn Header="Tổng Tiền" Binding="{Binding TotalAmount, StringFormat=N0}" Width="120"/>
-                <DataGridTextColumn Header="Ghi Chú" Binding="{Binding Notes}" Width="*"/>
-                <DataGridTemplateColumn Header="Hành Động" Width="150">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Button Content="Duyệt Giao Hàng" 
-                                    Command="{Binding DataContext.ApproveOrderCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" 
-                                    CommandParameter="{Binding Id}"
-                                    Background="#4CAF50" Foreground="White" Padding="10,5" Cursor="Hand" BorderThickness="0"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-            </DataGrid.Columns>
-        </DataGrid>
+
+        <!-- HEADER -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,16">
+            <Border Background="#FEF3C7" CornerRadius="8" Padding="10,6" Margin="0,0,10,0">
+                <TextBlock Text="⏳" FontSize="20" VerticalAlignment="Center"/>
+            </Border>
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="ĐƠN HÀNG ONLINE" FontSize="20" FontWeight="Bold" Foreground="#1A2340"/>
+                <TextBlock Text="Danh sách đơn đang chờ duyệt" FontSize="12" Foreground="#94A3B8"/>
+            </StackPanel>
+        </StackPanel>
+
+        <!-- TABLE CARD -->
+        <Border Grid.Row="1" Background="White" CornerRadius="12"
+                BorderBrush="#E2E8F0" BorderThickness="1">
+            <Border.Effect>
+                <DropShadowEffect Color="Black" Opacity="0.04" BlurRadius="8" ShadowDepth="1"/>
+            </Border.Effect>
+            <DataGrid ItemsSource="{Binding PendingOrders}"
+                      BorderThickness="0" RowHeight="48">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Mã Đơn" Binding="{Binding Id}" Width="80"/>
+                    <DataGridTextColumn Header="Khách Hàng" Binding="{Binding CustomerName}" Width="160"/>
+                    <DataGridTextColumn Header="Ngày Đặt" Binding="{Binding OrderDate, StringFormat=dd/MM/yyyy HH:mm}" Width="140"/>
+                    <DataGridTextColumn Header="Tổng Tiền" Binding="{Binding TotalAmount, StringFormat='{}{0:N0}đ'}" Width="120"/>
+                    <DataGridTextColumn Header="Ghi Chú" Binding="{Binding Notes}" Width="*"/>
+                    <DataGridTemplateColumn Header="Thao Tác" Width="150">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="✅ Duyệt Giao Hàng"
+                                        Command="{Binding DataContext.ApproveOrderCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                        CommandParameter="{Binding Id}"
+                                        Background="#16A34A" Foreground="White"
+                                        FontSize="12" FontWeight="SemiBold"
+                                        Padding="10,6" Cursor="Hand" BorderThickness="0"
+                                        Height="32" Margin="6,0"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
     </Grid>
 </UserControl>
