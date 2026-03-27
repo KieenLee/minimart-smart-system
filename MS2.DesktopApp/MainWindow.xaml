@@ -46,6 +46,14 @@
                         Visibility="{Binding IsAdmin}"
                         Margin="10,10,10,0"/>
 
+                <Button Content="📋 QUẢN LÝ ĐƠN ONLINE" 
+                        Height="50" 
+                        Command="{Binding NavigateToAdminOrdersCommand}"
+                        Visibility="{Binding IsAdmin}"
+                        Background="#E3F2FD"
+                        FontWeight="Bold"
+                        Margin="10,10,10,0"/>
+
                 <Button Content="BÁO CÁO" 
                         Height="50" 
                         Command="{Binding NavigateToReportsCommand}"

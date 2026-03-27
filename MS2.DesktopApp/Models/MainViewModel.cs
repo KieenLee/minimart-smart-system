@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.DependencyInjection;
 using MS2.DesktopApp.Network;
 using MS2.DesktopApp.Presentation.POS;
 using MS2.DesktopApp.Presentation.Inventory;
@@ -130,7 +131,7 @@ public partial class MainViewModel : ObservableObject
     {
         try
         {
-            var ordersViewModel = new MS2.DesktopApp.Models.OrdersViewModel(_hubConnection);
+            var ordersViewModel = new MS2.DesktopApp.Models.OrdersViewModel(_hubConnection, CurrentUser);
             var ordersView = new MS2.DesktopApp.Presentation.Orders.OrdersView { DataContext = ordersViewModel };
             CurrentView = ordersView;
 
@@ -143,13 +144,52 @@ public partial class MainViewModel : ObservableObject
     }
 
     [RelayCommand]
+    private async Task NavigateToAdminOrders()
+    {
+        try
+        {
+            var vm = new MS2.DesktopApp.Models.AdminOrdersViewModel(_hubConnection);
+            var view = new MS2.DesktopApp.Presentation.Orders.AdminOrdersView { DataContext = vm };
+            CurrentView = view;
+            await vm.InitializeAsync();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Lỗi mở Quản lý Đơn Online: {ex.Message}");
+        }
+    }
+
+    [RelayCommand]
     private void Logout()
     {
         // Disconnect TCP
         _tcpClient.Disconnect();
 
-        // Close MainWindow and show LoginWindow
-        Application.Current.Windows[0]?.Close();
+        // Lấy LoginWindow từ DI Container và hiển thị lại
+        var app = (App)Application.Current;
+        var serviceProvider = app.ServiceProvider;
+
+        if (serviceProvider != null)
+        {
+            var loginWindow = serviceProvider.GetRequiredService<MS2.DesktopApp.Presentation.LoginWindow>();
+            var loginViewModel = serviceProvider.GetRequiredService<LoginViewModel>();
+            loginViewModel.Username = "";
+            loginViewModel.Password = "";
+            loginViewModel.ErrorMessage = "";
+            loginViewModel.ErrorVisibility = Visibility.Collapsed;
+            loginWindow.DataContext = loginViewModel;
+            loginWindow.Show();
+        }
+
+        // Đóng MainWindow hiện tại
+        foreach (Window window in Application.Current.Windows)
+        {
+            if (window is MainWindow)
+            {
+                window.Close();
+                break;
+            }
+        }
     }
 
     // Helper method to create welcome view

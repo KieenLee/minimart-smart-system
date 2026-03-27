@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 using MS2.Models.Entities;
 
 namespace MS2.WebApp.Hubs
 {
     // Hub là trung tâm nhận/phát tín hiệu Real-time
-    // Code Hub sẽ được giữ siêu đơn giản để dễ bảo trì
     public class MiniMartHub : Hub
     {
         private readonly IServiceProvider _serviceProvider;
@@ -13,38 +13,75 @@ namespace MS2.WebApp.Hubs
         {
             _serviceProvider = serviceProvider;
         }
-        // 1. Gửi tín hiệu khi có người tạo hóa đơn mới
+
+        // 1. Báo hiệu đơn mới
         public async Task NotifyNewOrder(int orderId, string customerName, decimal totalAmount)
         {
-            // Phát cho tất cả Client (đặc biệt là DesktopApp của Nhân viên)
             await Clients.All.SendAsync("ReceiveNewOrder", orderId, customerName, totalAmount);
         }
 
-        // 2. Gửi tín hiệu khi Nhân viên đổi trạng thái đơn hàng (VD: Pending -> Shipping)
+        // 2. Báo hiệu trạng thái đơn đổi
         public async Task UpdateOrderStatus(int orderId, string status)
         {
-            // Phát cho tất cả Client (Khách hàng đang xem Lịch sử đơn)
             await Clients.All.SendAsync("ReceiveOrderStatusUpdate", orderId, status);
         }
 
-        // 3. Gửi tín hiệu khi Tồn kho (Stock) của 1 sản phẩm thay đổi
+        // 3. Báo hiệu tồn kho đổi
         public async Task UpdateStock(int productId, int remainingStock)
         {
             await Clients.All.SendAsync("ReceiveStockUpdate", productId, remainingStock);
         }
 
-        // --- CHO DESKTOP APP GỌI TRỰC TIẾP QUA SIGNALR ---
-        public async Task<List<Order>> GetPendingOrders()
+        // --- CHO DESKTOP EMP: Lấy đơn Pending (dùng DTO phẳng tránh Circular Reference) ---
+        public async Task<List<object>> GetPendingOrders()
         {
             using var scope = _serviceProvider.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<MS2.DataAccess.Data.MS2DbContext>();
-            return await Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync(
-                System.Linq.Queryable.OrderByDescending(
-                    System.Linq.Queryable.Where(db.Orders, o => o.Status == "Pending"), 
-                    o => o.OrderDate));
+            var orders = await db.Orders
+                .Where(o => o.Status == "Pending" && o.OrderType == "Online")
+                .Include(o => o.Customer)
+                .OrderByDescending(o => o.OrderDate)
+                .Select(o => (object)new
+                {
+                    o.Id,
+                    o.OrderDate,
+                    o.TotalAmount,
+                    o.Status,
+                    o.Notes,
+                    CustomerName = o.Customer != null ? o.Customer.FullName : ""
+                })
+                .ToListAsync();
+            return orders;
         }
 
-        public async Task<bool> ApproveOrder(int orderId)
+        // --- CHO DESKTOP ADMIN: Lấy tất cả đơn Online (dùng DTO phẳng tránh Circular Reference) ---
+        public async Task<List<object>> GetAllOnlineOrders()
+        {
+            using var scope = _serviceProvider.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<MS2.DataAccess.Data.MS2DbContext>();
+            var orders = await db.Orders
+                .Where(o => o.OrderType == "Online")
+                .Include(o => o.Customer)
+                .Include(o => o.ApprovedByEmployee)
+                .OrderByDescending(o => o.OrderDate)
+                .Select(o => (object)new
+                {
+                    o.Id,
+                    o.OrderDate,
+                    o.TotalAmount,
+                    o.Status,
+                    o.Notes,
+                    o.ApprovedAt,
+                    CustomerName    = o.Customer != null ? o.Customer.FullName : "",
+                    ApproverName    = o.ApprovedByEmployee != null ? o.ApprovedByEmployee.FullName : "",
+                    ApproverEmpId   = o.ApprovedByEmployeeId
+                })
+                .ToListAsync();
+            return orders;
+        }
+
+        // --- CHO DESKTOP EMP: Duyệt đơn ---
+        public async Task<bool> ApproveOrder(int orderId, int employeeId)
         {
             try
             {
@@ -54,9 +91,12 @@ namespace MS2.WebApp.Hubs
                 if (order != null && order.Status == "Pending")
                 {
                     order.Status = "Shipping";
+                    order.ApprovedByEmployeeId = employeeId;
+                    order.ApprovedAt = DateTime.Now;
                     await db.SaveChangesAsync();
-                    
-                    // Bắn ngược lại signal cho Khách hàng
+
+                    // Broadcast kèm người duyệt, giờ duyệt
+                    await Clients.All.SendAsync("ReceiveOrderApproved", orderId, "Shipping", employeeId, order.ApprovedAt);
                     await UpdateOrderStatus(orderId, "Shipping");
                     return true;
                 }

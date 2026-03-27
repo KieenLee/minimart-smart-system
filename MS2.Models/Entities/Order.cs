@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -36,6 +36,13 @@ public partial class Order
     [ForeignKey("EmployeeId")]
     [InverseProperty("OrderEmployees")]
     public virtual User? Employee { get; set; }
+
+    // Thông tin duyệt đơn
+    public int? ApprovedByEmployeeId { get; set; }
+    public DateTime? ApprovedAt { get; set; }
+
+    [ForeignKey("ApprovedByEmployeeId")]
+    public virtual User? ApprovedByEmployee { get; set; }
 
     [InverseProperty("Order")]
     public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();

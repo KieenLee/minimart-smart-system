@@ -73,3 +73,5 @@ D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\bin\Debug\net8.0-
 D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\bin\Debug\net8.0-windows\System.Threading.Channels.dll
 D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\obj\Debug\net8.0-windows\Presentation\Orders\OrdersView.baml
 D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\obj\Debug\net8.0-windows\Presentation\Orders\OrdersView.g.cs
+D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\obj\Debug\net8.0-windows\Presentation\Orders\AdminOrdersView.baml
+D:\Workspace\Project_.Net\minimart-smart-system\MS2.DesktopApp\obj\Debug\net8.0-windows\Presentation\Orders\AdminOrdersView.g.cs

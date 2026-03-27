@@ -3,31 +3,29 @@ using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.AspNetCore.SignalR.Client;
-using MS2.Models.Entities;
+using MS2.Models.DTOs.Auth;
 
 namespace MS2.DesktopApp.Models;
 
 public partial class OrdersViewModel : ObservableObject
 {
     private readonly HubConnection _hubConnection;
+    private readonly UserDto _currentUser;
 
     [ObservableProperty]
-    private ObservableCollection<Order> pendingOrders = new();
+    private ObservableCollection<OnlineOrderDto> pendingOrders = new();
 
-    public OrdersViewModel(HubConnection hubConnection)
+    public OrdersViewModel(HubConnection hubConnection, UserDto currentUser)
     {
         _hubConnection = hubConnection;
+        _currentUser = currentUser;
     }
 
     public async Task InitializeAsync()
     {
-        // Chờ kết nối đến Hub nếu chưa Active
         if (_hubConnection.State == HubConnectionState.Disconnected)
         {
-            try
-            {
-                await _hubConnection.StartAsync();
-            }
+            try { await _hubConnection.StartAsync(); }
             catch
             {
                 MessageBox.Show("Không thể kết nối tới Server. Vui lòng đảm bảo WebApp đang chạy.");
@@ -35,12 +33,9 @@ public partial class OrdersViewModel : ObservableObject
             }
         }
 
-        // Nếu đang Connecting thì đợi thêm tối đa 3 giây
         var timeout = DateTime.Now.AddSeconds(3);
         while (_hubConnection.State == HubConnectionState.Connecting && DateTime.Now < timeout)
-        {
             await Task.Delay(100);
-        }
 
         if (_hubConnection.State != HubConnectionState.Connected)
         {
@@ -50,12 +45,11 @@ public partial class OrdersViewModel : ObservableObject
 
         try
         {
-            // Yêu cầu danh sách đơn từ WebApp Hub
-            var orders = await _hubConnection.InvokeAsync<List<Order>>("GetPendingOrders");
+            var orders = await _hubConnection.InvokeAsync<List<OnlineOrderDto>>("GetPendingOrders");
             Application.Current.Dispatcher.Invoke(() =>
             {
                 PendingOrders.Clear();
-                foreach (var o in orders) PendingOrders.Add(o);
+                foreach (var o in orders ?? new()) PendingOrders.Add(o);
             });
         }
         catch (Exception ex)
@@ -69,11 +63,11 @@ public partial class OrdersViewModel : ObservableObject
     {
         try
         {
-            var success = await _hubConnection.InvokeAsync<bool>("ApproveOrder", orderId);
+            var success = await _hubConnection.InvokeAsync<bool>("ApproveOrder", orderId, _currentUser.Id);
             if (success)
             {
-                MessageBox.Show("Thành công! Đơn hàng đã được chuyển sang giao hàng.");
-                await InitializeAsync(); // Tải lại danh sách
+                MessageBox.Show("✅ Đơn hàng đã được chuyển sang giao hàng.");
+                await InitializeAsync();
             }
             else
             {

@@ -1,0 +1,117 @@
+<UserControl x:Class="MS2.DesktopApp.Presentation.Orders.AdminOrdersView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="#F5F5F5">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,16">
+            <TextBlock Text="📋" FontSize="26" VerticalAlignment="Center" Margin="0,0,8,0"/>
+            <TextBlock Text="QUẢN LÝ ĐƠN HÀNG ONLINE" FontSize="22" FontWeight="Bold" VerticalAlignment="Center"/>
+        </StackPanel>
+
+        <!-- Toolbar: Filter + Refresh -->
+        <Grid Grid.Row="1" Margin="0,0,0,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="180"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Column="0" Text="Lọc trạng thái:" VerticalAlignment="Center" Margin="0,0,10,0" FontSize="14"/>
+            <ComboBox Grid.Column="1"
+                      ItemsSource="{Binding FilterOptions}"
+                      SelectedItem="{Binding SelectedFilter}"
+                      FontSize="14" Height="32"/>
+
+            <Button Grid.Column="3"
+                    Content="🔄 Làm Mới"
+                    Command="{Binding RefreshOrdersAsyncCommand}"
+                    Background="#1976D2" Foreground="White"
+                    Padding="16,6" FontSize="14" Cursor="Hand" BorderThickness="0"/>
+        </Grid>
+
+        <!-- DataGrid -->
+        <DataGrid Grid.Row="2"
+                  ItemsSource="{Binding Orders}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  HeadersVisibility="Column"
+                  RowHeight="44"
+                  FontSize="13"
+                  GridLinesVisibility="Horizontal"
+                  AlternatingRowBackground="#FAFAFA"
+                  Background="White"
+                  BorderBrush="#E0E0E0"
+                  BorderThickness="1">
+            <DataGrid.ColumnHeaderStyle>
+                <Style TargetType="DataGridColumnHeader">
+                    <Setter Property="Background" Value="#1976D2"/>
+                    <Setter Property="Foreground" Value="White"/>
+                    <Setter Property="FontWeight" Value="SemiBold"/>
+                    <Setter Property="Padding" Value="10,8"/>
+                    <Setter Property="FontSize" Value="13"/>
+                </Style>
+            </DataGrid.ColumnHeaderStyle>
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Mã Đơn" Binding="{Binding Id}" Width="70"/>
+                <DataGridTextColumn Header="Khách Hàng" Binding="{Binding CustomerName}" Width="140"/>
+                <DataGridTextColumn Header="Ngày Đặt" Binding="{Binding OrderDate, StringFormat=dd/MM/yy HH:mm}" Width="120"/>
+                <DataGridTextColumn Header="Tổng Tiền (đ)" Binding="{Binding TotalAmount, StringFormat=N0}" Width="110"/>
+
+                <!-- Cột Trạng Thái với Badge màu -->
+                <DataGridTemplateColumn Header="Trạng Thái" Width="110">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Border CornerRadius="10" Padding="8,3" HorizontalAlignment="Center">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Background" Value="#9E9E9E"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Status}" Value="Pending">
+                                                <Setter Property="Background" Value="#FF9800"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Status}" Value="Shipping">
+                                                <Setter Property="Background" Value="#2196F3"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Status}" Value="Completed">
+                                                <Setter Property="Background" Value="#4CAF50"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Status}" Value="Cancelled">
+                                                <Setter Property="Background" Value="#F44336"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <TextBlock Text="{Binding Status}" Foreground="White" FontWeight="SemiBold" FontSize="12"/>
+                            </Border>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <!-- Người duyệt -->
+                <DataGridTextColumn Header="Người Duyệt" Binding="{Binding ApproverName}" Width="130"/>
+
+                <!-- Thời gian duyệt -->
+                <DataGridTextColumn Header="Thời Gian Duyệt" Binding="{Binding ApprovedAt, StringFormat=dd/MM/yy HH:mm}" Width="130"/>
+
+                <!-- Ghi chú -->
+                <DataGridTextColumn Header="Ghi Chú" Binding="{Binding Notes}" Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- Status bar -->
+        <TextBlock Grid.Row="3"
+                   Text="{Binding StatusMessage}"
+                   FontSize="12"
+                   Foreground="#666"
+                   Margin="0,8,0,0"/>
+    </Grid>
+</UserControl>

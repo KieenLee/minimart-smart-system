@@ -13,9 +13,10 @@
         <DataGrid Grid.Row="1" ItemsSource="{Binding PendingOrders}" AutoGenerateColumns="False" IsReadOnly="True" HeadersVisibility="Column" RowHeight="40" FontSize="14">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Mã Đơn" Binding="{Binding Id}" Width="80"/>
+                <DataGridTextColumn Header="Khách Hàng" Binding="{Binding CustomerName}" Width="140"/>
                 <DataGridTextColumn Header="Ngày Đặt" Binding="{Binding OrderDate, StringFormat=dd/MM/yyyy HH:mm}" Width="150"/>
                 <DataGridTextColumn Header="Tổng Tiền" Binding="{Binding TotalAmount, StringFormat=N0}" Width="120"/>
-                <DataGridTextColumn Header="Ghi Chú &amp; Thông tin" Binding="{Binding Notes}" Width="*"/>
+                <DataGridTextColumn Header="Ghi Chú" Binding="{Binding Notes}" Width="*"/>
                 <DataGridTemplateColumn Header="Hành Động" Width="150">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>

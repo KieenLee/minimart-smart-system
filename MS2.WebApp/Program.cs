@@ -80,6 +80,17 @@ using (var scope = app.Services.CreateScope())
         Microsoft.EntityFrameworkCore.RelationalDatabaseFacadeExtensions.ExecuteSqlRaw(db.Database, "ALTER TABLE Orders ADD CONSTRAINT CK_Orders_Status CHECK (Status IN ('Pending', 'Shipping', 'Completed', 'Cancelled'));");
     }
     catch { /* Ignore if constraint already exists */ }
+    // [DB Patch] Thêm 2 cột quản lý người duyệt đơn hàng
+    try
+    {
+        Microsoft.EntityFrameworkCore.RelationalDatabaseFacadeExtensions.ExecuteSqlRaw(db.Database, "IF NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID('Orders') AND name = 'ApprovedByEmployeeId') ALTER TABLE Orders ADD ApprovedByEmployeeId INT NULL REFERENCES Users(Id);");
+    }
+    catch { /* Ignore if column already exists */ }
+    try
+    {
+        Microsoft.EntityFrameworkCore.RelationalDatabaseFacadeExtensions.ExecuteSqlRaw(db.Database, "IF NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID('Orders') AND name = 'ApprovedAt') ALTER TABLE Orders ADD ApprovedAt DATETIME NULL;");
+    }
+    catch { /* Ignore if column already exists */ }
 }
 
 app.Run();
