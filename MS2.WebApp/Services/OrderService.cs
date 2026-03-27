@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using MS2.DataAccess.Interfaces;
 using MS2.Models.Entities;
 using MS2.WebApp.Models;
@@ -56,8 +57,16 @@ namespace MS2.WebApp.Services
 
                 foreach (var item in cartItems)
                 {
-                    var product = await _unitOfWork.Products.GetByIdAsync(item.ProductId);
-                    if (product == null) continue;
+                    // Optimistic Concurrency Control (OCC) using ExecuteUpdateAsync
+                    var rowsAffected = await _unitOfWork.Context.Products
+                        .Where(p => p.Id == item.ProductId && p.Stock >= item.Quantity)
+                        .ExecuteUpdateAsync(s => s.SetProperty(p => p.Stock, p => p.Stock - item.Quantity));
+
+                    if (rowsAffected == 0)
+                    {
+                        await _unitOfWork.RollbackTransactionAsync();
+                        return (0, $"Rất tiếc, sản phẩm '{item.ProductName}' vừa có người mua xong nên không đủ số lượng để thanh toán.");
+                    }
 
                     var detail = new OrderDetail
                     {
@@ -69,9 +78,6 @@ namespace MS2.WebApp.Services
                         Subtotal = item.Subtotal
                     };
                     await _unitOfWork.Context.OrderDetails.AddAsync(detail);
-
-                    product.Stock -= item.Quantity;
-                    await _unitOfWork.Products.UpdateAsync(product);
                 }
 
                 await _unitOfWork.SaveChangesAsync();
