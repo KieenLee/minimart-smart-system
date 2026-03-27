@@ -1,4 +1,4 @@
-﻿<Window x:Class="MS2.DesktopApp.MainWindow"
+<Window x:Class="MS2.DesktopApp.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="HỆ THỐNG QUẢN LÝ MINIMART" 
@@ -32,6 +32,13 @@
                         Height="50" 
                         Command="{Binding NavigateToPosCommand}"
                         Margin="10,20,10,0"/>
+
+                <Button Content="ĐƠN HÀNG ONLINE" 
+                        Height="50" 
+                        Command="{Binding NavigateToOrdersCommand}"
+                        Margin="10,10,10,0"
+                        Background="#FFFFDEAB"
+                        FontWeight="Bold"/>
 
                 <Button Content="KHO HÀNG" 
                         Height="50" 

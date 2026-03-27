@@ -3,6 +3,7 @@ using MS2.Models.DTOs.Order;
 using MS2.Models.Entities;
 using MS2.Models.TCP;
 using MS2.ServerApp.Business.Interfaces;
+using Microsoft.AspNetCore.SignalR.Client;
 using System.Text.Json;
 
 namespace MS2.ServerApp.Business.Services
@@ -11,11 +12,13 @@ namespace MS2.ServerApp.Business.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ISessionManager _sessionManager;
+        private readonly HubConnection _hubConnection;
 
-        public OrderService(IUnitOfWork unitOfWork, ISessionManager sessionManager)
+        public OrderService(IUnitOfWork unitOfWork, ISessionManager sessionManager, HubConnection hubConnection)
         {
             _unitOfWork = unitOfWork;
             _sessionManager = sessionManager;
+            _hubConnection = hubConnection;
         }
 
         public async Task<TcpResponse> CreateOrderAsync(TcpMessage message)
@@ -57,6 +60,7 @@ namespace MS2.ServerApp.Business.Services
                     await _unitOfWork.SaveChangesAsync(); // Lưu để có OrderId
 
                     decimal totalAmount = 0;
+                    var broadcastStockUpdates = new List<(int ProductId, int NewStock)>();
 
                     // Tạo OrderDetails và cập nhật stock
                     foreach (var detail in createOrderDto.OrderDetails)
@@ -97,6 +101,7 @@ namespace MS2.ServerApp.Business.Services
                         // Cập nhật stock
                         product.Stock -= detail.Quantity;
                         _unitOfWork.Context.Products.Update(product);
+                        broadcastStockUpdates.Add((product.Id, product.Stock));
                     }
 
                     // Cập nhật TotalAmount
@@ -106,6 +111,19 @@ namespace MS2.ServerApp.Business.Services
 
                     // Commit transaction
                     await _unitOfWork.CommitTransactionAsync();
+
+                    // Bắn SignalR Broadcast sang WebApp sau khi DB đã lưu thành công
+                    foreach (var update in broadcastStockUpdates)
+                    {
+                        try
+                        {
+                            if (_hubConnection.State == HubConnectionState.Connected)
+                            {
+                                await _hubConnection.InvokeAsync("UpdateStock", update.ProductId, update.NewStock);
+                            }
+                        }
+                        catch { /* Ignore errors during broadcast to not break checkout */ }
+                    }
 
                     // Lấy order với details để return
                     var createdOrder = await _unitOfWork.Orders.GetWithDetailsAsync(order.Id);

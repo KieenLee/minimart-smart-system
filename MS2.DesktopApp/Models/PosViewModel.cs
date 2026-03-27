@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
+using Microsoft.AspNetCore.SignalR.Client;
 
 namespace MS2.DesktopApp.Models;
 
@@ -17,6 +18,7 @@ public partial class PosViewModel : ObservableObject
 {
     private readonly TcpClientService _tcpClient;
     private readonly UserDto _currentUser;
+    private readonly HubConnection _hubConnection;
 
     [ObservableProperty]
     private string searchKeyword = "";
@@ -33,10 +35,33 @@ public partial class PosViewModel : ObservableObject
     [ObservableProperty]
     private bool isLoading = false;
 
-    public PosViewModel(TcpClientService tcpClient, UserDto currentUser)
+    public PosViewModel(TcpClientService tcpClient, UserDto currentUser, HubConnection hubConnection)
     {
         _tcpClient = tcpClient;
         _currentUser = currentUser;
+        _hubConnection = hubConnection;
+
+        // Bắt sự kiện Real-time trừ tồn kho từ Server
+        _hubConnection.On<int, int>("ReceiveStockUpdate", (productId, stock) =>
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                var product = Products.FirstOrDefault(p => p.Id == productId);
+                if (product != null)
+                {
+                    var index = Products.IndexOf(product);
+                    product.Stock = stock;
+                    if (product.Stock <= 0)
+                    {
+                        Products.RemoveAt(index); // Ẩn khỏi Grid nếu hết hàng
+                    }
+                    else
+                    {
+                        Products[index] = product; // Gán chèn lại lên chính index đó để kích gõ CollectionChanged đến UI Grid WPF
+                    }
+                }
+            });
+        });
     }
 
     /// <summary>

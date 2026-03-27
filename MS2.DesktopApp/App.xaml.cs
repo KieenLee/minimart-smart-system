@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Windows;
 using System.IO;
+using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MS2.DesktopApp.Models;
@@ -63,6 +64,15 @@ public partial class App : Application
         // Register Network Service (Singleton - dùng chung 1 connection)
         services.AddSingleton<TcpClientService>();
 
+        // Register SignalR HubConnection
+        services.AddSingleton<HubConnection>(sp =>
+        {
+            return new HubConnectionBuilder()
+                .WithUrl("http://localhost:5023/minimartHub")
+                .WithAutomaticReconnect()
+                .Build();
+        });
+
         // Register ViewModels (Transient - mỗi lần tạo mới)
         services.AddTransient<LoginViewModel>();
         services.AddTransient<MainViewModel>();
@@ -80,10 +90,13 @@ public partial class App : Application
         loginWindow.Show();
     }
 
-    protected override void OnExit(ExitEventArgs e)
+    protected override async void OnExit(ExitEventArgs e)
     {
         // Cleanup
-        ServiceProvider?.Dispose();
+        if (ServiceProvider != null)
+        {
+            await ServiceProvider.DisposeAsync();
+        }
         base.OnExit(e);
     }
 }

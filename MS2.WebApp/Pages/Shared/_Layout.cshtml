@@ -239,5 +239,53 @@
 </script>
 
 @await RenderSectionAsync("Scripts", required: false)
+
+<!-- SignalR Client Script -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+<script>
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/minimartHub")
+        .withAutomaticReconnect()
+        .build();
+
+    // 1. Lắng nghe cập nhật Tồn kho (Live Stock Sync)
+    connection.on("ReceiveStockUpdate", function (productId, remainingStock) {
+        const wrappers = document.querySelectorAll(`.product-wrapper[data-product-id='${productId}']`);
+        wrappers.forEach(w => {
+            if (remainingStock <= 0) {
+                // Hết hàng -> Ẩn luôn sản phẩm
+                w.style.display = 'none';
+            } else {
+                w.style.display = '';
+                const stockBadge = w.querySelector(`[data-stock-for='${productId}']`);
+                if (stockBadge) {
+                    if (remainingStock <= 10) {
+                        stockBadge.style.display = '';
+                        stockBadge.innerText = `Còn ${remainingStock} trong kho`;
+                    } else {
+                        stockBadge.style.display = 'none';
+                    }
+                }
+            }
+        });
+    });
+
+    // 2. Lắng nghe cập nhật Trạng thái đơn hàng (Khách hàng)
+    connection.on("ReceiveOrderStatusUpdate", function (orderId, status) {
+        const badge = document.querySelector(`[data-order-status-for='${orderId}']`);
+        if (badge) {
+            if (status === "Shipping") {
+                badge.className = "badge bg-warning text-dark px-3 py-2";
+                badge.innerText = "Đang giao hàng";
+            } else if (status === "Completed") {
+                badge.className = "badge bg-success px-3 py-2";
+                badge.innerText = "Đã nhận hàng";
+            }
+        }
+    });
+
+    connection.start().catch(err => console.error(err.toString()));
+</script>
+
 </body>
 </html>

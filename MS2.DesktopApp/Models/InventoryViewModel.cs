@@ -7,9 +7,11 @@ using MS2.Models.TCP;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
+using Microsoft.AspNetCore.SignalR.Client;
 
 namespace MS2.DesktopApp.Models;
 
@@ -40,10 +42,28 @@ public partial class InventoryViewModel : ObservableObject
     [ObservableProperty]
     private int newStock = 0;
 
-    public InventoryViewModel(TcpClientService tcpClient, UserDto currentUser)
+    private readonly HubConnection _hubConnection;
+
+    public InventoryViewModel(TcpClientService tcpClient, UserDto currentUser, HubConnection hubConnection)
     {
         _tcpClient = tcpClient;
         _currentUser = currentUser;
+        _hubConnection = hubConnection;
+
+        // Bắt sự kiện Real-time trừ tồn kho từ Server
+        _hubConnection.On<int, int>("ReceiveStockUpdate", (productId, stock) =>
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                var product = Products.FirstOrDefault(p => p.Id == productId);
+                if (product != null)
+                {
+                    var index = Products.IndexOf(product);
+                    product.Stock = stock;
+                    Products[index] = product; // Cập nhật lại Grid View
+                }
+            });
+        });
     }
 
     /// <summary>

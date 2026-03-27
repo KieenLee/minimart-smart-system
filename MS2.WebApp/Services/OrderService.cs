@@ -1,6 +1,8 @@
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using MS2.DataAccess.Interfaces;
 using MS2.Models.Entities;
+using MS2.WebApp.Hubs;
 using MS2.WebApp.Models;
 
 namespace MS2.WebApp.Services
@@ -8,10 +10,12 @@ namespace MS2.WebApp.Services
     public class OrderService : IOrderService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IHubContext<MiniMartHub> _hubContext;
 
-        public OrderService(IUnitOfWork unitOfWork)
+        public OrderService(IUnitOfWork unitOfWork, IHubContext<MiniMartHub> hubContext)
         {
             _unitOfWork = unitOfWork;
+            _hubContext = hubContext;
         }
 
         public async Task<(int orderId, string? error)> PlaceOrderAsync(
@@ -68,6 +72,9 @@ namespace MS2.WebApp.Services
                         return (0, $"Rất tiếc, sản phẩm '{item.ProductName}' vừa có người mua xong nên không đủ số lượng để thanh toán.");
                     }
 
+                    // Lấy Tồn kho mới nhất sau khi trừ để phát Broadcast SignalR
+                    var updatedStock = await _unitOfWork.Context.Products.Where(p => p.Id == item.ProductId).Select(p => p.Stock).FirstOrDefaultAsync();
+
                     var detail = new OrderDetail
                     {
                         OrderId = order.Id,
@@ -78,10 +85,17 @@ namespace MS2.WebApp.Services
                         Subtotal = item.Subtotal
                     };
                     await _unitOfWork.Context.OrderDetails.AddAsync(detail);
+                    
+                    // Phát tín hiệu tồn kho thay đổi cho toàn bộ Client đang xem 
+                    await _hubContext.Clients.All.SendAsync("ReceiveStockUpdate", item.ProductId, updatedStock);
                 }
 
                 await _unitOfWork.SaveChangesAsync();
                 await _unitOfWork.CommitTransactionAsync();
+                
+                // Phát tín hiệu Hệ thống (Đặc biệt cho DesktopApp) là có Đơn hàng mới
+                await _hubContext.Clients.All.SendAsync("ReceiveNewOrder", order.Id, receiverName, totalAmount);
+                
                 return (order.Id, null);
             }
             catch

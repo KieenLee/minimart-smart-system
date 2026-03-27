@@ -6,7 +6,9 @@ using MS2.DesktopApp.Presentation.Inventory;
 using MS2.DesktopApp.Presentation.Reports;
 using MS2.DesktopApp.Presentation.Employees;
 using MS2.DesktopApp.Presentation.Profile;
+using MS2.DesktopApp.Presentation.Orders;
 using MS2.Models.DTOs.Auth;
+using Microsoft.AspNetCore.SignalR.Client;
 using System.Windows;
 
 namespace MS2.DesktopApp.Models;
@@ -14,6 +16,7 @@ namespace MS2.DesktopApp.Models;
 public partial class MainViewModel : ObservableObject
 {
     private readonly TcpClientService _tcpClient;
+    private readonly HubConnection _hubConnection;
 
     [ObservableProperty]
     private UserDto currentUser;
@@ -24,15 +27,31 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private Visibility isAdmin = Visibility.Collapsed;
 
-    public MainViewModel(TcpClientService tcpClient, UserDto user)
+    public MainViewModel(TcpClientService tcpClient, UserDto user, HubConnection hubConnection)
     {
         _tcpClient = tcpClient;
         CurrentUser = user;
+        _hubConnection = hubConnection;
 
         // Set visibility for Admin-only buttons
         if (user.Role.Equals("Admin", System.StringComparison.OrdinalIgnoreCase))
         {
             IsAdmin = Visibility.Visible;
+        }
+
+        // Lắng nghe sự kiện Đơn mới từ WebApp
+        _hubConnection.On<int, string, decimal>("ReceiveNewOrder", (orderId, customer, total) =>
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                MessageBox.Show($"Có đơn hàng Online MỚI mã #{orderId} từ {customer}.\nTổng tiền: {total:N0}đ", "Thông báo Đơn Hàng Mới", MessageBoxButton.OK, MessageBoxImage.Information);
+            });
+        });
+
+        // Khởi động Background SignalR
+        if (_hubConnection.State != HubConnectionState.Connected)
+        {
+            try { _hubConnection.StartAsync(); } catch { }
         }
 
         // Default view: Show welcome message
@@ -44,7 +63,7 @@ public partial class MainViewModel : ObservableObject
     {
         try
         {
-            var posViewModel = new PosViewModel(_tcpClient, CurrentUser);
+            var posViewModel = new PosViewModel(_tcpClient, CurrentUser, _hubConnection);
             var posView = new PosView { DataContext = posViewModel };
             CurrentView = posView;
 
@@ -61,7 +80,7 @@ public partial class MainViewModel : ObservableObject
     {
         try
         {
-            var inventoryViewModel = new InventoryViewModel(_tcpClient, CurrentUser);
+            var inventoryViewModel = new InventoryViewModel(_tcpClient, CurrentUser, _hubConnection);
             var inventoryView = new InventoryView { DataContext = inventoryViewModel };
             CurrentView = inventoryView;
 
@@ -104,6 +123,23 @@ public partial class MainViewModel : ObservableObject
         var profileViewModel = new ProfileViewModel(_tcpClient, CurrentUser);
         var profileView = new ProfileView { DataContext = profileViewModel };
         CurrentView = profileView;
+    }
+
+    [RelayCommand]
+    private async Task NavigateToOrders()
+    {
+        try
+        {
+            var ordersViewModel = new MS2.DesktopApp.Models.OrdersViewModel(_hubConnection);
+            var ordersView = new MS2.DesktopApp.Presentation.Orders.OrdersView { DataContext = ordersViewModel };
+            CurrentView = ordersView;
+
+            await ordersViewModel.InitializeAsync();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Lỗi mở danh sách Đơn hàng: {ex.Message}");
+        }
     }
 
     [RelayCommand]

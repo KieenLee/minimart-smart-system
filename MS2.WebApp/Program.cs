@@ -6,8 +6,9 @@ using MS2.WebApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ===== RAZOR PAGES =====
+// ===== RAZOR PAGES & SIGNALR =====
 builder.Services.AddRazorPages();
+builder.Services.AddSignalR(); // Đăng ký SignalR
 
 // ===== DATABASE CONFIGURATION =====
 builder.Services.AddDbContext<MS2DbContext>(options =>
@@ -26,6 +27,9 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
+
+// ===== BACKGROUND WORKER =====
+builder.Services.AddHostedService<OrderTimeoutWorker>();
 
 // ===== SESSION CONFIGURATION =====
 builder.Services.AddDistributedMemoryCache();
@@ -59,7 +63,23 @@ app.UseSession();
 
 app.UseAuthorization();
 
-// ===== RAZOR PAGES ROUTING =====
+// ===== ROUTING & ENDPOINTS =====
 app.MapRazorPages();
+app.MapHub<MS2.WebApp.Hubs.MiniMartHub>("/minimartHub"); // Expose Hub endpoint
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<MS2.DataAccess.Data.MS2DbContext>();
+    try
+    {
+        Microsoft.EntityFrameworkCore.RelationalDatabaseFacadeExtensions.ExecuteSqlRaw(db.Database, "ALTER TABLE Orders DROP CONSTRAINT CK__Orders__Status__52593CB8;");
+    }
+    catch { /* Ignore if constraint already dropped */ }
+    try
+    {
+        Microsoft.EntityFrameworkCore.RelationalDatabaseFacadeExtensions.ExecuteSqlRaw(db.Database, "ALTER TABLE Orders ADD CONSTRAINT CK_Orders_Status CHECK (Status IN ('Pending', 'Shipping', 'Completed', 'Cancelled'));");
+    }
+    catch { /* Ignore if constraint already exists */ }
+}
 
 app.Run();

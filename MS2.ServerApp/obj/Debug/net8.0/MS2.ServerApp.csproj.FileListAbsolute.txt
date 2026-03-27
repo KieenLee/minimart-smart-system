@@ -97,3 +97,14 @@ D:\Workspace\Project_.Net\minimart-smart-system\MS2.ServerApp\bin\Debug\net8.0\M
 D:\Workspace\Project_.Net\minimart-smart-system\MS2.ServerApp\obj\Debug\net8.0\MS2.Serv.32062A9B.Up2Date
 D:\Workspace\Project_.Net\minimart-smart-system\MS2.ServerApp\obj\Debug\net8.0\MS2.ServerApp.genruntimeconfig.cache
 D:\Workspace\Project_.Net\minimart-smart-system\MS2.ServerApp\obj\Debug\net8.0\ref\MS2.ServerApp.dll
+D:\Workspace\Project_.Net\minimart-smart-system\MS2.ServerApp\bin\Debug\net8.0\Microsoft.AspNetCore.Connections.Abstractions.dll
+D:\Workspace\Project_.Net\minimart-smart-system\MS2.ServerApp\bin\Debug\net8.0\Microsoft.AspNetCore.Http.Connections.Client.dll
+D:\Workspace\Project_.Net\minimart-smart-system\MS2.ServerApp\bin\Debug\net8.0\Microsoft.AspNetCore.Http.Connections.Common.dll
+D:\Workspace\Project_.Net\minimart-smart-system\MS2.ServerApp\bin\Debug\net8.0\Microsoft.AspNetCore.SignalR.Client.dll
+D:\Workspace\Project_.Net\minimart-smart-system\MS2.ServerApp\bin\Debug\net8.0\Microsoft.AspNetCore.SignalR.Client.Core.dll
+D:\Workspace\Project_.Net\minimart-smart-system\MS2.ServerApp\bin\Debug\net8.0\Microsoft.AspNetCore.SignalR.Common.dll
+D:\Workspace\Project_.Net\minimart-smart-system\MS2.ServerApp\bin\Debug\net8.0\Microsoft.AspNetCore.SignalR.Protocols.Json.dll
+D:\Workspace\Project_.Net\minimart-smart-system\MS2.ServerApp\bin\Debug\net8.0\Microsoft.Bcl.TimeProvider.dll
+D:\Workspace\Project_.Net\minimart-smart-system\MS2.ServerApp\bin\Debug\net8.0\Microsoft.Extensions.Features.dll
+D:\Workspace\Project_.Net\minimart-smart-system\MS2.ServerApp\bin\Debug\net8.0\System.Net.ServerSentEvents.dll
+D:\Workspace\Project_.Net\minimart-smart-system\MS2.ServerApp\bin\Debug\net8.0\System.Threading.Channels.dll

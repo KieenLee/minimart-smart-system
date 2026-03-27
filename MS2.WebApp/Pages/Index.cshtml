@@ -86,7 +86,7 @@
             <div class="row g-3">
                 @foreach (var product in Model.FeaturedProducts)
                 {
-                    <div class="col-6 col-md-4 col-lg-3">
+                    <div class="col-6 col-md-4 col-lg-3 product-wrapper" data-product-id="@product.Id">
                         <div class="ms2-card product-card h-100 p-3">
                             <div class="position-relative mb-3">
                                 <div class="product-img-wrap">
@@ -99,14 +99,9 @@
                                         <div class="product-img-placeholder"><i class="bi bi-box-seam"></i></div>
                                     }
                                 </div>
-                                @if (product.Stock <= 10 && product.Stock > 0)
-                                {
-                                    <span class="product-badge badge status-badge-pending">Sắp hết</span>
-                                }
-                                @if (product.Stock == 0)
-                                {
-                                    <span class="product-badge badge status-badge-cancelled">Hết hàng</span>
-                                }
+                                <span class="product-badge badge status-badge-pending" data-stock-for="@product.Id" style="@(product.Stock > 10 ? "display:none;" : "")">
+                                    Còn @product.Stock
+                                </span>
                             </div>
                             <div class="mb-1">
                                 <small class="text-muted" style="font-size:0.75rem">@(product.Category?.Name ?? "Chung")</small>

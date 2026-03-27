@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -9,6 +9,7 @@ using MS2.ServerApp.Business.Interfaces;
 using MS2.ServerApp.Business.Services;
 using MS2.ServerApp.Models;
 using MS2.ServerApp.Network;
+using Microsoft.AspNetCore.SignalR.Client;
 
 var builder = new HostBuilder()
     .ConfigureServices((hostContext, services) =>
@@ -44,6 +45,22 @@ var builder = new HostBuilder()
         // 6. Network Layer
         services.AddSingleton<TcpMessageRouter>();
         services.AddSingleton<TcpServer>();
+
+        // 7. SignalR Client HubConnection
+        services.AddSingleton<HubConnection>(sp =>
+        {
+            var hubConnection = new HubConnectionBuilder()
+                .WithUrl("http://localhost:5023/minimartHub")
+                .WithAutomaticReconnect()
+                .Build();
+            
+            // Bắt đầu kết nối ẩn danh
+            hubConnection.StartAsync().ContinueWith(task => {
+                if (task.IsFaulted) Console.WriteLine("⚠️ SignalR: Không thể kết nối tới WebApp Hub.");
+                else Console.WriteLine("✅ SignalR: Đã kết nối WebApp Hub để đồng bộ Real-time.");
+            });
+            return hubConnection;
+        });
     });
 
     var host = builder.Build();

@@ -22,7 +22,14 @@
                             <span class="fw-700" style="color:#6366f1">Đơn #@order.Id</span>
                             <span class="text-muted ms-2 small">@order.OrderDate.ToString("dd/MM/yyyy HH:mm")</span>
                         </div>
-                        <span class="badge status-badge-completed px-3 py-2">Đã đặt hàng</span>
+                        @{
+                            var badgeClass = "bg-secondary";
+                            var statusText = order.Status;
+                            if (order.Status == "Pending") { badgeClass = "status-badge-completed"; statusText = "Đã đặt hàng"; }
+                            else if (order.Status == "Shipping") { badgeClass = "bg-warning text-dark"; statusText = "Đang giao hàng"; }
+                            else if (order.Status == "Completed") { badgeClass = "bg-success"; statusText = "Đã nhận hàng"; }
+                        }
+                        <span class="badge @badgeClass px-3 py-2" data-order-status-for="@order.Id">@statusText</span>
                     </div>
 
                     @if (order.OrderDetails != null && order.OrderDetails.Any())
@@ -32,7 +39,7 @@
                             {
                                 <div class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom">
                                     <span style="font-size:0.875rem">@(detail.Product?.Name ?? $"Sản phẩm #{detail.ProductId}")</span>
-                                    <span class="text-muted small">x@detail.Quantity × @detail.UnitPrice.ToString("N0")₫</span>
+                                    <span class="text-muted small">@detail.Quantity x @detail.UnitPrice.ToString("N0")₫</span>
                                 </div>
                             }
                             @if (order.OrderDetails.Count > 3)
