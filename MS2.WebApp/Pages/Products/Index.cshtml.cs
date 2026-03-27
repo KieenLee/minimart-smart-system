@@ -23,11 +23,11 @@ namespace MS2.WebApp.Pages.Products
         public int CurrentPage { get; set; } = 1;
         public int TotalPages { get; set; }
 
-        public async Task OnGetAsync(string? search, int? categoryId, int page = 1)
+        public async Task OnGetAsync(string? search, int? categoryId, int p = 1)
         {
             CurrentSearch = search;
             CurrentCategoryId = categoryId;
-            CurrentPage = page < 1 ? 1 : page;
+            CurrentPage = p < 1 ? 1 : p;
 
             Products = await _productService.GetProductsAsync(search, categoryId);
             Categories = await _productService.GetCategoriesAsync();
