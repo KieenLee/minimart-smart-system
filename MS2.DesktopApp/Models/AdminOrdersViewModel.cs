@@ -104,7 +104,14 @@ public partial class AdminOrdersViewModel : ObservableObject
     {
         if (order == null) return;
         var detailWindow = new MS2.DesktopApp.Presentation.Orders.OrderDetailWindow(order);
-        detailWindow.Owner = System.Windows.Application.Current.MainWindow;
+
+        // Tìm MainWindow chính xác để tránh lỗi "Owner to itself"
+        var mainWindow = System.Windows.Application.Current.Windows
+            .OfType<MainWindow>()
+            .FirstOrDefault();
+        if (mainWindow != null)
+            detailWindow.Owner = mainWindow;
+
         detailWindow.ShowDialog();
     }
 
