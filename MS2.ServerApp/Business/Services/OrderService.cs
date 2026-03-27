@@ -127,6 +127,7 @@ namespace MS2.ServerApp.Business.Services
 
                     // Lấy order với details để return
                     var createdOrder = await _unitOfWork.Orders.GetWithDetailsAsync(order.Id);
+                    if (createdOrder == null) throw new InvalidOperationException("Failed to retrieve order details after creation.");
 
                     var orderDto = new OrderDto
                     {

@@ -44,7 +44,7 @@ namespace MS2.WebApp.Services
                         await dbContext.SaveChangesAsync(stoppingToken);
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     // Ignore transient errors
                 }

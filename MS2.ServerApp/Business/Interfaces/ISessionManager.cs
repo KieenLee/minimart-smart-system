@@ -14,7 +14,7 @@ namespace MS2.ServerApp.Business.Interfaces
         bool RemoveSession(string sessionId);
 
         // Kiểm tra session có tồn tại không
-        bool IsValidSession(string sessionId);
+        bool IsValidSession(string? sessionId);
        
         // Lấy tất cả active sessions
         IEnumerable<UserSession> GetAllSessions();

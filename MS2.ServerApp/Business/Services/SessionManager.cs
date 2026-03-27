@@ -29,8 +29,9 @@ namespace MS2.ServerApp.Business.Services
             return _sessions.TryRemove(sessionId, out _);
         }
 
-        public bool IsValidSession(string sessionId)
+        public bool IsValidSession(string? sessionId)
         {
+            if (string.IsNullOrEmpty(sessionId)) return false;
             return _sessions.ContainsKey(sessionId);
         }
 
