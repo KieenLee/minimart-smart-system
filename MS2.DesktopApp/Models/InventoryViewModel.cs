@@ -347,7 +347,14 @@ public partial class InventoryViewModel : ObservableObject
         _ = LoadCategoriesAsync();
         SelectedCategoryId = 0;
         var dialog = new MS2.DesktopApp.Presentation.Inventory.CreateProductWindow(this);
-        dialog.Owner = System.Windows.Application.Current.MainWindow;
+
+        // Tìm MainWindow chính xác theo kiểu để tránh lỗi "Owner to itself"
+        var mainWindow = System.Windows.Application.Current.Windows
+            .OfType<MainWindow>()
+            .FirstOrDefault();
+        if (mainWindow != null)
+            dialog.Owner = mainWindow;
+
         dialog.ShowDialog();
 
         if (dialog.IsConfirmed)
